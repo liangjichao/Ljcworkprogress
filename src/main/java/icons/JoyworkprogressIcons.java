@@ -1,0 +1,17 @@
+package icons;
+
+import com.intellij.openapi.util.IconLoader;
+
+import javax.swing.Icon;
+
+
+/**
+ * @author liangjichao
+ * @date 2023/9/7 1:28 PM
+ */
+public class JoyworkprogressIcons {
+    public static Icon ToolWindowIcon = IconLoader.getIcon("icons/JoyworkprogressLogo.svg", JoyworkprogressIcons.class);
+
+    public JoyworkprogressIcons() {
+    }
+}
