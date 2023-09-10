@@ -1,20 +1,24 @@
 package com.jdl.ljc.joyworkprogress;
 
+import com.intellij.icons.AllIcons;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
-import com.intellij.ui.components.JBPanel;
-import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.util.ui.UIUtil;
-import com.jdl.ljc.joyworkprogress.panel.ProgressPanel;
+import com.jdl.ljc.joyworkprogress.action.AddWorkProgressDialogAction;
+import com.jdl.ljc.joyworkprogress.toolwindow.HomeToolWindowPanel;
+import com.jdl.ljc.joyworkprogress.ui.panel.ProgressPanel;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * @author liangjichao
@@ -30,16 +34,15 @@ public class DevWorkProgressWindowFactory implements ToolWindowFactory, DumbAwar
         if (toolWindow == null) {
             return;
         }
+
+
         ContentManager contentManager = toolWindow.getContentManager();
-        SimpleToolWindowPanel panel = new SimpleToolWindowPanel(true);
-        panel.setBackground(UIUtil.getFieldForegroundColor());
+        HomeToolWindowPanel panel = new HomeToolWindowPanel(project);
 
-        ProgressPanel jsp=new ProgressPanel(project,"<h1>Hello World!!!</h1>");
-
-        panel.setContent(jsp.getComponent());
-
-        panel.revalidate();
-        Content content = contentManager.getFactory().createContent(panel, "DevProgress", false);
+        Content content = contentManager.getFactory().createContent(panel, "", false);
         contentManager.addContent(content);
+
     }
+
+
 }

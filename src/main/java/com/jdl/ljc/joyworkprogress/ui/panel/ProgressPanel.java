@@ -1,10 +1,8 @@
-package com.jdl.ljc.joyworkprogress.panel;
+package com.jdl.ljc.joyworkprogress.ui.panel;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.jcef.JCEFHtmlPanel;
-import net.minidev.json.JSONObject;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author liangjichao
