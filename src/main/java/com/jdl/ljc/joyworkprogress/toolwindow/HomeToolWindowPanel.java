@@ -18,8 +18,9 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
     }
 
     private void initialize(Project project) {
-        ActionToolbar toolbar = createToolbar(project);
         ProgressPanel jsp=new ProgressPanel(project,"<h1>Hello World!!</h1>");
+
+        ActionToolbar toolbar = createToolbar(project);
         toolbar.setTargetComponent(jsp.getComponent());
 
 
