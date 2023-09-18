@@ -26,29 +26,10 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
 
     private void initialize(Project project) {
 //        ProgressHtmlPanel jsp=new ProgressHtmlPanel(project,"<h1>Hello World!!</h1>");
-        // 创建表头和表格数据
-        String[] columnNames = {"Name", "Age", "Email"};
-        Object[][] rowData = {
-                {"John Doe", 30, "john.doe@example.com"},
-                {"Jane Smith", 25, "jane.smith@example.com"},
-                {"Bob Johnson", 35, "bob.johnson@example.com"}
-        };
-
-        // 创建默认的表格模型
-        DefaultTableModel model = new DefaultTableModel(rowData, columnNames);
-
-        // 创建JBTable并设置模型
-        JBTable table = new JBTable(model);
-
-
-        WorkProgressPanel workProgressPanel=new WorkProgressPanel(table);
-
-        JBPanel panel = new JBPanel(new BorderLayout());
-        panel.add(workProgressPanel, BorderLayout.CENTER);
+        WorkProgressPanel panel = new WorkProgressPanel();
 
         ActionToolbar toolbar = createToolbar(project);
         toolbar.setTargetComponent(panel);
-
 
         setToolbar(toolbar.getComponent());
         setContent(panel);
