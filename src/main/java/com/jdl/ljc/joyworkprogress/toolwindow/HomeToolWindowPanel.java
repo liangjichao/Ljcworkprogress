@@ -3,13 +3,20 @@ package com.jdl.ljc.joyworkprogress.toolwindow;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
+import com.intellij.ui.components.JBList;
+import com.intellij.ui.components.JBPanel;
+import com.intellij.ui.table.JBTable;
 import com.jdl.ljc.joyworkprogress.action.AddWorkProgressDialogAction;
-import com.jdl.ljc.joyworkprogress.ui.panel.ProgressPanel;
+import com.jdl.ljc.joyworkprogress.ui.panel.ProgressHtmlPanel;
+import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressPanel;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 
 public class HomeToolWindowPanel extends SimpleToolWindowPanel {
     public HomeToolWindowPanel(@NotNull Project project) {
@@ -18,14 +25,33 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
     }
 
     private void initialize(Project project) {
-        ProgressPanel jsp=new ProgressPanel(project,"<h1>Hello World!!</h1>");
+//        ProgressHtmlPanel jsp=new ProgressHtmlPanel(project,"<h1>Hello World!!</h1>");
+        // 创建表头和表格数据
+        String[] columnNames = {"Name", "Age", "Email"};
+        Object[][] rowData = {
+                {"John Doe", 30, "john.doe@example.com"},
+                {"Jane Smith", 25, "jane.smith@example.com"},
+                {"Bob Johnson", 35, "bob.johnson@example.com"}
+        };
+
+        // 创建默认的表格模型
+        DefaultTableModel model = new DefaultTableModel(rowData, columnNames);
+
+        // 创建JBTable并设置模型
+        JBTable table = new JBTable(model);
+
+
+        WorkProgressPanel workProgressPanel=new WorkProgressPanel(table);
+
+        JBPanel panel = new JBPanel(new BorderLayout());
+        panel.add(workProgressPanel, BorderLayout.CENTER);
 
         ActionToolbar toolbar = createToolbar(project);
-        toolbar.setTargetComponent(jsp.getComponent());
+        toolbar.setTargetComponent(panel);
 
 
         setToolbar(toolbar.getComponent());
-        setContent(jsp.getComponent());
+        setContent(panel);
     }
 
     private ActionToolbar createToolbar(Project project) {

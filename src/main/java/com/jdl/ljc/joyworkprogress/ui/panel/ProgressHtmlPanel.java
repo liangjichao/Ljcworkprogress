@@ -8,8 +8,8 @@ import org.jetbrains.annotations.NotNull;
  * @author liangjichao
  * @date 2023/9/7 3:57 PM
  */
-public class ProgressPanel extends JCEFHtmlPanel {
-    public ProgressPanel(@NotNull Project project,String html) {
+public class ProgressHtmlPanel extends JCEFHtmlPanel {
+    public ProgressHtmlPanel(@NotNull Project project, String html) {
         super(null);
         setHtml(html);
     }
