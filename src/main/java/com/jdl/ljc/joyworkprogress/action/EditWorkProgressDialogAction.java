@@ -8,11 +8,12 @@ import com.intellij.openapi.ui.Messages;
 import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressPanel;
 
 import javax.swing.*;
+import java.util.Vector;
 
-public class AddWorkProgressDialogAction extends AnAction {
+public class EditWorkProgressDialogAction extends AnAction {
     private WorkProgressPanel panel;
 
-    public AddWorkProgressDialogAction(Icon icon, WorkProgressPanel panel) {
+    public EditWorkProgressDialogAction(Icon icon, WorkProgressPanel panel) {
         super(icon);
         this.panel = panel;
     }
@@ -20,10 +21,11 @@ public class AddWorkProgressDialogAction extends AnAction {
     @Override
     public void actionPerformed(AnActionEvent e) {
         Project project = e.getData(PlatformDataKeys.PROJECT);
+        Vector data = panel.getSelectRow();
         Messages.showInputDialog(
                 project,
-                "What is your name?",
-                "Input your name",
+                "我是编辑信息" + data.get(0),
+                "编辑",
                 Messages.getQuestionIcon());
     }
 }

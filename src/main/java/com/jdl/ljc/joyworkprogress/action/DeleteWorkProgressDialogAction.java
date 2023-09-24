@@ -9,10 +9,10 @@ import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressPanel;
 
 import javax.swing.*;
 
-public class AddWorkProgressDialogAction extends AnAction {
+public class DeleteWorkProgressDialogAction extends AnAction {
     private WorkProgressPanel panel;
 
-    public AddWorkProgressDialogAction(Icon icon, WorkProgressPanel panel) {
+    public DeleteWorkProgressDialogAction(Icon icon, WorkProgressPanel panel) {
         super(icon);
         this.panel = panel;
     }
@@ -22,8 +22,8 @@ public class AddWorkProgressDialogAction extends AnAction {
         Project project = e.getData(PlatformDataKeys.PROJECT);
         Messages.showInputDialog(
                 project,
-                "What is your name?",
-                "Input your name",
+                "我是删除信息",
+                "确认删除",
                 Messages.getQuestionIcon());
     }
 }
