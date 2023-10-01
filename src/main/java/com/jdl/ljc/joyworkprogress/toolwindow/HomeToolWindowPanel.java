@@ -57,6 +57,8 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
         actionGroup.add(flushAction);
         LocateWorkProgressDialogAction locateAction = new LocateWorkProgressDialogAction(AllIcons.Providers.Openedge, panel);
         actionGroup.add(locateAction);
+        SearchWorkProgressDialogAction searchAction = new SearchWorkProgressDialogAction(AllIcons.Actions.Search, panel);
+        actionGroup.add(searchAction);
         DeleteWorkProgressDialogAction delAction = new DeleteWorkProgressDialogAction(AllIcons.Actions.DeleteTag, panel);
         actionGroup.add(delAction);
 
