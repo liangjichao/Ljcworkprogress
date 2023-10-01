@@ -5,10 +5,13 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.vcs.ProjectLevelVcsManager;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressPanel;
+import git4idea.GitUtil;
+import git4idea.repo.GitRepository;
 
 import javax.swing.*;
-import java.util.Vector;
 
 public class EditWorkProgressDialogAction extends AnAction {
     private WorkProgressPanel panel;
@@ -21,11 +24,12 @@ public class EditWorkProgressDialogAction extends AnAction {
     @Override
     public void actionPerformed(AnActionEvent e) {
         Project project = e.getData(PlatformDataKeys.PROJECT);
-        Vector data = panel.getSelectRow();
-        Messages.showInputDialog(
-                project,
-                "我是编辑信息" + data.get(0),
-                "编辑",
-                Messages.getQuestionIcon());
+        VirtualFile baseDir = project.getBaseDir();
+        GitRepository res = GitUtil.getRepositoryManager(project).getRepositoryForRootQuick(baseDir);
+        String branchName =res.getCurrentBranchName();
+//        Vector data = panel.getSelectRow();
+        String dir = project.getBasePath()+"\n";
+        dir+=branchName+"\n";
+        Messages.showInfoMessage(dir,"提示");
     }
 }

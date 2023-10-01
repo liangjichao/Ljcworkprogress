@@ -25,6 +25,8 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
     }
 
     private void initialize(Project project) {
+
+
         List<WorkProgressGridData> gridDataList = new ArrayList<>();
         WorkProgressGridData data = new WorkProgressGridData();
         gridDataList.add(data);
