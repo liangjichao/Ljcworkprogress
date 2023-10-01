@@ -6,10 +6,7 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
-import com.jdl.ljc.joyworkprogress.action.AddWorkProgressDialogAction;
-import com.jdl.ljc.joyworkprogress.action.DeleteWorkProgressDialogAction;
-import com.jdl.ljc.joyworkprogress.action.EditWorkProgressDialogAction;
-import com.jdl.ljc.joyworkprogress.action.FlushProgressDialogAction;
+import com.jdl.ljc.joyworkprogress.action.*;
 import com.jdl.ljc.joyworkprogress.enums.WorkProgressStatusEnum;
 import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressPanel;
 import com.jdl.ljc.joyworkprogress.vo.WorkProgressGridData;
@@ -58,6 +55,8 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
         actionGroup.add(editAction);
         FlushProgressDialogAction flushAction = new FlushProgressDialogAction(AllIcons.Actions.Refresh, panel);
         actionGroup.add(flushAction);
+        LocateWorkProgressDialogAction locateAction = new LocateWorkProgressDialogAction(AllIcons.Providers.Openedge, panel);
+        actionGroup.add(locateAction);
         DeleteWorkProgressDialogAction delAction = new DeleteWorkProgressDialogAction(AllIcons.Actions.DeleteTag, panel);
         actionGroup.add(delAction);
 
