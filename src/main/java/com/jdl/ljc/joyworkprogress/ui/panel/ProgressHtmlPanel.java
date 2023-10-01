@@ -8,11 +8,7 @@ import org.cef.browser.CefBrowser;
 import org.cef.browser.CefFrame;
 import org.cef.browser.CefMessageRouter;
 import org.cef.callback.CefQueryCallback;
-import org.cef.handler.CefLoadHandlerAdapter;
 import org.cef.handler.CefMessageRouterHandlerAdapter;
-
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 /**
  * @author liangjichao
@@ -42,12 +38,13 @@ public class ProgressHtmlPanel extends JCEFHtmlPanel {
 
     }
     private String getIndexContent(String content) {
-        return FileUtils.getResource("/html/index.html").replace("[!editor-content]",content);
+        String html = FileUtils.getResource("/html/index.html").replace("[!editor-content]", content);
+        html=html.replace("#{index}", FileUtils.getResource("/html/js/index.js"));
+        html=html.replace("#{style}", FileUtils.getResource("/html/css/style.css"));
+        return html;
     }
 
     public String getEditorContent() {
-//        CefBrowser browser = getCefBrowser();
-//        browser.executeJavaScript("getEditorContent();", null, 0);
         return editorContent.getContent();
     }
 

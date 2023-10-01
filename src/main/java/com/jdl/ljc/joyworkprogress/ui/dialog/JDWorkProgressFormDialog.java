@@ -1,19 +1,20 @@
 package com.jdl.ljc.joyworkprogress.ui.dialog;
 
-import com.google.common.base.Joiner;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.jdl.ljc.joyworkprogress.enums.WorkProgressStatusEnum;
 import com.jdl.ljc.joyworkprogress.ui.panel.ProgressHtmlPanel;
+import org.jdesktop.swingx.JXDatePicker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.sql.SQLOutput;
+import java.awt.event.ActionListener;
 
 public class JDWorkProgressFormDialog extends DialogWrapper {
     private Project project;
@@ -38,11 +39,11 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         }
         rootPanel.setPreferredSize(new Dimension(minWidth, 600));
 
-        JPanel topPanel = getTopPanel();
-        rootPanel.add(topPanel, BorderLayout.NORTH);
-
         JPanel centerPanel = getCenterPanel(rootPanel);
         rootPanel.add(centerPanel, BorderLayout.CENTER);
+
+        JPanel topPanel = getTopPanel();
+        rootPanel.add(topPanel, BorderLayout.NORTH);
 
         JPanel bottomPanel = getBottomPanel();
         rootPanel.add(bottomPanel, BorderLayout.SOUTH);
@@ -71,7 +72,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
     private JPanel getCenterPanel(JPanel rootPanel) {
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.add(new JLabel("开发明细："), BorderLayout.NORTH);
-        editorPane = new ProgressHtmlPanel("Hello");
+        editorPane = new ProgressHtmlPanel("");
         centerPanel.add(editorPane.getComponent(), BorderLayout.CENTER);
 
         return centerPanel;
@@ -83,44 +84,64 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.insets = new Insets(5, 5, 5, 5);
 
-        JLabel nameLabel = new JLabel("标题：");
-        JTextField nameField = new JTextField(10);
+        int y=0;
 
-        nameField.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                // 处理键盘按键被按下的事件
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    // 防止回车键提交
-                    e.consume();
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-
-            }
-        });
-
-        JLabel prdLabel = new JLabel("PRD：");
-        JTextField prdField = new JTextField(10);
-
+        JLabel progressLabel = new JLabel("进度：");
+        //为状态添加下拉框编辑器
+        ComboBox<WorkProgressStatusEnum> comboBox = new ComboBox<>();
+        for (WorkProgressStatusEnum value : WorkProgressStatusEnum.values()) {
+            comboBox.addItem(value);
+        }
         constraints.gridx = 0;
-        constraints.gridy = 0;
+        constraints.gridy = y;
         constraints.anchor = GridBagConstraints.WEST;
-        topPanel.add(nameLabel, constraints);
+        topPanel.add(progressLabel, constraints);
+        constraints.gridx = 1;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.weightx = 1.0;
+        topPanel.add(comboBox, constraints);
+
+        y++;
+        JLabel planWorkHoursLabel = new JLabel("计划工时：");
+        JPanel dataPickerPanel = new JPanel();
+        JXDatePicker planWorkHoursPickerStart = new JXDatePicker();
+        planWorkHoursPickerStart.setFormats("yyyy.MM.dd");
+        JXDatePicker planWorkHoursPickerEnd = new JXDatePicker();
+        planWorkHoursPickerEnd.setFormats("yyyy.MM.dd");
+        UIManager.put("JXDatePicker.todayButtonText", "今日");
+        dataPickerPanel.add(planWorkHoursPickerStart);
+        dataPickerPanel.add(new JLabel("至"));
+        dataPickerPanel.add(planWorkHoursPickerEnd);
+        constraints.gridx = 0;
+        constraints.gridy = y;
+        constraints.anchor = GridBagConstraints.WEST;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.weightx = 0;
+        topPanel.add(planWorkHoursLabel, constraints);
+        constraints.gridx = 1;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.weightx = 0;
+        topPanel.add(dataPickerPanel, constraints);
+
+        y++;
+        JLabel titleLabel = new JLabel("标题：");
+        JTextField nameField = new JTextField();
+        constraints.gridx = 0;
+        constraints.gridy = y;
+        constraints.anchor = GridBagConstraints.WEST;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.weightx = 0;
+        topPanel.add(titleLabel, constraints);
         constraints.gridx = 1;
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.weightx = 1.0;
         topPanel.add(nameField, constraints);
 
+        y++;
+        JLabel prdLabel = new JLabel("PRD：");
+        JTextField prdField = new JTextField();
         constraints.gridx = 0;
-        constraints.gridy = 1;
+        constraints.gridy = y;
         constraints.anchor = GridBagConstraints.WEST;
         constraints.fill = GridBagConstraints.NONE;
         constraints.weightx = 0;
@@ -129,6 +150,78 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.weightx = 1.0;
         topPanel.add(prdField, constraints);
+
+        y++;
+        JLabel productLabel = new JLabel("产品：");
+        JTextField productField = new JTextField();
+        constraints.gridx = 0;
+        constraints.gridy = y;
+        constraints.anchor = GridBagConstraints.WEST;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.weightx = 0;
+        topPanel.add(productLabel, constraints);
+        constraints.gridx = 1;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.weightx = 1.0;
+        topPanel.add(productField, constraints);
+
+
+        y++;
+        JLabel devBranchLabel = new JLabel("开发分支：");
+        JTextField devBranchField = new JTextField();
+        constraints.gridx = 0;
+        constraints.gridy = y;
+        constraints.anchor = GridBagConstraints.WEST;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.weightx = 0;
+        topPanel.add(devBranchLabel, constraints);
+        constraints.gridx = 1;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.weightx = 1.0;
+        topPanel.add(devBranchField, constraints);
+
+        y++;
+        JLabel appVersionLabel = new JLabel("应用版本：");
+        JTextField appVersionField = new JTextField();
+        constraints.gridx = 0;
+        constraints.gridy = y;
+        constraints.anchor = GridBagConstraints.WEST;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.weightx = 0;
+        topPanel.add(appVersionLabel, constraints);
+        constraints.gridx = 1;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.weightx = 1.0;
+        topPanel.add(appVersionField, constraints);
+
+        y++;
+        JLabel cardLabel = new JLabel("卡片：");
+        JTextField cardField = new JTextField();
+        JButton openLinkBtn = new JButton(AllIcons.Ide.Link);
+        openLinkBtn.setPreferredSize(new Dimension(30,30));
+        JPanel cardPanel = new JPanel(new BorderLayout());
+        cardPanel.add(cardField,BorderLayout.CENTER);
+        cardPanel.add(openLinkBtn,BorderLayout.EAST);
+        openLinkBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println(cardField.getText());
+            }
+        });
+
+        constraints.gridx = 0;
+        constraints.gridy = y;
+        constraints.anchor = GridBagConstraints.WEST;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.weightx = 0;
+        topPanel.add(cardLabel, constraints);
+        constraints.gridx = 1;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.weightx = 1.0;
+        topPanel.add(cardPanel, constraints);
+
+
+
         return topPanel;
     }
 

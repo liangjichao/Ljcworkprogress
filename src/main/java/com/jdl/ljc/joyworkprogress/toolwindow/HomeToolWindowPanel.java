@@ -9,8 +9,14 @@ import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.jdl.ljc.joyworkprogress.action.AddWorkProgressDialogAction;
 import com.jdl.ljc.joyworkprogress.action.DeleteWorkProgressDialogAction;
 import com.jdl.ljc.joyworkprogress.action.EditWorkProgressDialogAction;
+import com.jdl.ljc.joyworkprogress.action.FlushProgressDialogAction;
+import com.jdl.ljc.joyworkprogress.enums.WorkProgressStatusEnum;
 import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressPanel;
+import com.jdl.ljc.joyworkprogress.vo.WorkProgressGridData;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HomeToolWindowPanel extends SimpleToolWindowPanel {
     public HomeToolWindowPanel(@NotNull Project project) {
@@ -19,8 +25,21 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
     }
 
     private void initialize(Project project) {
-//        ProgressHtmlPanel jsp=new ProgressHtmlPanel(project,"<h1>Hello World!!</h1>");
-        WorkProgressPanel panel = new WorkProgressPanel();
+        List<WorkProgressGridData> gridDataList = new ArrayList<>();
+        WorkProgressGridData data = new WorkProgressGridData();
+        gridDataList.add(data);
+        data.setTitle("上架页面的保质期展示日月管理维度");
+        data.setProgressStatus(WorkProgressStatusEnum.DEV_ING.toString());
+        data.setPlanWorkHours("2023.10.1-2023.10.7");
+        for (int i = 0; i < 20; i++) {
+            data = new WorkProgressGridData();
+            gridDataList.add(data);
+            data.setTitle("上架页面的保质期展示日月管理维度");
+            data.setProgressStatus(WorkProgressStatusEnum.DEV_ING.toString());
+            data.setPlanWorkHours("2023.10.1-2023.10.7");
+        }
+
+        WorkProgressPanel panel = new WorkProgressPanel(gridDataList);
 
         ActionToolbar toolbar = createToolbar(panel);
         toolbar.setTargetComponent(panel);
@@ -35,6 +54,8 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
         actionGroup.add(addAction);
         EditWorkProgressDialogAction editAction = new EditWorkProgressDialogAction(AllIcons.Actions.EditSource, panel);
         actionGroup.add(editAction);
+        FlushProgressDialogAction flushAction = new FlushProgressDialogAction(AllIcons.Actions.Refresh, panel);
+        actionGroup.add(flushAction);
         DeleteWorkProgressDialogAction delAction = new DeleteWorkProgressDialogAction(AllIcons.Actions.DeleteTag, panel);
         actionGroup.add(delAction);
 

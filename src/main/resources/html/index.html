@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://unpkg.com/@wangeditor/editor@latest/dist/css/style.css" rel="stylesheet">
-
+<!--    <link href="./css/style.css" rel="stylesheet">-->
+    <style>#{style}</style>
     <style>
         #editor—wrapper {
             border: 1px solid #ccc;
             z-index: 100; /* 按需定义 */
         }
         #toolbar-container { border-bottom: 1px solid #ccc; }
-        #editor-container { height: 400px; }
+        #editor-container { height: 390px; }
 
     </style>
-    <script src="https://unpkg.com/@wangeditor/editor@latest/dist/index.js"></script>
+<!--    <script src="./js/index.js"></script>-->
+    <script>#{index}</script>
 
 <!--    https://www.wangeditor.com/v5/getting-started.html-->
 </head>
@@ -24,12 +25,12 @@
     <div id="toolbar-container"><!-- 工具栏 --></div>
     <div id="editor-container"></div>
 </div>
-<a href="javascript:getEditorContent();">测试</a>
 <script>
     const { createEditor, createToolbar } = window.wangEditor
 
     const editorConfig = {
         placeholder: '请输入开发细节...',
+        scroll:true,
         onChange(editor) {
             const html = editor.getHtml()
             window.sendDataToJava({
@@ -38,6 +39,9 @@
             })
             //console.log('editor content', html)
             // 也可以同步到 <textarea>
+        },
+        onCreated(editor){
+            editor.fullScreen();
         }
     }
 

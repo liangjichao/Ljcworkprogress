@@ -24,7 +24,7 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="DevWorkProgress" anchor="right" icon="icons/JoyworkprogressLogo.svg" factoryClass="com.jdl.ljc.joyworkprogress.DevWorkProgressWindowFactory" />
+        <toolWindow id="DevWorkProgress" anchor="bottom" icon="icons/JoyworkprogressLogo.svg" factoryClass="com.jdl.ljc.joyworkprogress.DevWorkProgressWindowFactory" />
 
     </extensions>
     <actions>
