@@ -29,7 +29,7 @@ public class WorkProgressPanel extends JBPanel {
 
         columnNames = new Vector<>();
         columnNames.add("进度");
-        columnNames.add("标题");
+        columnNames.add("项目名称");
         columnNames.add("计划工时");
 
         tableData = new Vector();

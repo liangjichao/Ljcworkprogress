@@ -124,8 +124,8 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         topPanel.add(dataPickerPanel, constraints);
 
         y++;
-        JLabel titleLabel = new JLabel("标题：");
-        JTextField nameField = new JTextField();
+        JLabel titleLabel = new JLabel("项目名称：");
+        JTextField projectNameField = new JTextField();
         constraints.gridx = 0;
         constraints.gridy = y;
         constraints.anchor = GridBagConstraints.WEST;
@@ -135,7 +135,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         constraints.gridx = 1;
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.weightx = 1.0;
-        topPanel.add(nameField, constraints);
+        topPanel.add(projectNameField, constraints);
 
         y++;
         JLabel prdLabel = new JLabel("PRD：");
