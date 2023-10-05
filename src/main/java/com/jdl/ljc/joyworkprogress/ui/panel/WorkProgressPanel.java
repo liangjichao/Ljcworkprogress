@@ -31,14 +31,16 @@ public class WorkProgressPanel extends JBPanel {
         columnNames.add("进度");
         columnNames.add("项目名称");
         columnNames.add("计划工时");
+        columnNames.add("用户");
 
         tableData = new Vector();
-        Vector bean=null;
+        Vector bean;
         for (WorkProgressGridData data : gridDataList) {
             bean = new Vector();
             bean.add(data.getProgressStatus());
             bean.add(data.getTitle());
             bean.add(data.getPlanWorkHours());
+            bean.add(data.getUserCode());
             tableData.add(bean);
         }
 
@@ -54,6 +56,8 @@ public class WorkProgressPanel extends JBPanel {
         table.getColumnModel().getColumn(0).setMaxWidth(70);
         table.getColumnModel().getColumn(2).setMinWidth(138);
         table.getColumnModel().getColumn(2).setMaxWidth(138);
+        table.getColumnModel().getColumn(3).setMinWidth(80);
+        table.getColumnModel().getColumn(3).setMaxWidth(80);
 
         JBScrollPane jbScrollPane = new JBScrollPane(table);
         jbScrollPane.setBorder(JBUI.Borders.empty());
