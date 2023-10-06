@@ -23,7 +23,7 @@ public class SearchComboBoxPanel extends JPanel {
         super(new FlowLayout());
 
         menuBar = new JMenuBar();
-        menuBar.setBorder(null);
+        menuBar.setBorder(JBUI.Borders.empty());
 
         UserMenu menu = new UserMenu("User",AllIcons.General.ArrowDown);
         userMenu = menu;
