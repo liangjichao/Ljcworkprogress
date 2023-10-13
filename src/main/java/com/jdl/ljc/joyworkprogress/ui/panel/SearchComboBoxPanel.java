@@ -27,19 +27,19 @@ public class SearchComboBoxPanel extends JPanel {
 
         UserMenu menu = new UserMenu("User",AllIcons.General.ArrowDown);
         userMenu = menu;
-        menu.setSelectedRun(new Runnable() {
+        userMenu.setSelectedRun(new Runnable() {
             @Override
             public void run() {
                 iconBtn.setVisible(true);
             }
         });
-        menuBar.add(menu);
-        menu.add(new UserMenuItem("Select...",menu));
-        menu.add(new UserMenuItem("me",menu));
-        menu.addSeparator();
-        menu.add(new DisabledMenuItem("最近"));
-        menu.add(new UserMenuItem("me",menu));
-        menu.add(new UserMenuItem("liangjichao",menu));
+        menuBar.add(userMenu);
+        userMenu.add(new UserMenuItem("Select...",userMenu));
+        userMenu.add(new UserMenuItem("me",userMenu));
+        userMenu.addSeparator();
+        userMenu.add(new DisabledMenuItem("最近"));
+        userMenu.add(new UserMenuItem("me",userMenu));
+        userMenu.add(new UserMenuItem("liangjichao",userMenu));
         iconBtn = new CancelActionButton(new CancelAction(),"CANCEL_SELECTED_WORK_USER");
         iconBtn.setVisible(false);
         add(menuBar);

@@ -1,12 +1,14 @@
 package com.jdl.ljc.joyworkprogress.ui;
 
+import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.ui.components.JBMenu;
 import com.intellij.util.ui.JBUI;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicMenuUI;
 import java.awt.*;
 
-public class UserMenu extends JMenu {
+public class UserMenu extends JBMenu {
     private Icon menuIcon;
 
     private Runnable selectedRun;
@@ -14,15 +16,19 @@ public class UserMenu extends JMenu {
     private boolean showMenuIcon;
 
     public UserMenu(String text, Icon icon) {
-        super(text);
+        super();
+        setText(text);
         this.menuIcon = icon;
         showMenuIcon = true;
+
         setUI(new BasicMenuUI(){
             @Override
             protected void paintBackground(Graphics g, JMenuItem menuItem, Color bgColor) {
                 super.paintBackground(g, menuItem, bgColor);
-                g.setColor(JBUI.CurrentTheme.CustomFrameDecorations.paneBackground());
-                g.fillRect(0, 0, menuItem.getWidth(), menuItem.getHeight());
+                if (SystemInfoRt.isMac) {
+                    g.setColor(JBUI.CurrentTheme.CustomFrameDecorations.paneBackground());
+                    g.fillRect(0, 0, menuItem.getWidth(), menuItem.getHeight());
+                }
             }
         });
     }
