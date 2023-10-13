@@ -1,6 +1,9 @@
 package com.jdl.ljc.joyworkprogress.ui;
 
+import com.intellij.util.ui.JBUI;
+
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicMenuUI;
 import java.awt.*;
 
 public class UserMenu extends JMenu {
@@ -14,6 +17,14 @@ public class UserMenu extends JMenu {
         super(text);
         this.menuIcon = icon;
         showMenuIcon = true;
+        setUI(new BasicMenuUI(){
+            @Override
+            protected void paintBackground(Graphics g, JMenuItem menuItem, Color bgColor) {
+                super.paintBackground(g, menuItem, bgColor);
+                g.setColor(JBUI.CurrentTheme.CustomFrameDecorations.paneBackground());
+                g.fillRect(0, 0, menuItem.getWidth(), menuItem.getHeight());
+            }
+        });
     }
 
     @Override
