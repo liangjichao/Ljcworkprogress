@@ -1,16 +1,11 @@
 package com.jdl.ljc.joyworkprogress.ui;
 
-import com.intellij.ide.actions.AboutPopup;
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.ui.DialogPanel;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.popup.AbstractPopup;
-import com.intellij.util.ui.DialogUtil;
 import com.intellij.util.ui.JBUI;
 import com.jdl.ljc.joyworkprogress.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +16,11 @@ import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.AWTEventListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +40,7 @@ public class UserMenuItem extends JMenuItem {
                 if (originalText.equals("Select...")) {
                     JPanel rootPanel = new JPanel(new BorderLayout(3,3));
                     JTextArea textArea = new JTextArea(3,20);
-                    rootPanel.add(textArea, BorderLayout.CENTER);
+                    rootPanel.add(new JScrollPane(textArea), BorderLayout.CENTER);
                     JLabel label = new JLabel("请选择一个或多个用户,间隔符为|或换行，Ctrl+Enter完成选择,ESC退出");
                     rootPanel.add(label, BorderLayout.SOUTH);
                     JBPopup ourPopup = JBPopupFactory.getInstance().createComponentPopupBuilder(rootPanel, rootPanel).setRequestFocus(true).setFocusable(true).setResizable(false).setMovable(false).setModalContext(false).setShowShadow(true).setShowBorder(false).setCancelKeyEnabled(true).setCancelOnClickOutside(true).setCancelOnOtherWindowOpen(true).createPopup();
