@@ -1,8 +1,16 @@
 package com.jdl.ljc.joyworkprogress.ui;
 
+import com.intellij.ide.actions.AboutPopup;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.ui.DialogPanel;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.ui.popup.JBPopup;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.popup.AbstractPopup;
+import com.intellij.util.ui.DialogUtil;
 import com.intellij.util.ui.JBUI;
 import com.jdl.ljc.joyworkprogress.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -31,24 +39,44 @@ public class UserMenuItem extends JMenuItem {
             public void actionPerformed(ActionEvent e) {
                 System.out.println("已选菜单：" + originalText);
                 if (originalText.equals("Select...")) {
-
-                    SearchUserDialog dialog = new SearchUserDialog();
-                    Point location = userMenu.getLocationOnScreen();
-                    int dialogHeight = dialog.getSize().height;
-                    int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
-                    int visibleHeight = screenHeight - location.y - userMenu.getHeight();
-                    if (dialogHeight > visibleHeight) {
-                        dialog.setLocation(location.x,location.y+userMenu.getHeight()-dialogHeight);
-                    }else{
-                        dialog.setLocation(location.x,location.y+userMenu.getHeight());
-                    }
-                    dialog.show();
+                    JPanel rootPanel = new JPanel(new BorderLayout(3,3));
+                    JTextArea textArea = new JTextArea(3,20);
+                    rootPanel.add(textArea, BorderLayout.CENTER);
+                    JLabel label = new JLabel("请选择一个或多个用户,间隔符为|或换行，Ctrl+Enter完成选择,ESC退出");
+                    rootPanel.add(label, BorderLayout.SOUTH);
+                    JBPopup ourPopup = JBPopupFactory.getInstance().createComponentPopupBuilder(rootPanel, rootPanel).setRequestFocus(true).setFocusable(true).setResizable(false).setMovable(false).setModalContext(false).setShowShadow(true).setShowBorder(false).setCancelKeyEnabled(true).setCancelOnClickOutside(true).setCancelOnOtherWindowOpen(true).createPopup();
+                    RelativePoint loc = new RelativePoint(userMenu, new Point(0, 0+userMenu.getSize().height));
+                    ourPopup.show(loc);
+//                    showSearchUserDialog();
 
                 }else{
                     userMenu.editSelectedMenuItem(originalText);
                 }
             }
         });
+    }
+
+    private void showSearchUserDialog() {
+        SearchUserDialog dialog = new SearchUserDialog();
+        Point newLocation = getPopLocation(dialog.getSize().height);
+        dialog.setLocation(newLocation);
+        dialog.show();
+    }
+
+    @NotNull
+    private Point getPopLocation(int dialogHeight) {
+        Point location = userMenu.getLocationOnScreen();
+        int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
+        int visibleHeight = screenHeight - location.y - userMenu.getHeight();
+        Point newLocation=null;
+        if (dialogHeight > visibleHeight) {
+            newLocation = new Point(location.x, location.y + userMenu.getHeight() - dialogHeight);
+//            dialog.setLocation(location.x,location.y+userMenu.getHeight()-dialogHeight);
+        }else{
+            newLocation = new Point(location.x, location.y + userMenu.getHeight());
+//            dialog.setLocation(location.x,location.y+userMenu.getHeight());
+        }
+        return newLocation;
     }
 
     private class SearchUserDialog extends DialogWrapper{
@@ -59,7 +87,7 @@ public class UserMenuItem extends JMenuItem {
         private Timer timer;
 
         protected SearchUserDialog() {
-            super(false);
+            super(true);
             setUndecorated(true);//不显示标题栏和关闭按钮
             setModal(false);
 
@@ -90,6 +118,9 @@ public class UserMenuItem extends JMenuItem {
         protected @Nullable JComponent createCenterPanel() {
             JPanel rootPanel = new JPanel(new BorderLayout(3,3));
             JTextArea textArea = new JTextArea(3,20);
+            rootPanel.add(textArea, BorderLayout.CENTER);
+            JLabel label = new JLabel("请选择一个或多个用户,间隔符为|或换行，Ctrl+Enter完成选择,ESC退出");
+            rootPanel.add(label, BorderLayout.SOUTH);
 
             Action enterAction = new AbstractAction() {
                 @Override
@@ -165,9 +196,7 @@ public class UserMenuItem extends JMenuItem {
                 }
             });
 
-            rootPanel.add(textArea, BorderLayout.CENTER);
-            JLabel label = new JLabel("请选择一个或多个用户,间隔符为|或换行，Ctrl+Enter完成选择,ESC退出");
-            rootPanel.add(label, BorderLayout.SOUTH);
+
             return rootPanel;
         }
 
