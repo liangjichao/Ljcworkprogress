@@ -7,7 +7,10 @@ public class StringUtils {
         if (StringUtil.isEmpty(input)) {
             return "";
         }
-        String[] parts = input.split("\\n|\\|");
-        return parts[parts.length-1];
+        int lastIndex = Math.max(input.lastIndexOf('\n'), input.lastIndexOf('|'));
+        if (lastIndex != -1) {
+            return input.substring(lastIndex+1, input.length());
+        }
+        return input.substring(0, input.length());
     }
 }
