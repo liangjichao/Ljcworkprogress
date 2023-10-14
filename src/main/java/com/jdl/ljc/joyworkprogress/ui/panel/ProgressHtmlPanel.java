@@ -2,7 +2,7 @@ package com.jdl.ljc.joyworkprogress.ui.panel;
 
 import com.intellij.ui.jcef.JCEFHtmlPanel;
 import com.jdl.ljc.joyworkprogress.util.FileUtils;
-import com.jdl.ljc.joyworkprogress.vo.EditorContent;
+import com.jdl.ljc.joyworkprogress.domain.vo.EditorContent;
 import org.cef.CefClient;
 import org.cef.browser.CefBrowser;
 import org.cef.browser.CefFrame;

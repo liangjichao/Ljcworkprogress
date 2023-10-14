@@ -2,24 +2,17 @@ package com.jdl.ljc.joyworkprogress.toolwindow;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.actionSystem.impl.ActionButton;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.ui.ComboBoxFieldPanel;
 import com.intellij.ui.components.TwoSideComponent;
-import com.intellij.util.ui.JBUI;
 import com.jdl.ljc.joyworkprogress.action.*;
 import com.jdl.ljc.joyworkprogress.enums.WorkProgressStatusEnum;
-import com.jdl.ljc.joyworkprogress.ui.DisabledMenuItem;
-import com.jdl.ljc.joyworkprogress.ui.UserMenu;
-import com.jdl.ljc.joyworkprogress.ui.UserMenuItem;
 import com.jdl.ljc.joyworkprogress.ui.panel.SearchComboBoxPanel;
 import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressPanel;
-import com.jdl.ljc.joyworkprogress.vo.WorkProgressGridData;
+import com.jdl.ljc.joyworkprogress.domain.vo.WorkProgressGridData;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -4,16 +4,14 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 import com.jdl.ljc.joyworkprogress.enums.WorkProgressStatusEnum;
 import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressPanel;
-import com.jdl.ljc.joyworkprogress.vo.WorkProgressGridData;
+import com.jdl.ljc.joyworkprogress.domain.vo.WorkProgressGridData;
 import org.apache.commons.lang3.RandomUtils;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 public class FlushProgressDialogAction extends AnAction {
     private WorkProgressPanel panel;

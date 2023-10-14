@@ -1,4 +1,4 @@
-package com.jdl.ljc.joyworkprogress.vo;
+package com.jdl.ljc.joyworkprogress.domain.vo;
 
 public class WorkProgressGridData {
     private String title;

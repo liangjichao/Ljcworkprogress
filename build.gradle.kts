@@ -19,7 +19,10 @@ intellij {
 
     plugins.set(listOf("Git4Idea"))
 }
-
+dependencies{
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
+    implementation("com.alibaba:fastjson:2.0.28")
+}
 tasks {
     // Set the JVM compatibility versions
     withType<JavaCompile> {
@@ -43,5 +46,13 @@ tasks {
 
     publishPlugin {
         token.set(System.getenv("PUBLISH_TOKEN"))
+    }
+
+    compileKotlin {
+        kotlinOptions.jvmTarget = "17"
+    }
+
+    compileTestKotlin {
+        kotlinOptions.jvmTarget = "17"
     }
 }

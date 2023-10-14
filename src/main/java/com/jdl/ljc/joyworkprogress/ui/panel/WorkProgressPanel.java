@@ -1,18 +1,13 @@
 package com.jdl.ljc.joyworkprogress.ui.panel;
 
-import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.table.JBTable;
 import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.table.JBListTable;
-import com.intellij.util.ui.table.JBTableRowEditor;
-import com.intellij.util.ui.table.JBTableRowRenderer;
 import com.jdl.ljc.joyworkprogress.ui.JDTableModel;
-import com.jdl.ljc.joyworkprogress.vo.WorkProgressGridData;
+import com.jdl.ljc.joyworkprogress.domain.vo.WorkProgressGridData;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 import java.util.Vector;
