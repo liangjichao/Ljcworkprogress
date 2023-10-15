@@ -27,7 +27,7 @@ public class WorkProgressPanel extends JBPanel {
 
     private Vector<String> columnNames;
 
-    private List<WorkProgressGridData> gridDataList;
+    private List<WpsDto> dataList;
 
     public WorkProgressPanel() {
         super(new BorderLayout());
@@ -65,8 +65,22 @@ public class WorkProgressPanel extends JBPanel {
     }
 
 
-    public void setData(List<WorkProgressGridData> gridDataList) {
-        this.gridDataList = gridDataList;
+    public void setData(List<WpsDto> wpsDtoList) {
+        this.dataList = wpsDtoList;
+        List<WorkProgressGridData> gridDataList = new ArrayList<>();
+        WorkProgressGridData gridData;
+        for (WpsDto wpsDto : wpsDtoList) {
+            gridData = new WorkProgressGridData();
+            gridDataList.add(gridData);
+            gridData.setTitle(wpsDto.getProjectName());
+            gridData.setProgressStatus(WorkProgressStatusEnum.queryStatusEnum(wpsDto.getProgressStatus()).toString());
+            String planWorkHours = wpsDto.getPlanStartTime();
+            if (wpsDto.getPlanEndTime() != null) {
+                planWorkHours += "-" + wpsDto.getPlanEndTime();
+            }
+            gridData.setPlanWorkHours(planWorkHours);
+            gridData.setUserCode(wpsDto.getUserCode());
+        }
         tableData = new Vector();
         Vector bean;
         for (WorkProgressGridData data : gridDataList) {
@@ -96,25 +110,11 @@ public class WorkProgressPanel extends JBPanel {
         if (resultDto == null) {
             return;
         }
-        List<WorkProgressGridData> gridDataList = new ArrayList<>();
-        WorkProgressGridData data;
-        for (WpsDto wpsDto : resultDto.getResultValue()) {
-            data = new WorkProgressGridData();
-            gridDataList.add(data);
-            data.setTitle(wpsDto.getProjectName());
-            data.setProgressStatus(WorkProgressStatusEnum.queryStatusEnum(wpsDto.getProgressStatus()).toString());
-            String planWorkHours = wpsDto.getPlanStartTime();
-            if (wpsDto.getPlanEndTime() != null) {
-                planWorkHours += "-" + wpsDto.getPlanEndTime();
-            }
-            data.setPlanWorkHours(planWorkHours);
-            data.setUserCode(wpsDto.getUserCode());
-        }
-        setData(gridDataList);
+        setData(resultDto.getResultValue());
     }
 
-    public WorkProgressGridData getSelectRow() {
-        return gridDataList.get(table.getSelectedRow());
+    public WpsDto getSelectRow() {
+        return dataList.get(table.getSelectedRow());
     }
 
     private class AsyncTableWorker extends SwingWorker<ResultDto<List<WpsDto>>, Void> {

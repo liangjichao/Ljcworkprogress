@@ -23,7 +23,7 @@ public class AddWorkProgressDialogAction extends AnAction {
     public void actionPerformed(AnActionEvent e) {
         Project project = e.getData(PlatformDataKeys.PROJECT);
 
-        JDWorkProgressFormDialog dialog=new JDWorkProgressFormDialog(project);
+        JDWorkProgressFormDialog dialog=new JDWorkProgressFormDialog(project,null);
         if (dialog.showAndGet()) {
             this.panel.refreshTableData();
         }

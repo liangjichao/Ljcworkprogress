@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jdl.ljc.joyworkprogress.ui.dialog.JDWorkProgressFormDialog;
 import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressPanel;
 import git4idea.GitUtil;
 import git4idea.repo.GitRepository;
@@ -24,12 +25,9 @@ public class EditWorkProgressDialogAction extends AnAction {
     @Override
     public void actionPerformed(AnActionEvent e) {
         Project project = e.getData(PlatformDataKeys.PROJECT);
-        VirtualFile baseDir = project.getBaseDir();
-        GitRepository res = GitUtil.getRepositoryManager(project).getRepositoryForRootQuick(baseDir);
-        String branchName =res.getCurrentBranchName();
-//        Vector data = panel.getSelectRow();
-        String dir = project.getBasePath()+"\n";
-        dir+=branchName+"\n";
-        Messages.showInfoMessage(dir,"提示");
+        JDWorkProgressFormDialog dialog=new JDWorkProgressFormDialog(project,this.panel.getSelectRow());
+        if (dialog.showAndGet()) {
+            this.panel.refreshTableData();
+        }
     }
 }
