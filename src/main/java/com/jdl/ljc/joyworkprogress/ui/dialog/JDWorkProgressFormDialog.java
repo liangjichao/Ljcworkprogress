@@ -289,7 +289,11 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
 
 
                         WpsDto dto = getFormData(projectName);
-                        ResultDto<String> resultDto = RestUtils.post(String.class, "/wps/insert", dto);
+                        String requestPath = "/wps/insert";
+                        if (formData != null && formData.getId() != null&&formData.getId()>0) {
+                            requestPath = "/wps/update";
+                        }
+                        ResultDto<String> resultDto = RestUtils.post(String.class, requestPath, dto);
                         if (resultDto.isSuccess()) {
                             close(DialogWrapper.OK_EXIT_CODE);
                         }else{
@@ -307,6 +311,9 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         Object selectedItem = progressStatusComboBox.getSelectedItem();
         WorkProgressStatusEnum statusEnum=(WorkProgressStatusEnum)selectedItem;
         WpsDto dto = new WpsDto();
+        if (formData != null) {
+            dto.setId(formData.getId());
+        }
         dto.setProgressStatus(statusEnum.getCode());
         dto.setPlanStartTime(planWorkHoursPickerStart.getEditor().getText()+" 00:00:00");
         dto.setPlanEndTime(planWorkHoursPickerEnd.getEditor().getText()+" 23:59:59");
