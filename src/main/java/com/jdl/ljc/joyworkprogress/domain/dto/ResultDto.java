@@ -1,5 +1,10 @@
 package com.jdl.ljc.joyworkprogress.domain.dto;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.TypeReference;
+
+import java.util.List;
+
 public class ResultDto<T> {
     private boolean success;
     private Integer resultCode;
@@ -40,5 +45,15 @@ public class ResultDto<T> {
 
     public void setResultMessage(String resultMessage) {
         this.resultMessage = resultMessage;
+    }
+
+
+    public static <T> ResultDto<T> toResult(String responseText,Class<T> resultValueClazz) {
+        return JSON.parseObject(responseText, new TypeReference<ResultDto<T>>(resultValueClazz) {
+        });
+    }
+    public static <T> ResultDto<List<T>> toResultList(String responseText,Class<T> resultValueClazz) {
+        return JSON.parseObject(responseText, new TypeReference<ResultDto<List<T>>>(resultValueClazz) {
+        });
     }
 }

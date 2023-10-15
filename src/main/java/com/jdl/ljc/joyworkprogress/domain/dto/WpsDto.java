@@ -5,8 +5,8 @@ public class WpsDto {
     private String userCode;
     private String cardUrl;
     private Integer progressStatus;
-    private String startTime;
-    private String endTime;
+    private String planStartTime;
+    private String planEndTime;
     private String projectName;
     private String prd;
     private String productManager;
@@ -46,20 +46,20 @@ public class WpsDto {
         this.progressStatus = progressStatus;
     }
 
-    public String getStartTime() {
-        return startTime;
+    public String getPlanStartTime() {
+        return planStartTime;
     }
 
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
+    public void setPlanStartTime(String planStartTime) {
+        this.planStartTime = planStartTime;
     }
 
-    public String getEndTime() {
-        return endTime;
+    public String getPlanEndTime() {
+        return planEndTime;
     }
 
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
+    public void setPlanEndTime(String planEndTime) {
+        this.planEndTime = planEndTime;
     }
 
     public String getProjectName() {

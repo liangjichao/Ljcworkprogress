@@ -20,8 +20,11 @@ intellij {
     plugins.set(listOf("Git4Idea"))
 }
 dependencies{
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1"){
+        exclude(group = "org.slf4j",module = "slf4j-api")
+    }
     implementation("com.alibaba:fastjson:2.0.28")
+
 }
 tasks {
     // Set the JVM compatibility versions

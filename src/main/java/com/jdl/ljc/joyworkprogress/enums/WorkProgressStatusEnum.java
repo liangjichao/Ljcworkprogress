@@ -19,6 +19,15 @@ public enum WorkProgressStatusEnum {
         this.name = name;
     }
 
+    public static WorkProgressStatusEnum queryStatusEnum(int code) {
+        for (WorkProgressStatusEnum value : values()) {
+            if (value.getCode() == code) {
+                return value;
+            }
+        }
+        return DEFAULT;
+    }
+
     public int getCode() {
         return code;
     }

@@ -18,7 +18,23 @@ public class WorkProgressPanel extends JBPanel {
     private JDTableModel model;
 
     private Vector<String> columnNames;
-    public WorkProgressPanel(List<WorkProgressGridData> gridDataList) {
+
+    public void setData(List<WorkProgressGridData> gridDataList) {
+        table.removeAll();
+        Vector bean;
+        for (WorkProgressGridData data : gridDataList) {
+            bean = new Vector();
+            bean.add(data.getProgressStatus());
+            bean.add(data.getTitle());
+            bean.add(data.getPlanWorkHours());
+            bean.add(data.getUserCode());
+            tableData.add(bean);
+        }
+
+        model.setDataVector(tableData,columnNames);
+
+    }
+    public WorkProgressPanel() {
         super(new BorderLayout());
         // 创建表头和表格数据
 
@@ -29,15 +45,7 @@ public class WorkProgressPanel extends JBPanel {
         columnNames.add("用户");
 
         tableData = new Vector();
-        Vector bean;
-        for (WorkProgressGridData data : gridDataList) {
-            bean = new Vector();
-            bean.add(data.getProgressStatus());
-            bean.add(data.getTitle());
-            bean.add(data.getPlanWorkHours());
-            bean.add(data.getUserCode());
-            tableData.add(bean);
-        }
+
 
         // 创建默认的表格模型
         model = new JDTableModel(tableData, columnNames);
