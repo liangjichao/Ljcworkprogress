@@ -8,21 +8,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.ui.components.TwoSideComponent;
 import com.jdl.ljc.joyworkprogress.action.*;
-import com.jdl.ljc.joyworkprogress.domain.dto.ResultDto;
-import com.jdl.ljc.joyworkprogress.domain.dto.WpsDto;
-import com.jdl.ljc.joyworkprogress.domain.vo.WorkProgressGridData;
-import com.jdl.ljc.joyworkprogress.domain.vo.WpsQueryDto;
-import com.jdl.ljc.joyworkprogress.enums.WorkProgressStatusEnum;
+import com.jdl.ljc.joyworkprogress.domain.WpsConfig;
 import com.jdl.ljc.joyworkprogress.ui.panel.SearchComboBoxPanel;
 import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressPanel;
-import com.jdl.ljc.joyworkprogress.util.RestUtils;
-import org.apache.hc.client5.http.async.methods.SimpleHttpResponse;
-import org.apache.hc.core5.concurrent.FutureCallback;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class HomeToolWindowPanel extends SimpleToolWindowPanel {
     public HomeToolWindowPanel(@NotNull Project project) {
@@ -31,7 +20,7 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
     }
 
     private void initialize(Project project) {
-
+        WpsConfig.getInstance().init(project);
 
 
         WorkProgressPanel panel = new WorkProgressPanel();
@@ -42,62 +31,12 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
 
         SearchComboBoxPanel searchComboBoxPanel = new SearchComboBoxPanel();
 
-        TwoSideComponent twoSideComponent = new TwoSideComponent(searchComboBoxPanel,leftToolbar.getComponent());
+        TwoSideComponent twoSideComponent = new TwoSideComponent(searchComboBoxPanel, leftToolbar.getComponent());
 
         setToolbar(twoSideComponent);
         setContent(panel);
 
-        WpsQueryDto queryDto = new WpsQueryDto();
-        RestUtils.post("/wps/list", queryDto, new FutureCallback<SimpleHttpResponse>() {
-            @Override
-            public void completed(SimpleHttpResponse result) {
-                String responseText = result.getBody().getBodyText();
-                ResultDto<List<WpsDto>> resultDto = ResultDto.toResultList(responseText, WpsDto.class);
-                List<WorkProgressGridData> gridDataList = new ArrayList<>();
-                WorkProgressGridData data;
-                for (WpsDto wpsDto : resultDto.getResultValue()) {
-                    data = new WorkProgressGridData();
-                    gridDataList.add(data);
-                    data.setTitle(wpsDto.getProjectName());
-                    data.setProgressStatus(WorkProgressStatusEnum.queryStatusEnum(wpsDto.getProgressStatus()).toString());
-                    String planWorkHours = wpsDto.getPlanStartTime();
-                    if (wpsDto.getPlanEndTime() != null) {
-                        planWorkHours += "-" + wpsDto.getPlanEndTime();
-                    }
-                    data.setPlanWorkHours(planWorkHours);
-                    data.setUserCode(wpsDto.getUserCode());
-                }
-                panel.setData(gridDataList);
-            }
-
-            @Override
-            public void failed(Exception ex) {
-
-            }
-
-            @Override
-            public void cancelled() {
-
-            }
-        });
-
-//        List<WorkProgressGridData> gridDataList = new ArrayList<>();
-//        WorkProgressGridData data = new WorkProgressGridData();
-//        gridDataList.add(data);
-//        data.setTitle("上架页面的保质期展示日月管理维度");
-//        data.setProgressStatus(WorkProgressStatusEnum.DEV_ING.toString());
-//        data.setPlanWorkHours("2023.10.1-2023.10.7");
-//        data.setUserCode("liangjichao");
-//        for (int i = 0; i < 20; i++) {
-//            data = new WorkProgressGridData();
-//            gridDataList.add(data);
-//            data.setTitle("上架页面的保质期展示日月管理维度");
-//            data.setProgressStatus(WorkProgressStatusEnum.DEV_ING.toString());
-//            data.setPlanWorkHours("2023.10.1-2023.10.7");
-//            data.setUserCode("liangjichao");
-//        }
-//        panel.setData(gridDataList);
-
+        panel.refreshTableData();
     }
 
 
@@ -116,13 +55,9 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
         FlushProgressDialogAction flushAction = new FlushProgressDialogAction(AllIcons.Actions.Refresh, panel);
         actionGroup.add(flushAction);
 
-
         actionGroup.addSeparator();
         DeleteWorkProgressDialogAction delAction = new DeleteWorkProgressDialogAction(AllIcons.Actions.DeleteTag, panel);
         actionGroup.add(delAction);
-
-
-
 
         ActionManager actionManager = ActionManager.getInstance();
         return actionManager.createActionToolbar("NAV_DevWorkToolbar", actionGroup, true);

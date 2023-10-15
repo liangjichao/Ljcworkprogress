@@ -109,4 +109,5 @@ public class WpsDto {
     public void setDevInfo(String devInfo) {
         this.devInfo = devInfo;
     }
+
 }
