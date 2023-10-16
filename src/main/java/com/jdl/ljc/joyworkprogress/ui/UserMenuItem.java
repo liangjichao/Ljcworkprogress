@@ -37,7 +37,6 @@ public class UserMenuItem extends JMenuItem {
         addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("已选菜单：" + originalText);
                 if (originalText.equals("Select...")) {
                     SelectUserPanel selectUserPanel = new SelectUserPanel();
                     searchUserPop = JBPopupFactory.getInstance().createComponentPopupBuilder(selectUserPanel, selectUserPanel)

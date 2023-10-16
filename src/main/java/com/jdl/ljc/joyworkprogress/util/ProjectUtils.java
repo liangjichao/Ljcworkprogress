@@ -3,6 +3,7 @@ package com.jdl.ljc.joyworkprogress.util;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vfs.VirtualFile;
+import git4idea.GitUserRegistry;
 import git4idea.GitUtil;
 import git4idea.config.GitConfigUtil;
 import git4idea.repo.GitRepository;
@@ -17,7 +18,6 @@ public class ProjectUtils {
         return "";
     }
     public static String getCurrentUserCode(Project project) {
-
         VirtualFile root = project.getBaseDir();
         String userName = null;
         try {

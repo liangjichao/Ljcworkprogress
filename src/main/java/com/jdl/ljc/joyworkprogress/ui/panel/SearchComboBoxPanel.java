@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.impl.ActionButton;
 import com.intellij.ui.ExperimentalUI;
 import com.intellij.ui.IconManager;
+import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.components.JBTextArea;
 import com.intellij.util.ui.JBUI;
 import com.jdl.ljc.joyworkprogress.domain.WpsConfig;
@@ -17,15 +18,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-public class SearchComboBoxPanel extends JPanel implements Disposable {
+public class SearchComboBoxPanel extends JBPanel implements Disposable {
     private JMenuBar menuBar;
     private UserMenu userMenu;
     private ActionButton iconBtn;

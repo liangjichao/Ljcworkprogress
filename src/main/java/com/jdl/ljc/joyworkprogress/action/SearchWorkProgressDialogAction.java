@@ -12,8 +12,8 @@ public class SearchWorkProgressDialogAction extends AnAction {
     private WorkProgressPanel panel;
 
     public SearchWorkProgressDialogAction(Icon icon, WorkProgressPanel panel) {
-        super(icon);
-//        super("搜索",null,icon);
+//        super(icon);
+        super("搜索",null,icon);
         this.panel = panel;
 
     }

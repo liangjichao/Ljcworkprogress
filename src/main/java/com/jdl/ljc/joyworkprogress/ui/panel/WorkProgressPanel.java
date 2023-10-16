@@ -1,9 +1,16 @@
 package com.jdl.ljc.joyworkprogress.ui.panel;
 
+import com.intellij.icons.AllIcons;
+import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.ui.SimpleToolWindowPanel;
+import com.intellij.ui.AnActionButton;
+import com.intellij.ui.BalloonImpl;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.components.JBScrollPane;
+import com.intellij.ui.components.TwoSideComponent;
 import com.intellij.ui.table.JBTable;
 import com.intellij.util.ui.JBUI;
+import com.jdl.ljc.joyworkprogress.action.*;
 import com.jdl.ljc.joyworkprogress.domain.WpsConfig;
 import com.jdl.ljc.joyworkprogress.domain.dto.ResultDto;
 import com.jdl.ljc.joyworkprogress.domain.dto.WpsDto;
@@ -12,9 +19,11 @@ import com.jdl.ljc.joyworkprogress.domain.vo.WpsQueryDto;
 import com.jdl.ljc.joyworkprogress.enums.WorkProgressStatusEnum;
 import com.jdl.ljc.joyworkprogress.ui.JDTableModel;
 import com.jdl.ljc.joyworkprogress.util.RestUtils;
+import git4idea.rebase.interactive.dialog.AnActionOptionButton;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,7 +34,7 @@ import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 
-public class WorkProgressPanel extends JBPanel {
+public class WorkProgressPanel extends SimpleToolWindowPanel {
     private JBTable table;
     private Vector tableData;
     private JDTableModel model;
@@ -35,7 +44,7 @@ public class WorkProgressPanel extends JBPanel {
     private List<WpsDto> dataList;
 
     public WorkProgressPanel() {
-        super(new BorderLayout());
+        super(true);
         // 创建表头和表格数据
 
         columnNames = new Vector<>();
@@ -64,9 +73,42 @@ public class WorkProgressPanel extends JBPanel {
         jbScrollPane.setBorder(JBUI.Borders.empty());
         jbScrollPane.getViewport().setBackground(JBUI.CurrentTheme.TabbedPane.ENABLED_SELECTED_COLOR);
 
-        add(jbScrollPane, BorderLayout.CENTER);
+        ActionToolbar topToolBar = createToolbar();
+        topToolBar.setTargetComponent(jbScrollPane);
 
+        setToolbar(topToolBar.getComponent());
+        setContent(jbScrollPane);
+    }
 
+    private ActionToolbar createToolbar() {
+
+        DefaultActionGroup actionGroup = new DefaultActionGroup("WPS_GRID_BAR_GROUP", true);
+        actionGroup.add(new AnAction(AllIcons.Actions.Play_first) {
+            @Override
+            public void actionPerformed(@NotNull AnActionEvent e) {
+
+            }
+        });
+        actionGroup.add(new AnAction(AllIcons.Actions.Play_back) {
+            @Override
+            public void actionPerformed(@NotNull AnActionEvent e) {
+
+            }
+        });
+        actionGroup.add(new AnAction(AllIcons.Actions.Play_forward) {
+            @Override
+            public void actionPerformed(@NotNull AnActionEvent e) {
+
+            }
+        });
+        actionGroup.add(new AnAction(AllIcons.Actions.Play_last) {
+            @Override
+            public void actionPerformed(@NotNull AnActionEvent e) {
+
+            }
+        });
+        ActionManager actionManager = ActionManager.getInstance();
+        return actionManager.createActionToolbar("WPS_GridToolbar", actionGroup, true);
     }
 
 
