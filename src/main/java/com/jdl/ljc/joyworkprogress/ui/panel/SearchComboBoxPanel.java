@@ -10,6 +10,7 @@ import com.intellij.ui.ExperimentalUI;
 import com.intellij.ui.IconManager;
 import com.intellij.ui.components.JBTextArea;
 import com.intellij.util.ui.JBUI;
+import com.jdl.ljc.joyworkprogress.domain.WpsConfig;
 import com.jdl.ljc.joyworkprogress.domain.vo.WpsQueryDto;
 import com.jdl.ljc.joyworkprogress.ui.UserMenu;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +22,8 @@ import javax.swing.event.AncestorListener;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 public class SearchComboBoxPanel extends JPanel implements Disposable {
     private JMenuBar menuBar;
@@ -43,9 +46,7 @@ public class SearchComboBoxPanel extends JPanel implements Disposable {
             public void run() {
                 iconBtn.setVisible(true);
                 if (StringUtils.isNotBlank(userMenu.getSelectedText())) {
-                    WpsQueryDto queryDto = new WpsQueryDto();
-                    queryDto.setUserCode(userMenu.getSelectedText());
-                    panel.refreshTableData(queryDto);
+                    panel.refreshTableData(getQueryDto());
                 }
             }
         });
@@ -54,9 +55,21 @@ public class SearchComboBoxPanel extends JPanel implements Disposable {
         iconBtn.setVisible(false);
 
 
-        searchArea = new SearchTextArea(new JBTextArea(1, 10), true);
+        JBTextArea myTextArea = new JBTextArea(1, 10);
+        searchArea = new SearchTextArea(myTextArea, true);
         searchArea.setMultilineEnabled(false);
-
+        myTextArea.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (SearchTextArea.JUST_CLEARED_KEY.equals(evt.getPropertyName())) {
+                    Object v = evt.getNewValue();
+                    if (v != null) {
+                        myTextArea.setText("");
+                        panel.refreshTableData(getQueryDto());
+                    }
+                }
+            }
+        });
         searchArea.getTextArea().addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
@@ -85,7 +98,12 @@ public class SearchComboBoxPanel extends JPanel implements Disposable {
     private WpsQueryDto getQueryDto() {
         WpsQueryDto queryDto = new WpsQueryDto();
         queryDto.setProjectName(searchArea.getTextArea().getText());
-        queryDto.setUserCode(userMenu.getSelectedText());
+        String selectedText = userMenu.getSelectedText();
+        if (selectedText.equals("me")) {
+            selectedText= WpsConfig.getInstance().getCurrentUserCode();
+        }
+        queryDto.setUserCode(selectedText);
+
         return queryDto;
     }
 

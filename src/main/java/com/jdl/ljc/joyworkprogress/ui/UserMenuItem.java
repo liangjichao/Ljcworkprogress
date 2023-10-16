@@ -50,6 +50,7 @@ public class UserMenuItem extends JMenuItem {
                     selectUserPanel.textFocus();
                 } else {
                     userMenu.editSelectedMenuItem(originalText);
+
                 }
             }
         });
