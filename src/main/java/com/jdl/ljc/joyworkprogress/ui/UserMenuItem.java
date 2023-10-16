@@ -204,35 +204,7 @@ public class UserMenuItem extends JMenuItem {
                         timer = new Timer(200, new ActionListener() {
                             @Override
                             public void actionPerformed(ActionEvent e) {
-                                List<String> its = new ArrayList<>();
-                                for (String s : suggestions) {
-                                    boolean b = s.startsWith(text);
-                                    if (b) {
-                                        its.add(s);
-                                    }
-                                }
-                                if (its.size() > 0) {
-                                    listPanel.add(its);
-                                    int x = textArea.getCaret().getMagicCaretPosition().x;
-                                    int y = textArea.getCaret().getMagicCaretPosition().y;
-                                    FontMetrics fontMetrics = textArea.getFontMetrics(textArea.getFont());
-                                    int tw = fontMetrics.stringWidth(text);
-                                    x = x - tw;
-                                    y = y + textArea.getFont().getSize();
-
-                                    listPop = JBPopupFactory.getInstance().createComponentPopupBuilder(listPanel, listPanel)
-                                            .setRequestFocus(true).setFocusable(true).setResizable(false).setMovable(false)
-                                            .setModalContext(false).setShowShadow(true).setShowBorder(false)
-                                            .setCancelKeyEnabled(true).setCancelOnClickOutside(true)
-                                            .setCancelOnOtherWindowOpen(true).createPopup();
-
-                                    RelativePoint loc = new RelativePoint(textArea, new Point(x, y));
-                                    listPop.show(loc);
-
-                                    textArea.requestFocus();
-                                } else {
-                                    closePop();
-                                }
+                                expandUserList(text);
                             }
                         });
                         timer.setRepeats(false);
@@ -243,6 +215,38 @@ public class UserMenuItem extends JMenuItem {
 
             });
 
+        }
+
+        private void expandUserList(String text) {
+            List<String> its = new ArrayList<>();
+            for (String s : suggestions) {
+                boolean b = s.startsWith(text);
+                if (b) {
+                    its.add(s);
+                }
+            }
+            if (its.size() > 0) {
+                listPanel.add(its);
+                int x = textArea.getCaret().getMagicCaretPosition().x;
+                int y = textArea.getCaret().getMagicCaretPosition().y;
+                FontMetrics fontMetrics = textArea.getFontMetrics(textArea.getFont());
+                int tw = fontMetrics.stringWidth(text);
+                x = x - tw;
+                y = y + textArea.getFont().getSize();
+
+                listPop = JBPopupFactory.getInstance().createComponentPopupBuilder(listPanel, listPanel)
+                        .setRequestFocus(false).setFocusable(true).setResizable(false).setMovable(false)
+                        .setModalContext(false).setShowShadow(true).setShowBorder(true)
+                        .setCancelKeyEnabled(true).setCancelOnClickOutside(true)
+                        .setCancelOnOtherWindowOpen(true).createPopup();
+
+                RelativePoint loc = new RelativePoint(textArea, new Point(x, y));
+                listPop.show(loc);
+
+//                textArea.requestFocus();
+            } else {
+                closePop();
+            }
         }
 
         private String convertTextValue(String val) {
