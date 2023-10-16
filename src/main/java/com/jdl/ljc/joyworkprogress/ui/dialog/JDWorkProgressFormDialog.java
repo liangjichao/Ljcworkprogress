@@ -25,6 +25,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -42,6 +45,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
     private JTextField devBranchField;
     private JTextField appVersionField;
     private JTextField cardField;
+    private JTextField devOwnerField;
     private WpsDto formData;
     public JDWorkProgressFormDialog(@Nullable Project project,WpsDto formData) {
         super(project);
@@ -244,7 +248,14 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         openLinkBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println(cardField.getText());
+                String url = cardField.getText();
+                if (StringUtils.isNotBlank(url)) {
+                    try {
+                        Desktop.getDesktop().browse(new URI(url));
+                    } catch (Exception ex) {
+                        Messages.showInfoMessage(String.format("打开失败：%s",ex.getMessage()),"提示");
+                    }
+                }
             }
         });
 
@@ -259,7 +270,19 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         constraints.weightx = 1.0;
         topPanel.add(cardPanel, constraints);
 
-
+        y++;
+        JLabel devOwnerLabel = new JLabel("开发人员：");
+        devOwnerField = new JTextField();
+        constraints.gridx = 0;
+        constraints.gridy = y;
+        constraints.anchor = GridBagConstraints.WEST;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.weightx = 0;
+        topPanel.add(devOwnerLabel, constraints);
+        constraints.gridx = 1;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.weightx = 1.0;
+        topPanel.add(devOwnerField, constraints);
 
         return topPanel;
     }
@@ -331,7 +354,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         dto.setDevBranchName(devBranchField.getText());
         dto.setAppVersion(appVersionField.getText());
         dto.setCardUrl(cardField.getText());
-        dto.setUserCode(WpsConfig.getInstance().getCurrentUserCode());
+        dto.setUserCode(devOwnerField.getText());
         return dto;
     }
 
@@ -348,8 +371,9 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
     }
 
     private void setFormData(WpsDto wpsDto) {
-        devBranchField.setText(ProjectUtils.getCurrentBranchName(project));
         if (wpsDto == null) {
+            devBranchField.setText(ProjectUtils.getCurrentBranchName(project));
+            devOwnerField.setText(WpsConfig.getInstance().getCurrentUserCode());
             return;
         }
         projectNameField.setText(wpsDto.getProjectName());
@@ -367,6 +391,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         cardField.setText(wpsDto.getCardUrl());
         devBranchField.setText(wpsDto.getDevBranchName());
         appVersionField.setText(wpsDto.getAppVersion());
+        devOwnerField.setText(wpsDto.getUserCode());
     }
 
     @Override
