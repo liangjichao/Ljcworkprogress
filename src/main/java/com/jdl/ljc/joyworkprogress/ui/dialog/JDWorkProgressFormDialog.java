@@ -16,7 +16,7 @@ import com.jdl.ljc.joyworkprogress.enums.WorkProgressStatusEnum;
 import com.jdl.ljc.joyworkprogress.ui.panel.ProgressHtmlPanel;
 import com.jdl.ljc.joyworkprogress.util.ProjectUtils;
 import com.jdl.ljc.joyworkprogress.util.RestUtils;
-import com.jdl.ljc.joyworkprogress.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.swingx.JXDatePicker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class JDWorkProgressFormDialog extends DialogWrapper {
-    private static final String dateFormatPattern = "yyyy-MM-dd HH:mm:ss";
     private Project project;
     private ProgressHtmlPanel editorPane;
 
@@ -286,7 +285,15 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
                             Messages.showInfoMessage("请输入项目名称!", "提示");
                             return;
                         }
-
+                        String startShortTime = getShortDateTime(planWorkHoursPickerStart);
+                        String endShortTime = getShortDateTime(planWorkHoursPickerEnd);
+                        if (StringUtils.isNotBlank(startShortTime) && StringUtils.isBlank(endShortTime)) {
+                            Messages.showInfoMessage("请完成计划工时!", "提示");
+                            return;
+                        }else if (StringUtils.isNotBlank(endShortTime) && StringUtils.isBlank(startShortTime)) {
+                            Messages.showInfoMessage("请完成计划工时!", "提示");
+                            return;
+                        }
 
                         WpsDto dto = getFormData(projectName);
                         String requestPath = "/wps/insert";
@@ -315,8 +322,8 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
             dto.setId(formData.getId());
         }
         dto.setProgressStatus(statusEnum.getCode());
-        dto.setPlanStartTime(planWorkHoursPickerStart.getEditor().getText()+" 00:00:00");
-        dto.setPlanEndTime(planWorkHoursPickerEnd.getEditor().getText()+" 23:59:59");
+        dto.setPlanStartTime(getDateTime(planWorkHoursPickerStart," 00:00:00"));
+        dto.setPlanEndTime(getDateTime(planWorkHoursPickerEnd," 23:59:59"));
         dto.setDevInfo(editorContent);
         dto.setProjectName(projectName);
         dto.setPrd(prdField.getText());
@@ -328,19 +335,31 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         return dto;
     }
 
+    private String getDateTime(JXDatePicker picker,String fillTime) {
+        String shortDateTime = getShortDateTime(picker);
+        if (StringUtils.isNoneBlank(shortDateTime)) {
+            return shortDateTime+fillTime;
+        }
+        return "";
+    }
+
+    private static String getShortDateTime(JXDatePicker picker) {
+        return picker.getEditor().getText();
+    }
+
     private void setFormData(WpsDto wpsDto) {
-        devBranchField.setText(ProjectUtils.getCurrentUserCode(project));
+        devBranchField.setText(ProjectUtils.getCurrentBranchName(project));
         if (wpsDto == null) {
             return;
         }
         projectNameField.setText(wpsDto.getProjectName());
         if (!StringUtil.isEmpty(wpsDto.getPlanStartTime())) {
 
-            Date startDate = DateUtils.parseDate(wpsDto.getPlanStartTime(), dateFormatPattern);
+            Date startDate = DateUtils.parseDate(wpsDto.getPlanStartTime(), WpsConfig.dateFormatPattern);
             planWorkHoursPickerStart.setDate(startDate);
         }
         if (!StringUtil.isEmpty(wpsDto.getPlanEndTime())) {
-            Date endDate = DateUtils.parseDate(wpsDto.getPlanEndTime(), dateFormatPattern);
+            Date endDate = DateUtils.parseDate(wpsDto.getPlanEndTime(), WpsConfig.dateFormatPattern);
             planWorkHoursPickerEnd.setDate(endDate);
         }
         productField.setText(wpsDto.getProductManager());

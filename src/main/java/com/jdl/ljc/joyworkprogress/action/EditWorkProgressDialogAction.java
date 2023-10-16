@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jdl.ljc.joyworkprogress.domain.dto.WpsDto;
 import com.jdl.ljc.joyworkprogress.ui.dialog.JDWorkProgressFormDialog;
 import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressPanel;
 import git4idea.GitUtil;
@@ -25,9 +26,14 @@ public class EditWorkProgressDialogAction extends AnAction {
     @Override
     public void actionPerformed(AnActionEvent e) {
         Project project = e.getData(PlatformDataKeys.PROJECT);
-        JDWorkProgressFormDialog dialog=new JDWorkProgressFormDialog(project,this.panel.getSelectRow());
+        WpsDto wpsDto = this.panel.getSelectRow();
+        if (wpsDto == null) {
+            Messages.showInfoMessage("请选择一条记录!","提示");
+            return;
+        }
+        JDWorkProgressFormDialog dialog=new JDWorkProgressFormDialog(project, wpsDto);
         if (dialog.showAndGet()) {
-            this.panel.refreshTableData();
+            this.panel.refreshTableData(null);
         }
     }
 }

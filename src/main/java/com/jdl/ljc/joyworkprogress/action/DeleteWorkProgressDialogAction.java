@@ -5,7 +5,10 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.jdl.ljc.joyworkprogress.domain.dto.ResultDto;
+import com.jdl.ljc.joyworkprogress.domain.dto.WpsDto;
 import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressPanel;
+import com.jdl.ljc.joyworkprogress.util.RestUtils;
 
 import javax.swing.*;
 
@@ -19,11 +22,17 @@ public class DeleteWorkProgressDialogAction extends AnAction {
 
     @Override
     public void actionPerformed(AnActionEvent e) {
-        Project project = e.getData(PlatformDataKeys.PROJECT);
-        Messages.showInputDialog(
-                project,
-                "我是删除信息",
-                "确认删除",
-                Messages.getQuestionIcon());
+        WpsDto wpsDto = this.panel.getSelectRow();
+        if (wpsDto == null) {
+            Messages.showInfoMessage("请选择一条记录!","提示");
+        }else {
+            ResultDto<String> resultDto = RestUtils.post(String.class, String.format("/wps/delete/%s", wpsDto.getId()), null);
+            if (resultDto.isSuccess()) {
+                this.panel.refreshTableData(null);
+            }else{
+                Messages.showInfoMessage(resultDto.getResultMessage(),"删除失败");
+            }
+        }
+
     }
 }

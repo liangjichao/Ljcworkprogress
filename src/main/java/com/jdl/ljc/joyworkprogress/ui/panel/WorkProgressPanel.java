@@ -12,10 +12,15 @@ import com.jdl.ljc.joyworkprogress.domain.vo.WpsQueryDto;
 import com.jdl.ljc.joyworkprogress.enums.WorkProgressStatusEnum;
 import com.jdl.ljc.joyworkprogress.ui.JDTableModel;
 import com.jdl.ljc.joyworkprogress.util.RestUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
@@ -74,9 +79,9 @@ public class WorkProgressPanel extends JBPanel {
             gridDataList.add(gridData);
             gridData.setTitle(wpsDto.getProjectName());
             gridData.setProgressStatus(WorkProgressStatusEnum.queryStatusEnum(wpsDto.getProgressStatus()).toString());
-            String planWorkHours = wpsDto.getPlanStartTime();
+            String planWorkHours = convertDate(wpsDto.getPlanStartTime());
             if (wpsDto.getPlanEndTime() != null) {
-                planWorkHours += "-" + wpsDto.getPlanEndTime();
+                planWorkHours += "-" + convertDate(wpsDto.getPlanEndTime());
             }
             gridData.setPlanWorkHours(planWorkHours);
             gridData.setUserCode(wpsDto.getUserCode());
@@ -96,13 +101,32 @@ public class WorkProgressPanel extends JBPanel {
 
     }
 
+    private static String convertDate(String time) {
+        if (StringUtils.isBlank(time)) {
+            return "";
+        }
+        String viewDate;
+        try {
+            Date date = DateUtils.parseDate(time, WpsConfig.dateFormatPattern);
+            viewDate = DateFormatUtils.format(date, "yyyy-MM-dd");
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        return viewDate;
+    }
+
     public void clear() {
         model.setRowCount(0);
     }
 
-    public void refreshTableData() {
+    public void refreshTableData(WpsQueryDto queryDto) {
         clear();
-        AsyncTableWorker asyncTableWorker = new AsyncTableWorker();
+        if (queryDto == null) {
+            queryDto=new WpsQueryDto();
+            String currentUserCode = WpsConfig.getInstance().getCurrentUserCode();
+            queryDto.setUserCode(currentUserCode);
+        }
+        AsyncTableWorker asyncTableWorker = new AsyncTableWorker(queryDto);
         asyncTableWorker.execute();
     }
 
@@ -114,16 +138,21 @@ public class WorkProgressPanel extends JBPanel {
     }
 
     public WpsDto getSelectRow() {
-        return dataList.get(table.getSelectedRow());
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow < 0) {
+            return null;
+        }
+        return dataList.get(selectedRow);
     }
 
     private class AsyncTableWorker extends SwingWorker<ResultDto<List<WpsDto>>, Void> {
-
+        private WpsQueryDto queryDto;
+        public AsyncTableWorker(WpsQueryDto queryDto) {
+            this.queryDto=queryDto;
+        }
         @Override
         protected ResultDto<List<WpsDto>> doInBackground() throws Exception {
-            WpsQueryDto queryDto = new WpsQueryDto();
-            String currentUserCode = WpsConfig.getInstance().getCurrentUserCode();
-            queryDto.setUserCode(currentUserCode);
+
 
             ResultDto<List<WpsDto>> resultDto = RestUtils.postList(WpsDto.class, "/wps/list", queryDto);
             return resultDto;

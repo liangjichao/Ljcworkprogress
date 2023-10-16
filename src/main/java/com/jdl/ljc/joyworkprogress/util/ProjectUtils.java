@@ -11,8 +11,10 @@ public class ProjectUtils {
     public static String getCurrentBranchName(Project project) {
         VirtualFile baseDir = project.getBaseDir();
         GitRepository res = GitUtil.getRepositoryManager(project).getRepositoryForRootQuick(baseDir);
-
-        return res.getCurrentBranchName();
+        if (res != null) {
+            return res.getCurrentBranchName();
+        }
+        return "";
     }
     public static String getCurrentUserCode(Project project) {
 

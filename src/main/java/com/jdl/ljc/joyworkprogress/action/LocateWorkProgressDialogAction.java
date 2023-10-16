@@ -6,7 +6,10 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jdl.ljc.joyworkprogress.domain.WpsConfig;
+import com.jdl.ljc.joyworkprogress.domain.vo.WpsQueryDto;
 import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressPanel;
+import com.jdl.ljc.joyworkprogress.util.ProjectUtils;
 import git4idea.GitUtil;
 import git4idea.repo.GitRepository;
 
@@ -23,12 +26,11 @@ public class LocateWorkProgressDialogAction extends AnAction {
     @Override
     public void actionPerformed(AnActionEvent e) {
         Project project = e.getData(PlatformDataKeys.PROJECT);
-        VirtualFile baseDir = project.getBaseDir();
-        GitRepository res = GitUtil.getRepositoryManager(project).getRepositoryForRootQuick(baseDir);
-        String branchName =res.getCurrentBranchName();
-//        Vector data = panel.getSelectRow();
-        String dir = project.getBasePath()+"\n";
-        dir+=branchName+"\n";
-        Messages.showInfoMessage(dir,"提示");
+        String currentBranchName = ProjectUtils.getCurrentBranchName(project);
+        WpsQueryDto queryDto=new WpsQueryDto();
+        String currentUserCode = WpsConfig.getInstance().getCurrentUserCode();
+        queryDto.setUserCode(currentUserCode);
+        queryDto.setDevBranchName(currentBranchName);
+        panel.refreshTableData(queryDto);
     }
 }

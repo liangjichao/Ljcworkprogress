@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.jdl.ljc.joyworkprogress.util.ProjectUtils;
 
 public class WpsConfig {
+    public static final String dateFormatPattern = "yyyy-MM-dd HH:mm:ss";
     private static WpsConfig config = new WpsConfig();
     private String currentUserCode;
 

@@ -36,7 +36,7 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
         setToolbar(twoSideComponent);
         setContent(panel);
 
-        panel.refreshTableData();
+        panel.refreshTableData(null);
     }
 
 
