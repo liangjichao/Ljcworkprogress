@@ -3,18 +3,25 @@ package com.jdl.ljc.joyworkprogress.ui;
 import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.ui.components.JBMenu;
 import com.intellij.util.ui.JBUI;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicMenuUI;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class UserMenu extends JBMenu {
+    private String selectedText;
     private Icon menuIcon;
 
     private Runnable selectedRun;
 
     private boolean showMenuIcon;
 
+    private static LinkedList<String> recentList = new LinkedList<>();
+    private int maxRecentSize = 5;
     public UserMenu(String text, Icon icon) {
         super();
         setText(text);
@@ -31,6 +38,20 @@ public class UserMenu extends JBMenu {
                 }
             }
         });
+
+        addMenuList();
+    }
+    private void addMenuList() {
+        removeAll();
+        add(new UserMenuItem("Select...", this));
+        add(new UserMenuItem("me", this));
+        addSeparator();
+        if (recentList.size() > 0) {
+            add(new DisabledMenuItem("最近"));
+            for (String us : recentList) {
+                add(new UserMenuItem(us, this));
+            }
+        }
     }
 
     @Override
@@ -65,12 +86,27 @@ public class UserMenu extends JBMenu {
     }
 
     public void editSelectedMenuItem(String text) {
-        System.out.println("我收到选择的文本：" + text);
-        setText("User:" + text);
-        showMenuIcon=false;
-        if (selectedRun != null) {
-            selectedRun.run();
+        selectedText=text;
+        String showUserTxt = "User";
+        if (StringUtils.isNotBlank(text)) {
+            showUserTxt += ":" + text;
+
+            if (recentList.size() >= maxRecentSize) {
+                recentList.remove();
+            }
+            recentList.add(text);
+            addMenuList();
+
+            showMenuIcon=false;
+            if (selectedRun != null) {
+                selectedRun.run();
+            }
+
+
         }
+        setText(showUserTxt);
+
+
     }
 
     public void setSelectedRun(Runnable selectedRun) {
@@ -81,4 +117,11 @@ public class UserMenu extends JBMenu {
         this.showMenuIcon = visiable;
     }
 
+    public String getSelectedText() {
+        return selectedText;
+    }
+
+    public void setSelectedText(String selectedText) {
+        this.selectedText = selectedText;
+    }
 }

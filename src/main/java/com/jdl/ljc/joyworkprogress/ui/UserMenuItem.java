@@ -3,6 +3,7 @@ package com.jdl.ljc.joyworkprogress.ui;
 import com.google.common.base.Joiner;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBList;
@@ -118,7 +119,11 @@ public class UserMenuItem extends JMenuItem {
 
             setBorder(JBUI.Borders.empty(3, 3, 3, 3));
             textArea = new JTextArea(3, 20);
-            label = new JLabel("请选择一个或多个用户,间隔符为|或换行，Ctrl+Enter完成选择,ESC退出");
+            String opTip = "请选择一个或多个用户,间隔符为|或换行，Ctrl+Enter完成选择,ESC退出";
+            if (SystemInfoRt.isMac) {
+                opTip = "请选择一个或多个用户,间隔符为|或换行，Command+Enter完成选择,ESC退出";
+            }
+            label = new JLabel(opTip);
             add(new JScrollPane(textArea), BorderLayout.CENTER);
             add(label, BorderLayout.SOUTH);
 
@@ -143,9 +148,13 @@ public class UserMenuItem extends JMenuItem {
                     }
                 }
             };
-            KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.CTRL_DOWN_MASK);
-            textArea.getInputMap(JComponent.WHEN_FOCUSED).put(keyStroke, "ctrlEnter");
-            textArea.getActionMap().put("ctrlEnter", enterAction);
+            KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+            String actionKey = "ctrlEnter";
+            if (SystemInfoRt.isMac) {
+                actionKey = "commandEnter";
+            }
+            textArea.getInputMap(JComponent.WHEN_FOCUSED).put(keyStroke, actionKey);
+            textArea.getActionMap().put(actionKey, enterAction);
 
 
             textArea.addKeyListener(new KeyListener() {

@@ -29,7 +29,7 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
         leftToolbar.setTargetComponent(panel);
 
 
-        SearchComboBoxPanel searchComboBoxPanel = new SearchComboBoxPanel();
+        SearchComboBoxPanel searchComboBoxPanel = new SearchComboBoxPanel(panel);
 
         TwoSideComponent twoSideComponent = new TwoSideComponent(searchComboBoxPanel, leftToolbar.getComponent());
 

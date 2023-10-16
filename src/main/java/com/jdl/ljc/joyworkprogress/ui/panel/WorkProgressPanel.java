@@ -123,8 +123,6 @@ public class WorkProgressPanel extends JBPanel {
         clear();
         if (queryDto == null) {
             queryDto=new WpsQueryDto();
-            String currentUserCode = WpsConfig.getInstance().getCurrentUserCode();
-            queryDto.setUserCode(currentUserCode);
         }
         AsyncTableWorker asyncTableWorker = new AsyncTableWorker(queryDto);
         asyncTableWorker.execute();
