@@ -23,36 +23,26 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
-import java.util.concurrent.ExecutionException;
 
-public class WorkProgressPanel extends JBPanel {
-    private JBTable table;
-    private Vector tableData;
-    private JDTableModel model;
-
-    private Vector<String> columnNames;
-
+public class WorkProgressPanel extends JBPanel<WorkProgressPanel> {
+    private final JBTable table;
+    private Vector<Vector<String>> tableData;
+    private final JDTableModel model;
+    private final Vector<String> columnNames;
     private List<WpsDto> dataList;
 
     public WorkProgressPanel() {
         super(new BorderLayout(),true);
         // 创建表头和表格数据
-
         columnNames = new Vector<>();
         columnNames.add("进度");
         columnNames.add("项目名称");
         columnNames.add("计划工时");
         columnNames.add("用户");
-
-
         // 创建默认的表格模型
         model = new JDTableModel(tableData, columnNames);
-
-
         // 创建JBTable并设置模型
         table = new JBTable(model);
-
-
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.getColumnModel().getColumn(0).setMaxWidth(70);
         table.getColumnModel().getColumn(2).setMinWidth(138);
@@ -64,13 +54,11 @@ public class WorkProgressPanel extends JBPanel {
         jbScrollPane.setBorder(JBUI.Borders.empty());
         jbScrollPane.getViewport().setBackground(JBUI.CurrentTheme.TabbedPane.ENABLED_SELECTED_COLOR);
 
-        WorkProgressNavPanel navPanel = new WorkProgressNavPanel();
+        WorkProgressNavPanel navPanel = new WorkProgressNavPanel(this);
 
         add(jbScrollPane, BorderLayout.CENTER);
         add(navPanel, BorderLayout.SOUTH);
     }
-
-
 
     public void setData(List<WpsDto> wpsDtoList) {
         this.dataList = wpsDtoList;
@@ -88,10 +76,10 @@ public class WorkProgressPanel extends JBPanel {
             gridData.setPlanWorkHours(planWorkHours);
             gridData.setUserCode(wpsDto.getUserCode());
         }
-        tableData = new Vector();
-        Vector bean;
+        tableData = new Vector<Vector<String>>();
+        Vector<String> bean;
         for (WorkProgressGridData data : gridDataList) {
-            bean = new Vector();
+            bean = new Vector<String>();
             bean.add(data.getProgressStatus());
             bean.add(data.getTitle());
             bean.add(data.getPlanWorkHours());
@@ -146,16 +134,14 @@ public class WorkProgressPanel extends JBPanel {
     }
 
     private class AsyncTableWorker extends SwingWorker<ResultDto<List<WpsDto>>, Void> {
-        private WpsQueryDto queryDto;
+        private final WpsQueryDto queryDto;
         public AsyncTableWorker(WpsQueryDto queryDto) {
             this.queryDto=queryDto;
         }
         @Override
-        protected ResultDto<List<WpsDto>> doInBackground() throws Exception {
+        protected ResultDto<List<WpsDto>> doInBackground(){
 
-
-            ResultDto<List<WpsDto>> resultDto = RestUtils.postList(WpsDto.class, "/wps/list", queryDto);
-            return resultDto;
+            return RestUtils.postList(WpsDto.class, "/wps/list", queryDto);
         }
 
         @Override
@@ -163,9 +149,7 @@ public class WorkProgressPanel extends JBPanel {
             ResultDto<List<WpsDto>> resultDto = null;
             try {
                 resultDto = get();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            } catch (ExecutionException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
             responseTableData(resultDto);

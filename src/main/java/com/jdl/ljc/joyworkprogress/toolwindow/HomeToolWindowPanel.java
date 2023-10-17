@@ -7,7 +7,11 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.ui.components.TwoSideComponent;
-import com.jdl.ljc.joyworkprogress.action.*;
+import com.jdl.ljc.joyworkprogress.action.AddWorkProgressDialogAction;
+import com.jdl.ljc.joyworkprogress.action.DeleteWorkProgressDialogAction;
+import com.jdl.ljc.joyworkprogress.action.EditWorkProgressDialogAction;
+import com.jdl.ljc.joyworkprogress.action.FlushProgressDialogAction;
+import com.jdl.ljc.joyworkprogress.action.LocateWorkProgressDialogAction;
 import com.jdl.ljc.joyworkprogress.domain.WpsConfig;
 import com.jdl.ljc.joyworkprogress.ui.panel.SearchComboBoxPanel;
 import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressPanel;
@@ -57,9 +61,6 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
 
     private ActionToolbar createToolbar(WorkProgressPanel panel) {
         DefaultActionGroup actionGroup = new DefaultActionGroup("WORK_BAR_GROUP", false);
-        SearchWorkProgressDialogAction searchAction = new SearchWorkProgressDialogAction(AllIcons.Actions.Search, panel);
-        actionGroup.add(searchAction);
-        actionGroup.addSeparator();
         LocateWorkProgressDialogAction locateAction = new LocateWorkProgressDialogAction(AllIcons.Providers.Openedge, panel);
         actionGroup.add(locateAction);
         actionGroup.addSeparator();
@@ -67,13 +68,10 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
         actionGroup.add(addWorkAction);
         EditWorkProgressDialogAction editAction = new EditWorkProgressDialogAction(AllIcons.Actions.EditSource, panel);
         actionGroup.add(editAction);
-        FlushProgressDialogAction flushAction = new FlushProgressDialogAction(AllIcons.Actions.Refresh, panel);
-        actionGroup.add(flushAction);
 
         actionGroup.addSeparator();
         DeleteWorkProgressDialogAction delAction = new DeleteWorkProgressDialogAction(AllIcons.Actions.DeleteTag, panel);
         actionGroup.add(delAction);
-
         ActionManager actionManager = ActionManager.getInstance();
         return actionManager.createActionToolbar("NAV_DevWorkToolbar", actionGroup, true);
     }
