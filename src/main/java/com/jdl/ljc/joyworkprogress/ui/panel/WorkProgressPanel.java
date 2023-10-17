@@ -26,27 +26,26 @@ import java.util.Vector;
 
 public class WorkProgressPanel extends JBPanel<WorkProgressPanel> {
     private final JBTable table;
-    private Vector<Vector<String>> tableData;
     private final JDTableModel model;
-    private final Vector<String> columnNames;
     private List<WpsDto> dataList;
+    private final WorkProgressNavPanel navPanel;
 
     public WorkProgressPanel() {
-        super(new BorderLayout(),true);
+        super(new BorderLayout(), true);
         // 创建表头和表格数据
-        columnNames = new Vector<>();
+        Vector<String> columnNames = new Vector<>();
         columnNames.add("进度");
         columnNames.add("项目名称");
         columnNames.add("计划工时");
         columnNames.add("用户");
         // 创建默认的表格模型
-        model = new JDTableModel(tableData, columnNames);
+        model = new JDTableModel(null, columnNames);
         // 创建JBTable并设置模型
         table = new JBTable(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.getColumnModel().getColumn(0).setMaxWidth(70);
-        table.getColumnModel().getColumn(2).setMinWidth(138);
-        table.getColumnModel().getColumn(2).setMaxWidth(138);
+        table.getColumnModel().getColumn(2).setMinWidth(178);
+        table.getColumnModel().getColumn(2).setMaxWidth(178);
         table.getColumnModel().getColumn(3).setMinWidth(80);
         table.getColumnModel().getColumn(3).setMaxWidth(80);
 
@@ -54,7 +53,7 @@ public class WorkProgressPanel extends JBPanel<WorkProgressPanel> {
         jbScrollPane.setBorder(JBUI.Borders.empty());
         jbScrollPane.getViewport().setBackground(JBUI.CurrentTheme.TabbedPane.ENABLED_SELECTED_COLOR);
 
-        WorkProgressNavPanel navPanel = new WorkProgressNavPanel(this);
+        navPanel = new WorkProgressNavPanel(this);
 
         add(jbScrollPane, BorderLayout.CENTER);
         add(navPanel, BorderLayout.SOUTH);
@@ -71,13 +70,12 @@ public class WorkProgressPanel extends JBPanel<WorkProgressPanel> {
             gridData.setProgressStatus(WorkProgressStatusEnum.queryStatusEnum(wpsDto.getProgressStatus()).toString());
             String planWorkHours = convertDate(wpsDto.getPlanStartTime());
             if (wpsDto.getPlanEndTime() != null) {
-                planWorkHours += "-" + convertDate(wpsDto.getPlanEndTime());
+                planWorkHours += "至" + convertDate(wpsDto.getPlanEndTime());
             }
             gridData.setPlanWorkHours(planWorkHours);
             gridData.setUserCode(wpsDto.getUserCode());
         }
         model.setRowCount(0);
-        tableData = new Vector<Vector<String>>();
         Vector<String> bean;
         for (WorkProgressGridData data : gridDataList) {
             bean = new Vector<String>();
@@ -85,10 +83,8 @@ public class WorkProgressPanel extends JBPanel<WorkProgressPanel> {
             bean.add(data.getTitle());
             bean.add(data.getPlanWorkHours());
             bean.add(data.getUserCode());
-            tableData.add(bean);
             model.addRow(bean);
         }
-
 
 //        model.setDataVector(tableData, columnNames);
 
@@ -115,8 +111,10 @@ public class WorkProgressPanel extends JBPanel<WorkProgressPanel> {
     public void refreshTableData(WpsQueryDto queryDto) {
         clear();
         if (queryDto == null) {
-            queryDto=new WpsQueryDto();
+            queryDto = new WpsQueryDto();
         }
+        queryDto.setCpage(navPanel.getCpage());
+        queryDto.setPageSize(navPanel.getPageSize());
         AsyncTableWorker asyncTableWorker = new AsyncTableWorker(queryDto);
         asyncTableWorker.execute();
     }
@@ -138,11 +136,13 @@ public class WorkProgressPanel extends JBPanel<WorkProgressPanel> {
 
     private class AsyncTableWorker extends SwingWorker<ResultDto<List<WpsDto>>, Void> {
         private final WpsQueryDto queryDto;
+
         public AsyncTableWorker(WpsQueryDto queryDto) {
-            this.queryDto=queryDto;
+            this.queryDto = queryDto;
         }
+
         @Override
-        protected ResultDto<List<WpsDto>> doInBackground(){
+        protected ResultDto<List<WpsDto>> doInBackground() {
 
             return RestUtils.postList(WpsDto.class, "/wps/list", queryDto);
         }

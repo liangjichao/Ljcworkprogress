@@ -11,6 +11,7 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.jdl.ljc.joyworkprogress.domain.WpsConfig;
 import com.jdl.ljc.joyworkprogress.domain.dto.ResultDto;
 import com.jdl.ljc.joyworkprogress.domain.dto.WpsDto;
+import com.jdl.ljc.joyworkprogress.domain.dto.WpsSaveDto;
 import com.jdl.ljc.joyworkprogress.domain.vo.WpsQueryDto;
 import com.jdl.ljc.joyworkprogress.enums.WorkProgressStatusEnum;
 import com.jdl.ljc.joyworkprogress.ui.panel.ProgressHtmlPanel;
@@ -148,9 +149,9 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         JLabel planWorkHoursLabel = new JLabel("计划工时：");
         JPanel dataPickerPanel = new JPanel();
         planWorkHoursPickerStart = new JXDatePicker();
-        planWorkHoursPickerStart.setFormats("yyyy.MM.dd");
+        planWorkHoursPickerStart.setFormats("yyyy-MM-dd");
         planWorkHoursPickerEnd = new JXDatePicker();
-        planWorkHoursPickerEnd.setFormats("yyyy.MM.dd");
+        planWorkHoursPickerEnd.setFormats("yyyy-MM-dd");
         UIManager.put("JXDatePicker.todayButtonText", "今日");
         dataPickerPanel.add(planWorkHoursPickerStart);
         dataPickerPanel.add(new JLabel("至"));
@@ -318,7 +319,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
                             return;
                         }
 
-                        WpsDto dto = getFormData(projectName);
+                        WpsSaveDto dto = getFormData(projectName);
                         String requestPath = "/wps/insert";
                         if (formData != null && formData.getId() != null&&formData.getId()>0) {
                             requestPath = "/wps/update";
@@ -336,17 +337,17 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
     }
 
     @NotNull
-    private WpsDto getFormData(String projectName) {
+    private WpsSaveDto getFormData(String projectName) {
         String editorContent = editorPane.getEditorContent();
         Object selectedItem = progressStatusComboBox.getSelectedItem();
         WorkProgressStatusEnum statusEnum=(WorkProgressStatusEnum)selectedItem;
-        WpsDto dto = new WpsDto();
+        WpsSaveDto dto = new WpsSaveDto();
         if (formData != null) {
             dto.setId(formData.getId());
         }
         dto.setProgressStatus(statusEnum.getCode());
-        dto.setPlanStartTime(getDateTime(planWorkHoursPickerStart," 00:00:00"));
-        dto.setPlanEndTime(getDateTime(planWorkHoursPickerEnd," 23:59:59"));
+        dto.setStartTime(getDateTime(planWorkHoursPickerStart," 00:00:00"));
+        dto.setEndTime(getDateTime(planWorkHoursPickerEnd," 23:59:59"));
         dto.setDevInfo(editorContent);
         dto.setProjectName(projectName);
         dto.setPrd(prdField.getText());

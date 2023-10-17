@@ -20,12 +20,19 @@ import java.awt.*;
  * @date 2023/10/17 9:42 AM
  */
 public class WorkProgressNavPanel extends JBPanel {
+    private static final Integer DEFAULT_PAGE_SIZE = 30;
     public static final String place = "WPS_NAV_Toolbar";
     private WorkProgressPanel panel;
+
+    private Long cpage;
+    private Integer pageSize;
+
     public WorkProgressNavPanel(WorkProgressPanel panel) {
         super(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        cpage = 1L;
+        pageSize = DEFAULT_PAGE_SIZE;
         setBorder(JBUI.Borders.customLineTop(JBUI.CurrentTheme.ToolWindow.headerBorderBackground()));
-        this.panel=panel;
+        this.panel = panel;
         ActionToolbar leftToolbar = createToolbar();
         leftToolbar.setTargetComponent(this);
         add(leftToolbar.getComponent());
@@ -45,5 +52,13 @@ public class WorkProgressNavPanel extends JBPanel {
         actionGroup.add(flushAction);
         ActionManager actionManager = ActionManager.getInstance();
         return actionManager.createActionToolbar(place, actionGroup, true);
+    }
+
+    public Long getCpage() {
+        return cpage;
+    }
+
+    public Integer getPageSize() {
+        return pageSize;
     }
 }

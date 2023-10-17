@@ -1,11 +1,19 @@
 package com.jdl.ljc.joyworkprogress.domain.vo;
 
 public class WpsQueryDto {
+
     private String userCode;
     private String projectName;
     private String devBranchName;
     private String appVersion;
     private Integer progressStatus;
+
+    private Long cpage;
+    private Integer pageSize;
+
+    public WpsQueryDto() {
+
+    }
 
     public String getUserCode() {
         return userCode;
@@ -45,5 +53,21 @@ public class WpsQueryDto {
 
     public void setProgressStatus(Integer progressStatus) {
         this.progressStatus = progressStatus;
+    }
+
+    public Long getCpage() {
+        return cpage;
+    }
+
+    public void setCpage(Long cpage) {
+        this.cpage = cpage;
+    }
+
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
     }
 }
