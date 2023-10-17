@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.components.JBTextField;
+import com.intellij.util.ui.JBUI;
 import com.jdl.ljc.joyworkprogress.action.FlushProgressDialogAction;
 import com.jdl.ljc.joyworkprogress.action.NavButtonAction;
 import com.jdl.ljc.joyworkprogress.action.NavPageButtonAction;
@@ -23,6 +24,7 @@ public class WorkProgressNavPanel extends JBPanel {
     private WorkProgressPanel panel;
     public WorkProgressNavPanel(WorkProgressPanel panel) {
         super(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        setBorder(JBUI.Borders.customLineTop(JBUI.CurrentTheme.ToolWindow.headerBorderBackground()));
         this.panel=panel;
         ActionToolbar leftToolbar = createToolbar();
         leftToolbar.setTargetComponent(this);

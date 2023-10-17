@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.impl.ActionButton;
 import com.intellij.ui.ExperimentalUI;
 import com.intellij.ui.IconManager;
+import com.intellij.ui.SearchTextField;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.components.JBTextArea;
 import com.intellij.util.ui.JBUI;
@@ -29,7 +30,7 @@ public class SearchComboBoxPanel extends JBPanel implements Disposable {
     private UserMenu userMenu;
     private ActionButton iconBtn;
     private WorkProgressPanel panel;
-    private SearchTextArea searchArea;
+    private SearchTextField searchArea;
 
     public SearchComboBoxPanel(WorkProgressPanel panel) {
         super(new FlowLayout());
@@ -54,39 +55,53 @@ public class SearchComboBoxPanel extends JBPanel implements Disposable {
         iconBtn.setVisible(false);
 
 
-        JBTextArea myTextArea = new JBTextArea(1, 10);
-        searchArea = new SearchTextArea(myTextArea, false);
-        searchArea.setMultilineEnabled(false);
-        myTextArea.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if (SearchTextArea.JUST_CLEARED_KEY.equals(evt.getPropertyName())) {
-                    Object v = evt.getNewValue();
-                    if (v != null) {
-                        myTextArea.setText("");
-                        panel.refreshTableData(getQueryDto());
-                    }
-                }
-            }
-        });
-        searchArea.getTextArea().addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
 
-            }
-
+        searchArea = new SearchTextField(false){
             @Override
-            public void keyPressed(KeyEvent e) {
+            protected boolean preprocessEventForTextField(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     panel.refreshTableData(getQueryDto());
+                    return true;
                 }
+                return super.preprocessEventForTextField(e);
             }
 
             @Override
-            public void keyReleased(KeyEvent e) {
-
+            protected void onFieldCleared() {
+                super.onFieldCleared();
+                panel.refreshTableData(getQueryDto());
             }
-        });
+        };
+//        searchArea.addPropertyChangeListener(new PropertyChangeListener() {
+//            @Override
+//            public void propertyChange(PropertyChangeEvent evt) {
+//                if (SearchTextArea.JUST_CLEARED_KEY.equals(evt.getPropertyName())) {
+//                    Object v = evt.getNewValue();
+//                    if (v != null) {
+//                        myTextArea.setText("");
+//                        panel.refreshTableData(getQueryDto());
+//                    }
+//                }
+//            }
+//        });
+//        searchArea.getTextArea().addKeyListener(new KeyListener() {
+//            @Override
+//            public void keyTyped(KeyEvent e) {
+//
+//            }
+//
+//            @Override
+//            public void keyPressed(KeyEvent e) {
+//                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+//                    panel.refreshTableData(getQueryDto());
+//                }
+//            }
+//
+//            @Override
+//            public void keyReleased(KeyEvent e) {
+//
+//            }
+//        });
 
         add(searchArea);
 
@@ -96,7 +111,7 @@ public class SearchComboBoxPanel extends JBPanel implements Disposable {
 
     private WpsQueryDto getQueryDto() {
         WpsQueryDto queryDto = new WpsQueryDto();
-        queryDto.setProjectName(searchArea.getTextArea().getText());
+        queryDto.setProjectName(searchArea.getText());
         String selectedText = userMenu.getSelectedText();
         if (selectedText!=null&&selectedText.equals("me")) {
             selectedText= WpsConfig.getInstance().getCurrentUserCode();

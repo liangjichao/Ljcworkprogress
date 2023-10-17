@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.ui.components.TwoSideComponent;
+import com.intellij.util.ui.JBUI;
 import com.jdl.ljc.joyworkprogress.action.AddWorkProgressDialogAction;
 import com.jdl.ljc.joyworkprogress.action.DeleteWorkProgressDialogAction;
 import com.jdl.ljc.joyworkprogress.action.EditWorkProgressDialogAction;
@@ -39,7 +40,7 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
         SearchComboBoxPanel searchComboBoxPanel = new SearchComboBoxPanel(panel);
 
         TwoSideComponent twoSideComponent = new TwoSideComponent(searchComboBoxPanel, leftToolbar.getComponent());
-
+        twoSideComponent.setBorder(JBUI.Borders.customLineBottom(JBUI.CurrentTheme.ToolWindow.headerBorderBackground()));
         setToolbar(twoSideComponent);
         setContent(panel);
 
