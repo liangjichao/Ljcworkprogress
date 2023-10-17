@@ -11,6 +11,7 @@ import com.intellij.util.ui.JBUI;
 import com.jdl.ljc.joyworkprogress.action.FlushProgressDialogAction;
 import com.jdl.ljc.joyworkprogress.action.NavButtonAction;
 import com.jdl.ljc.joyworkprogress.action.NavPageButtonAction;
+import com.jdl.ljc.joyworkprogress.domain.dto.WpsPageDto;
 import org.jdesktop.swingx.JXTextField;
 
 import java.awt.*;
@@ -26,6 +27,8 @@ public class WorkProgressNavPanel extends JBPanel {
 
     private Long cpage;
     private Integer pageSize;
+
+    private WpsPageDto pageDto;
 
     public WorkProgressNavPanel(WorkProgressPanel panel) {
         super(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -43,11 +46,11 @@ public class WorkProgressNavPanel extends JBPanel {
     private ActionToolbar createToolbar() {
         DefaultActionGroup actionGroup = new DefaultActionGroup("WPS_NAV_BAR_GROUP", false);
 
-        actionGroup.add(new NavButtonAction("first", AllIcons.Actions.Play_first));
-        actionGroup.add(new NavButtonAction("prev", AllIcons.General.ArrowLeft));
-        actionGroup.add(new NavPageButtonAction("1/2 总计:999", null));
-        actionGroup.add(new NavButtonAction("next", AllIcons.General.ArrowRight));
-        actionGroup.add(new NavButtonAction("last", AllIcons.Actions.Play_last));
+        actionGroup.add(new NavButtonAction("first", AllIcons.Actions.Play_first,this));
+        actionGroup.add(new NavButtonAction("prev", AllIcons.General.ArrowLeft,this));
+        actionGroup.add(new NavPageButtonAction(this));
+        actionGroup.add(new NavButtonAction("next", AllIcons.General.ArrowRight,this));
+        actionGroup.add(new NavButtonAction("last", AllIcons.Actions.Play_last,this));
         FlushProgressDialogAction flushAction = new FlushProgressDialogAction(AllIcons.Actions.Refresh, panel);
         actionGroup.add(flushAction);
         ActionManager actionManager = ActionManager.getInstance();
@@ -60,5 +63,25 @@ public class WorkProgressNavPanel extends JBPanel {
 
     public Integer getPageSize() {
         return pageSize;
+    }
+
+    public void setCpage(Long cpage) {
+        this.cpage = cpage;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public WpsPageDto getPageDto() {
+        return pageDto;
+    }
+
+    public void setPageDto(WpsPageDto pageDto) {
+        this.pageDto = pageDto;
+    }
+
+    public void updateNav() {
+        this.panel.refreshTableData();
     }
 }

@@ -7,9 +7,11 @@ import com.intellij.util.ui.JBUI;
 import com.jdl.ljc.joyworkprogress.domain.WpsConfig;
 import com.jdl.ljc.joyworkprogress.domain.dto.ResultDto;
 import com.jdl.ljc.joyworkprogress.domain.dto.WpsDto;
+import com.jdl.ljc.joyworkprogress.domain.dto.WpsPageDto;
 import com.jdl.ljc.joyworkprogress.domain.vo.WorkProgressGridData;
 import com.jdl.ljc.joyworkprogress.domain.vo.WpsQueryDto;
 import com.jdl.ljc.joyworkprogress.enums.WorkProgressStatusEnum;
+import com.jdl.ljc.joyworkprogress.toolwindow.HomeToolWindowPanel;
 import com.jdl.ljc.joyworkprogress.ui.JDTableModel;
 import com.jdl.ljc.joyworkprogress.util.RestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -27,11 +29,14 @@ import java.util.Vector;
 public class WorkProgressPanel extends JBPanel<WorkProgressPanel> {
     private final JBTable table;
     private final JDTableModel model;
-    private List<WpsDto> dataList;
+    private WpsPageDto pageData;
     private final WorkProgressNavPanel navPanel;
 
-    public WorkProgressPanel() {
+    private HomeToolWindowPanel rootPanel;
+
+    public WorkProgressPanel(HomeToolWindowPanel rootPanel) {
         super(new BorderLayout(), true);
+        this.rootPanel=rootPanel;
         // 创建表头和表格数据
         Vector<String> columnNames = new Vector<>();
         columnNames.add("进度");
@@ -59,11 +64,12 @@ public class WorkProgressPanel extends JBPanel<WorkProgressPanel> {
         add(navPanel, BorderLayout.SOUTH);
     }
 
-    public void setData(List<WpsDto> wpsDtoList) {
-        this.dataList = wpsDtoList;
+    public void setData(WpsPageDto pageData) {
+        this.pageData = pageData;
+        navPanel.setPageDto(pageData);
         List<WorkProgressGridData> gridDataList = new ArrayList<>();
         WorkProgressGridData gridData;
-        for (WpsDto wpsDto : wpsDtoList) {
+        for (WpsDto wpsDto : pageData.getPageData()) {
             gridData = new WorkProgressGridData();
             gridDataList.add(gridData);
             gridData.setTitle(wpsDto.getProjectName());
@@ -104,14 +110,27 @@ public class WorkProgressPanel extends JBPanel<WorkProgressPanel> {
         return viewDate;
     }
 
+    public WpsPageDto getPageData() {
+        return pageData;
+    }
+
     public void clear() {
         model.setRowCount(0);
     }
 
-    public void refreshTableData(WpsQueryDto queryDto) {
+    public void refreshTableData() {
+        refreshTableData(null);
+    }
+    public void refreshTableData(String devBranName) {
         clear();
-        if (queryDto == null) {
-            queryDto = new WpsQueryDto();
+        WpsQueryDto queryDto;
+        if (StringUtils.isNotBlank(devBranName)) {
+            queryDto=new WpsQueryDto();
+            String currentUserCode = WpsConfig.getInstance().getCurrentUserCode();
+            queryDto.setUserCode(currentUserCode);
+            queryDto.setDevBranchName(devBranName);
+        }else{
+            queryDto = rootPanel.getSearchComboBoxPanel().getQueryDto();
         }
         queryDto.setCpage(navPanel.getCpage());
         queryDto.setPageSize(navPanel.getPageSize());
@@ -119,7 +138,7 @@ public class WorkProgressPanel extends JBPanel<WorkProgressPanel> {
         asyncTableWorker.execute();
     }
 
-    private void responseTableData(ResultDto<List<WpsDto>> resultDto) {
+    private void responseTableData(ResultDto<WpsPageDto> resultDto) {
         if (resultDto == null) {
             return;
         }
@@ -131,10 +150,10 @@ public class WorkProgressPanel extends JBPanel<WorkProgressPanel> {
         if (selectedRow < 0) {
             return null;
         }
-        return dataList.get(selectedRow);
+        return pageData.getPageData().get(selectedRow);
     }
 
-    private class AsyncTableWorker extends SwingWorker<ResultDto<List<WpsDto>>, Void> {
+    private class AsyncTableWorker extends SwingWorker<ResultDto<WpsPageDto>, Void> {
         private final WpsQueryDto queryDto;
 
         public AsyncTableWorker(WpsQueryDto queryDto) {
@@ -142,14 +161,14 @@ public class WorkProgressPanel extends JBPanel<WorkProgressPanel> {
         }
 
         @Override
-        protected ResultDto<List<WpsDto>> doInBackground() {
+        protected ResultDto<WpsPageDto> doInBackground() {
 
-            return RestUtils.postList(WpsDto.class, "/wps/list", queryDto);
+            return RestUtils.post(WpsPageDto.class, "/wps/list", queryDto);
         }
 
         @Override
         protected void done() {
-            ResultDto<List<WpsDto>> resultDto = null;
+            ResultDto<WpsPageDto> resultDto = null;
             try {
                 resultDto = get();
             } catch (Exception e) {

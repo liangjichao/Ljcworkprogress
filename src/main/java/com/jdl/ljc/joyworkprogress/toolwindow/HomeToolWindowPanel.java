@@ -11,7 +11,6 @@ import com.intellij.util.ui.JBUI;
 import com.jdl.ljc.joyworkprogress.action.AddWorkProgressDialogAction;
 import com.jdl.ljc.joyworkprogress.action.DeleteWorkProgressDialogAction;
 import com.jdl.ljc.joyworkprogress.action.EditWorkProgressDialogAction;
-import com.jdl.ljc.joyworkprogress.action.FlushProgressDialogAction;
 import com.jdl.ljc.joyworkprogress.action.LocateWorkProgressDialogAction;
 import com.jdl.ljc.joyworkprogress.domain.WpsConfig;
 import com.jdl.ljc.joyworkprogress.ui.panel.SearchComboBoxPanel;
@@ -21,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class HomeToolWindowPanel extends SimpleToolWindowPanel {
+    private WorkProgressPanel gridPanel;
+    private SearchComboBoxPanel searchComboBoxPanel;
     public HomeToolWindowPanel(@NotNull Project project) {
         super(true);
         initialize(project);
@@ -31,20 +32,20 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
 
 
 
-        WorkProgressPanel panel = new WorkProgressPanel();
+        gridPanel = new WorkProgressPanel(this);
 
-        ActionToolbar leftToolbar = createToolbar(panel);
-        leftToolbar.setTargetComponent(panel);
+        ActionToolbar leftToolbar = createToolbar(gridPanel);
+        leftToolbar.setTargetComponent(gridPanel);
 
 
-        SearchComboBoxPanel searchComboBoxPanel = new SearchComboBoxPanel(panel);
+        searchComboBoxPanel = new SearchComboBoxPanel(this);
 
         TwoSideComponent twoSideComponent = new TwoSideComponent(searchComboBoxPanel, leftToolbar.getComponent());
         twoSideComponent.setBorder(JBUI.Borders.customLineBottom(JBUI.CurrentTheme.ToolWindow.headerBorderBackground()));
         setToolbar(twoSideComponent);
-        setContent(panel);
+        setContent(gridPanel);
 
-        panel.refreshTableData(null);
+        gridPanel.refreshTableData();
     }
 
     private class InitWorkTasker extends SwingWorker{
@@ -75,5 +76,13 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
         actionGroup.add(delAction);
         ActionManager actionManager = ActionManager.getInstance();
         return actionManager.createActionToolbar("NAV_DevWorkToolbar", actionGroup, true);
+    }
+
+    public WorkProgressPanel getGridPanel() {
+        return gridPanel;
+    }
+
+    public SearchComboBoxPanel getSearchComboBoxPanel() {
+        return searchComboBoxPanel;
     }
 }

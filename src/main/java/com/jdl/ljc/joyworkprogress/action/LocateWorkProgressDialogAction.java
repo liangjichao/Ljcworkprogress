@@ -27,10 +27,7 @@ public class LocateWorkProgressDialogAction extends AnAction {
     public void actionPerformed(AnActionEvent e) {
         Project project = e.getData(PlatformDataKeys.PROJECT);
         String currentBranchName = ProjectUtils.getCurrentBranchName(project);
-        WpsQueryDto queryDto=new WpsQueryDto();
-        String currentUserCode = WpsConfig.getInstance().getCurrentUserCode();
-        queryDto.setUserCode(currentUserCode);
-        queryDto.setDevBranchName(currentBranchName);
-        panel.refreshTableData(queryDto);
+
+        panel.refreshTableData(currentBranchName);
     }
 }

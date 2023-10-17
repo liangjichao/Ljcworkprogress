@@ -33,7 +33,7 @@ public class EditWorkProgressDialogAction extends AnAction {
         }
         JDWorkProgressFormDialog dialog=new JDWorkProgressFormDialog(project, wpsDto);
         if (dialog.showAndGet()) {
-            this.panel.refreshTableData(null);
+            this.panel.refreshTableData();
         }
     }
 }

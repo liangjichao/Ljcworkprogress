@@ -1,5 +1,7 @@
 package com.jdl.ljc.joyworkprogress.domain.dto;
 
+import java.util.List;
+
 /**
  * @author liangjichao
  * @date 2023/10/17 8:53 PM
@@ -17,6 +19,8 @@ public class WpsPageDto {
      * 总记录
      */
     private Long rows;
+
+    private List<WpsDto> pageData;
 
     /**
      * 获取总页数
@@ -48,5 +52,13 @@ public class WpsPageDto {
 
     public void setRows(Long rows) {
         this.rows = rows;
+    }
+
+    public List<WpsDto> getPageData() {
+        return pageData;
+    }
+
+    public void setPageData(List<WpsDto> pageData) {
+        this.pageData = pageData;
     }
 }

@@ -16,6 +16,6 @@ public class FlushProgressDialogAction extends AnAction {
 
     @Override
     public void actionPerformed(AnActionEvent e) {
-        this.panel.refreshTableData(null);
+        this.panel.refreshTableData();
     }
 }
