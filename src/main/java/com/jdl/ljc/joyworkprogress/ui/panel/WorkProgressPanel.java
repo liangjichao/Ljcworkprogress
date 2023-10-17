@@ -76,6 +76,7 @@ public class WorkProgressPanel extends JBPanel<WorkProgressPanel> {
             gridData.setPlanWorkHours(planWorkHours);
             gridData.setUserCode(wpsDto.getUserCode());
         }
+        model.setRowCount(0);
         tableData = new Vector<Vector<String>>();
         Vector<String> bean;
         for (WorkProgressGridData data : gridDataList) {
@@ -85,9 +86,11 @@ public class WorkProgressPanel extends JBPanel<WorkProgressPanel> {
             bean.add(data.getPlanWorkHours());
             bean.add(data.getUserCode());
             tableData.add(bean);
+            model.addRow(bean);
         }
 
-        model.setDataVector(tableData, columnNames);
+
+//        model.setDataVector(tableData, columnNames);
 
     }
 
