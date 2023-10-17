@@ -13,14 +13,17 @@ import com.jdl.ljc.joyworkprogress.ui.panel.SearchComboBoxPanel;
 import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressPanel;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
+
 public class HomeToolWindowPanel extends SimpleToolWindowPanel {
     public HomeToolWindowPanel(@NotNull Project project) {
         super(true);
         initialize(project);
     }
-
     private void initialize(Project project) {
-        WpsConfig.getInstance().init(project);
+        InitWorkTasker tasker = new InitWorkTasker(project);
+        tasker.execute();
+
 
 
         WorkProgressPanel panel = new WorkProgressPanel();
@@ -37,6 +40,18 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
         setContent(panel);
 
         panel.refreshTableData(null);
+    }
+
+    private class InitWorkTasker extends SwingWorker{
+        private Project project;
+        public InitWorkTasker(Project project){
+            this.project=project;
+        }
+        @Override
+        protected Object doInBackground() throws Exception {
+            WpsConfig.getInstance().init(project);
+            return null;
+        }
     }
 
 

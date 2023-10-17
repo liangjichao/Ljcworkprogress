@@ -55,7 +55,7 @@ public class SearchComboBoxPanel extends JBPanel implements Disposable {
 
 
         JBTextArea myTextArea = new JBTextArea(1, 10);
-        searchArea = new SearchTextArea(myTextArea, true);
+        searchArea = new SearchTextArea(myTextArea, false);
         searchArea.setMultilineEnabled(false);
         myTextArea.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
@@ -98,7 +98,7 @@ public class SearchComboBoxPanel extends JBPanel implements Disposable {
         WpsQueryDto queryDto = new WpsQueryDto();
         queryDto.setProjectName(searchArea.getTextArea().getText());
         String selectedText = userMenu.getSelectedText();
-        if (selectedText.equals("me")) {
+        if (selectedText!=null&&selectedText.equals("me")) {
             selectedText= WpsConfig.getInstance().getCurrentUserCode();
         }
         queryDto.setUserCode(selectedText);
