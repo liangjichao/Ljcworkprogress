@@ -26,7 +26,7 @@
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow id="DevWorkProgress" anchor="bottom" icon="icons/JoyworkprogressLogo.svg" factoryClass="com.jdl.ljc.joyworkprogress.DevWorkProgressWindowFactory" />
-
+        <applicationService serviceImplementation="com.jdl.ljc.joyworkprogress.config.WpsPluginSetting"/>
     </extensions>
     <actions>
 

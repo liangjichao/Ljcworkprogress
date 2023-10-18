@@ -12,6 +12,7 @@ import com.jdl.ljc.joyworkprogress.action.AddWorkProgressDialogAction;
 import com.jdl.ljc.joyworkprogress.action.DeleteWorkProgressDialogAction;
 import com.jdl.ljc.joyworkprogress.action.EditWorkProgressDialogAction;
 import com.jdl.ljc.joyworkprogress.action.LocateWorkProgressDialogAction;
+import com.jdl.ljc.joyworkprogress.action.SettingAction;
 import com.jdl.ljc.joyworkprogress.domain.WpsConfig;
 import com.jdl.ljc.joyworkprogress.ui.panel.SearchComboBoxPanel;
 import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressPanel;
@@ -63,6 +64,8 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
 
     private ActionToolbar createToolbar(WorkProgressPanel panel) {
         DefaultActionGroup actionGroup = new DefaultActionGroup("WORK_BAR_GROUP", false);
+        actionGroup.add(new SettingAction());
+        actionGroup.addSeparator();
         LocateWorkProgressDialogAction locateAction = new LocateWorkProgressDialogAction(AllIcons.Providers.Openedge, panel);
         actionGroup.add(locateAction);
         actionGroup.addSeparator();
@@ -74,6 +77,7 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
         actionGroup.addSeparator();
         DeleteWorkProgressDialogAction delAction = new DeleteWorkProgressDialogAction(AllIcons.Actions.DeleteTag, panel);
         actionGroup.add(delAction);
+
         ActionManager actionManager = ActionManager.getInstance();
         return actionManager.createActionToolbar("NAV_DevWorkToolbar", actionGroup, true);
     }
