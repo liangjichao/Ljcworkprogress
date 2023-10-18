@@ -28,7 +28,7 @@ public class DeleteWorkProgressDialogAction extends AnAction {
         }else {
             ResultDto<String> resultDto = RestUtils.post(String.class, String.format("/wps/delete/%s", wpsDto.getId()), null);
             if (resultDto.isSuccess()) {
-                this.panel.refreshTableData();
+                this.panel.resetTableData();
             }else{
                 Messages.showInfoMessage(resultDto.getResultMessage(),"删除失败");
             }

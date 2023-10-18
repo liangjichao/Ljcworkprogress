@@ -65,6 +65,7 @@ public class WorkProgressPanel extends JBPanel<WorkProgressPanel> {
     }
 
     public void setData(WpsPageDto pageData) {
+        clear();
         this.pageData = pageData;
         navPanel.setPageDto(pageData);
         List<WorkProgressGridData> gridDataList = new ArrayList<>();
@@ -121,8 +122,11 @@ public class WorkProgressPanel extends JBPanel<WorkProgressPanel> {
     public void refreshTableData() {
         refreshTableData(null);
     }
+    public void resetTableData() {
+        navPanel.setCpage(1L);
+        refreshTableData(null);
+    }
     public void refreshTableData(String devBranName) {
-        clear();
         WpsQueryDto queryDto;
         if (StringUtils.isNotBlank(devBranName)) {
             queryDto=new WpsQueryDto();

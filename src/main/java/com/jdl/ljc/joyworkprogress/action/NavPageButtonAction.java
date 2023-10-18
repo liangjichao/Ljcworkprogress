@@ -37,7 +37,6 @@ public class NavPageButtonAction extends AnAction {
             if (pageDto != null) {
                 title=String.format(DEFAULT_FORMAT_TEXT,pageDto.getCpage(),pageDto.getTotalPage(),pageDto.getRows());
             }
-            System.out.println("Page Nav:"+title);
             e.getPresentation().setText(title);
         }
     }
