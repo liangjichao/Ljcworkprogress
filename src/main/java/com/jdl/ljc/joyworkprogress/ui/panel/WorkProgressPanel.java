@@ -129,6 +129,7 @@ public class WorkProgressPanel extends JBPanel<WorkProgressPanel> {
     public void refreshTableData(String devBranName) {
         WpsQueryDto queryDto;
         if (StringUtils.isNotBlank(devBranName)) {
+            navPanel.setCpage(1L);
             queryDto=new WpsQueryDto();
             String currentUserCode = WpsConfig.getInstance().getCurrentUserCode();
             queryDto.setUserCode(currentUserCode);
