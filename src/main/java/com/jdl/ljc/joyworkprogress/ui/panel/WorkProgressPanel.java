@@ -1,5 +1,6 @@
 package com.jdl.ljc.joyworkprogress.ui.panel;
 
+import com.intellij.openapi.ui.Messages;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.table.JBTable;
@@ -147,7 +148,12 @@ public class WorkProgressPanel extends JBPanel<WorkProgressPanel> {
         if (resultDto == null) {
             return;
         }
-        setData(resultDto.getResultValue());
+        if (!resultDto.isSuccess()) {
+            clear();
+            Messages.showInfoMessage(resultDto.getResultMessage(),"错误提示");
+        }else{
+            setData(resultDto.getResultValue());
+        }
     }
 
     public WpsDto getSelectRow() {

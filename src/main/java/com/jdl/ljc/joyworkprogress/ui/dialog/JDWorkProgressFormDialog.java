@@ -63,7 +63,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         JPanel rootPanel = new JPanel(new BorderLayout());
         int rootWidth = ToolWindowManager.getInstance(project).getToolWindow("DevWorkProgress").getComponent().getRootPane().getWidth();
         int minWidth = 500;
-        int recommondWidth = 1173;
+        int recommondWidth = 873;
         if (rootWidth > recommondWidth) {
             minWidth = recommondWidth;
         }
@@ -286,15 +286,6 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         topPanel.add(devOwnerField, constraints);
 
         return topPanel;
-    }
-
-    @Override
-    protected void createDefaultActions() {
-        super.createDefaultActions();
-        getOKAction().putValue(Action.NAME, "保存");
-        getCancelAction().putValue(Action.NAME, "取消");
-
-
     }
 
     @Override

@@ -23,8 +23,11 @@ import javax.swing.*;
 public class HomeToolWindowPanel extends SimpleToolWindowPanel {
     private WorkProgressPanel gridPanel;
     private SearchComboBoxPanel searchComboBoxPanel;
+
+    private Project project;
     public HomeToolWindowPanel(@NotNull Project project) {
         super(true);
+        this.project=project;
         initialize(project);
     }
     private void initialize(Project project) {
@@ -64,7 +67,7 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
 
     private ActionToolbar createToolbar(WorkProgressPanel panel) {
         DefaultActionGroup actionGroup = new DefaultActionGroup("WORK_BAR_GROUP", false);
-        actionGroup.add(new SettingAction());
+        actionGroup.add(new SettingAction(project));
         actionGroup.addSeparator();
         LocateWorkProgressDialogAction locateAction = new LocateWorkProgressDialogAction(AllIcons.Providers.Openedge, panel);
         actionGroup.add(locateAction);
