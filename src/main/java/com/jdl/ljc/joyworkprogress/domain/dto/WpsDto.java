@@ -13,6 +13,7 @@ public class WpsDto {
     private String devBranchName;
     private String appVersion;
     private String devInfo;
+    private Integer forcedDependency;
 
     public Long getId() {
         return id;
@@ -110,4 +111,11 @@ public class WpsDto {
         this.devInfo = devInfo;
     }
 
+    public Integer getForcedDependency() {
+        return forcedDependency;
+    }
+
+    public void setForcedDependency(Integer forcedDependency) {
+        this.forcedDependency = forcedDependency;
+    }
 }

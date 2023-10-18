@@ -48,6 +48,8 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
     private JTextField cardField;
     private JTextField devOwnerField;
     private WpsDto formData;
+
+    private JCheckBox dependenceCheckBox;
     public JDWorkProgressFormDialog(@Nullable Project project,WpsDto formData) {
         super(project);
         this.project = project;
@@ -87,14 +89,14 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.insets = new Insets(5, 5, 5, 5);
 
-        JCheckBox dependenceServerCheckBox = new JCheckBox("依赖后端", true);
-        dependenceServerCheckBox.setHorizontalAlignment(SwingConstants.LEFT);
+        dependenceCheckBox = new JCheckBox("是否有依赖", true);
+        dependenceCheckBox.setHorizontalAlignment(SwingConstants.LEFT);
 
         constraints.gridx = 0;
         constraints.gridy = 0;
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.weightx = 1.0;
-        bottomPanel.add(dependenceServerCheckBox, constraints);
+        bottomPanel.add(dependenceCheckBox, constraints);
 
         return bottomPanel;
     }
@@ -347,6 +349,11 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         dto.setAppVersion(appVersionField.getText());
         dto.setCardUrl(cardField.getText());
         dto.setUserCode(devOwnerField.getText());
+        if (dependenceCheckBox.isSelected()) {
+            dto.setForcedDependency(1);
+        }else {
+            dto.setForcedDependency(0);
+        }
         return dto;
     }
 

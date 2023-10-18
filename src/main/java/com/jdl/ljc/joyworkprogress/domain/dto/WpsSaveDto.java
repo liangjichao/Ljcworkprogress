@@ -14,6 +14,8 @@ public class WpsSaveDto {
     private String appVersion;
     private String devInfo;
 
+    private Integer forcedDependency;
+
     public Long getId() {
         return id;
     }
@@ -110,4 +112,11 @@ public class WpsSaveDto {
         this.devInfo = devInfo;
     }
 
+    public Integer getForcedDependency() {
+        return forcedDependency;
+    }
+
+    public void setForcedDependency(Integer forcedDependency) {
+        this.forcedDependency = forcedDependency;
+    }
 }
