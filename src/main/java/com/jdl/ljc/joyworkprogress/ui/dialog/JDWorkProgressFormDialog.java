@@ -166,7 +166,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         topPanel.add(dataPickerPanel, constraints);
 
         y++;
-        JLabel titleLabel = new JLabel("项目名称：");
+        JLabel titleLabel = new JLabel("<html>项目名称：<font color=\"red\">*</></html>");
         projectNameField = new JTextField();
         constraints.gridx = 0;
         constraints.gridy = y;
