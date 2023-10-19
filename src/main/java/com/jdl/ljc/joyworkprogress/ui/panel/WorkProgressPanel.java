@@ -1,5 +1,6 @@
 package com.jdl.ljc.joyworkprogress.ui.panel;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.components.JBScrollPane;
@@ -14,13 +15,17 @@ import com.jdl.ljc.joyworkprogress.domain.vo.WpsQueryDto;
 import com.jdl.ljc.joyworkprogress.enums.WorkProgressStatusEnum;
 import com.jdl.ljc.joyworkprogress.toolwindow.HomeToolWindowPanel;
 import com.jdl.ljc.joyworkprogress.ui.JDTableModel;
+import com.jdl.ljc.joyworkprogress.ui.dialog.JDWorkProgressFormDialog;
 import com.jdl.ljc.joyworkprogress.util.RestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,10 +39,12 @@ public class WorkProgressPanel extends JBPanel<WorkProgressPanel> {
     private final WorkProgressNavPanel navPanel;
 
     private HomeToolWindowPanel rootPanel;
+    private Project project;
 
-    public WorkProgressPanel(HomeToolWindowPanel rootPanel) {
+    public WorkProgressPanel(HomeToolWindowPanel rootPanel, Project project) {
         super(new BorderLayout(), true);
         this.rootPanel=rootPanel;
+        this.project=project;
         // 创建表头和表格数据
         Vector<String> columnNames = new Vector<>();
         columnNames.add("进度");
@@ -63,6 +70,38 @@ public class WorkProgressPanel extends JBPanel<WorkProgressPanel> {
 
         add(jbScrollPane, BorderLayout.CENTER);
         add(navPanel, BorderLayout.SOUTH);
+        table.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    WpsDto wpsDto = getSelectRow();
+                    JDWorkProgressFormDialog dialog=new JDWorkProgressFormDialog(project, wpsDto);
+                    if (dialog.showAndGet()) {
+                        refreshTableData();
+                    }
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
     }
 
     public void setData(WpsPageDto pageData) {

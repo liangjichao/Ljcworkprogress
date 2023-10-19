@@ -36,7 +36,7 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
 
 
 
-        gridPanel = new WorkProgressPanel(this);
+        gridPanel = new WorkProgressPanel(this,project);
 
         ActionToolbar leftToolbar = createToolbar(gridPanel);
         leftToolbar.setTargetComponent(gridPanel);

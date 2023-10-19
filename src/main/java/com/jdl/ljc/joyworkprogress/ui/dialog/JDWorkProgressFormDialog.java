@@ -16,6 +16,7 @@ import com.jdl.ljc.joyworkprogress.enums.WorkProgressStatusEnum;
 import com.jdl.ljc.joyworkprogress.ui.panel.ProgressHtmlPanel;
 import com.jdl.ljc.joyworkprogress.util.ProjectUtils;
 import com.jdl.ljc.joyworkprogress.util.RestUtils;
+import com.michaelbaranov.microba.calendar.DatePicker;
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.swingx.JXDatePicker;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +32,6 @@ import java.util.Date;
 public class JDWorkProgressFormDialog extends DialogWrapper {
     private Project project;
     private ProgressHtmlPanel editorPane;
-
     private ComboBox<WorkProgressStatusEnum> progressStatusComboBox;
     private JXDatePicker planWorkHoursPickerStart;
     private JXDatePicker planWorkHoursPickerEnd;
@@ -182,6 +182,19 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         y++;
         JLabel prdLabel = new JLabel("PRD：");
         prdField = new JTextField();
+        JButton prdLinkBtn = new JButton(AllIcons.Ide.Link);
+        prdLinkBtn.setPreferredSize(new Dimension(30, 30));
+        JPanel prdPanel = new JPanel(new BorderLayout());
+        prdPanel.add(prdField, BorderLayout.CENTER);
+        prdPanel.add(prdLinkBtn, BorderLayout.EAST);
+        prdLinkBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String url = prdField.getText();
+                openBrowserLink(url);
+            }
+        });
+
         constraints.gridx = 0;
         constraints.gridy = y;
         constraints.anchor = GridBagConstraints.WEST;
@@ -191,7 +204,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         constraints.gridx = 1;
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.weightx = 1.0;
-        topPanel.add(prdField, constraints);
+        topPanel.add(prdPanel, constraints);
 
         y++;
         JLabel productLabel = new JLabel("产品经理：");
@@ -220,7 +233,18 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         constraints.gridx = 1;
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.weightx = 1.0;
-        topPanel.add(devBranchField, constraints);
+        JPanel devBranchPanel = new JPanel(new BorderLayout());
+        devBranchPanel.add(devBranchField, BorderLayout.CENTER);
+        JButton getBranchNameBtn = new JButton(AllIcons.Actions.Checked);
+        getBranchNameBtn.setPreferredSize(new Dimension(30, 30));
+        getBranchNameBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                devBranchField.setText(ProjectUtils.getCurrentBranchName(project));
+            }
+        });
+        devBranchPanel.add(getBranchNameBtn, BorderLayout.EAST);
+        topPanel.add(devBranchPanel, constraints);
 
         y++;
         JLabel appVersionLabel = new JLabel("应用版本：");
@@ -248,13 +272,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String url = cardField.getText();
-                if (StringUtils.isNotBlank(url)) {
-                    try {
-                        Desktop.getDesktop().browse(new URI(url));
-                    } catch (Exception ex) {
-                        Messages.showInfoMessage(String.format("打开失败：%s", ex.getMessage()), "提示");
-                    }
-                }
+                openBrowserLink(url);
             }
         });
 
@@ -284,6 +302,16 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         topPanel.add(devOwnerField, constraints);
 
         return topPanel;
+    }
+
+    private static void openBrowserLink(String url) {
+        if (StringUtils.isNotBlank(url)) {
+            try {
+                Desktop.getDesktop().browse(new URI(url));
+            } catch (Exception ex) {
+                Messages.showInfoMessage(String.format("打开失败：%s", ex.getMessage()), "提示");
+            }
+        }
     }
 
     @Override
