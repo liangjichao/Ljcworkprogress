@@ -32,7 +32,7 @@ public class WpsSettingDialog extends DialogWrapper {
     @Override
     protected @Nullable JComponent createCenterPanel() {
         JPanel rootPanel = new JPanel(new BorderLayout());
-        rootPanel.setPreferredSize(new Dimension(300, 80));
+        rootPanel.setPreferredSize(new Dimension(350, 80));
         JPanel topPanel = getFormPanel();
         rootPanel.add(topPanel, BorderLayout.CENTER);
         return rootPanel;

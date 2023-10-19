@@ -12,7 +12,6 @@ import com.jdl.ljc.joyworkprogress.domain.WpsConfig;
 import com.jdl.ljc.joyworkprogress.domain.dto.ResultDto;
 import com.jdl.ljc.joyworkprogress.domain.dto.WpsDto;
 import com.jdl.ljc.joyworkprogress.domain.dto.WpsSaveDto;
-import com.jdl.ljc.joyworkprogress.domain.vo.WpsQueryDto;
 import com.jdl.ljc.joyworkprogress.enums.WorkProgressStatusEnum;
 import com.jdl.ljc.joyworkprogress.ui.panel.ProgressHtmlPanel;
 import com.jdl.ljc.joyworkprogress.util.ProjectUtils;
@@ -26,12 +25,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Date;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class JDWorkProgressFormDialog extends DialogWrapper {
     private Project project;
@@ -50,7 +45,8 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
     private WpsDto formData;
 
     private JCheckBox dependenceCheckBox;
-    public JDWorkProgressFormDialog(@Nullable Project project,WpsDto formData) {
+
+    public JDWorkProgressFormDialog(@Nullable Project project, WpsDto formData) {
         super(project);
         this.project = project;
         this.formData = formData;
@@ -105,7 +101,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.add(new JLabel("开发明细："), BorderLayout.NORTH);
         String content = "";
-        if (formData != null&&!StringUtil.isEmpty(formData.getDevInfo())) {
+        if (formData != null && !StringUtil.isEmpty(formData.getDevInfo())) {
             content = formData.getDevInfo();
         }
         editorPane = new ProgressHtmlPanel(content);
@@ -120,7 +116,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.insets = new Insets(5, 5, 5, 5);
 
-        int y=0;
+        int y = 0;
 
         JLabel progressLabel = new JLabel("进度：");
         //为状态添加下拉框编辑器
@@ -130,7 +126,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
             progressStatusComboBox.addItem(value);
             if (formData != null && formData.getProgressStatus() != null) {
                 if (formData.getProgressStatus().equals(value.getCode())) {
-                    selectedStatus=value;
+                    selectedStatus = value;
                 }
             }
         }
@@ -244,10 +240,10 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         JLabel cardLabel = new JLabel("卡片：");
         cardField = new JTextField();
         JButton openLinkBtn = new JButton(AllIcons.Ide.Link);
-        openLinkBtn.setPreferredSize(new Dimension(30,30));
+        openLinkBtn.setPreferredSize(new Dimension(30, 30));
         JPanel cardPanel = new JPanel(new BorderLayout());
-        cardPanel.add(cardField,BorderLayout.CENTER);
-        cardPanel.add(openLinkBtn,BorderLayout.EAST);
+        cardPanel.add(cardField, BorderLayout.CENTER);
+        cardPanel.add(openLinkBtn, BorderLayout.EAST);
         openLinkBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -256,7 +252,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
                     try {
                         Desktop.getDesktop().browse(new URI(url));
                     } catch (Exception ex) {
-                        Messages.showInfoMessage(String.format("打开失败：%s",ex.getMessage()),"提示");
+                        Messages.showInfoMessage(String.format("打开失败：%s", ex.getMessage()), "提示");
                     }
                 }
             }
@@ -307,20 +303,20 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
                         if (StringUtils.isNotBlank(startShortTime) && StringUtils.isBlank(endShortTime)) {
                             Messages.showInfoMessage("请完成计划工时!", "提示");
                             return;
-                        }else if (StringUtils.isNotBlank(endShortTime) && StringUtils.isBlank(startShortTime)) {
+                        } else if (StringUtils.isNotBlank(endShortTime) && StringUtils.isBlank(startShortTime)) {
                             Messages.showInfoMessage("请完成计划工时!", "提示");
                             return;
                         }
 
                         WpsSaveDto dto = getFormData(projectName);
                         String requestPath = "/wps/insert";
-                        if (formData != null && formData.getId() != null&&formData.getId()>0) {
+                        if (formData != null && formData.getId() != null && formData.getId() > 0) {
                             requestPath = "/wps/update";
                         }
                         ResultDto<String> resultDto = RestUtils.post(String.class, requestPath, dto);
                         if (resultDto.isSuccess()) {
                             close(DialogWrapper.OK_EXIT_CODE);
-                        }else{
+                        } else {
                             Messages.showInfoMessage(resultDto.getResultMessage(), "保存失败");
                         }
                     }
@@ -333,14 +329,14 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
     private WpsSaveDto getFormData(String projectName) {
         String editorContent = editorPane.getEditorContent();
         Object selectedItem = progressStatusComboBox.getSelectedItem();
-        WorkProgressStatusEnum statusEnum=(WorkProgressStatusEnum)selectedItem;
+        WorkProgressStatusEnum statusEnum = (WorkProgressStatusEnum) selectedItem;
         WpsSaveDto dto = new WpsSaveDto();
         if (formData != null) {
             dto.setId(formData.getId());
         }
         dto.setProgressStatus(statusEnum.getCode());
-        dto.setStartTime(getDateTime(planWorkHoursPickerStart," 00:00:00"));
-        dto.setEndTime(getDateTime(planWorkHoursPickerEnd," 23:59:59"));
+        dto.setStartTime(getDateTime(planWorkHoursPickerStart, " 00:00:00"));
+        dto.setEndTime(getDateTime(planWorkHoursPickerEnd, " 23:59:59"));
         dto.setDevInfo(editorContent);
         dto.setProjectName(projectName);
         dto.setPrd(prdField.getText());
@@ -351,18 +347,18 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         dto.setUserCode(devOwnerField.getText());
         if (dependenceCheckBox.isSelected()) {
             dto.setForcedDependency(1);
-        }else {
+        } else {
             dto.setForcedDependency(0);
         }
         return dto;
     }
 
-    private String getDateTime(JXDatePicker picker,String fillTime) {
+    private String getDateTime(JXDatePicker picker, String fillTime) {
         String shortDateTime = getShortDateTime(picker);
         if (StringUtils.isNoneBlank(shortDateTime)) {
-            return shortDateTime+fillTime;
+            return shortDateTime + fillTime;
         }
-        return "";
+        return null;
     }
 
     private static String getShortDateTime(JXDatePicker picker) {
@@ -373,6 +369,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         if (wpsDto == null) {
             devBranchField.setText(ProjectUtils.getCurrentBranchName(project));
             devOwnerField.setText(WpsConfig.getInstance().getCurrentUserCode());
+            dependenceCheckBox.setSelected(false);
             return;
         }
         projectNameField.setText(wpsDto.getProjectName());
@@ -387,10 +384,11 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         }
         productField.setText(wpsDto.getProductManager());
         prdField.setText(wpsDto.getPrd());
-        cardField.setText(wpsDto.getCardUrl());
+        cardField.setText(wpsDto.getCard());
         devBranchField.setText(wpsDto.getDevBranchName());
         appVersionField.setText(wpsDto.getAppVersion());
         devOwnerField.setText(wpsDto.getUserCode());
+        dependenceCheckBox.setSelected((wpsDto.getForcedDependency()!=null&&wpsDto.getForcedDependency()==1));
     }
 
     @Override

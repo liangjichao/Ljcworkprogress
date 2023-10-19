@@ -3,7 +3,7 @@ package com.jdl.ljc.joyworkprogress.domain.dto;
 public class WpsDto {
     private Long id;
     private String userCode;
-    private String cardUrl;
+    private String card;
     private Integer progressStatus;
     private String planStartTime;
     private String planEndTime;
@@ -31,12 +31,12 @@ public class WpsDto {
         this.userCode = userCode;
     }
 
-    public String getCardUrl() {
-        return cardUrl;
+    public String getCard() {
+        return card;
     }
 
-    public void setCardUrl(String cardUrl) {
-        this.cardUrl = cardUrl;
+    public void setCard(String card) {
+        this.card = card;
     }
 
     public Integer getProgressStatus() {

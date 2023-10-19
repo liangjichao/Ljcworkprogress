@@ -4,8 +4,6 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
-import com.jdl.ljc.joyworkprogress.config.WpsPluginSetting;
 import com.jdl.ljc.joyworkprogress.ui.dialog.WpsSettingDialog;
 import org.jetbrains.annotations.NotNull;
 
