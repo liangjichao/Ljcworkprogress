@@ -8,11 +8,14 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.util.ui.JBUI;
 import com.jdl.ljc.joyworkprogress.domain.WpsConfig;
 import com.jdl.ljc.joyworkprogress.domain.dto.ResultDto;
 import com.jdl.ljc.joyworkprogress.domain.dto.WpsDto;
 import com.jdl.ljc.joyworkprogress.domain.dto.WpsSaveDto;
 import com.jdl.ljc.joyworkprogress.enums.WorkProgressStatusEnum;
+import com.jdl.ljc.joyworkprogress.ui.calendar.WpsCalendarResources;
+import com.jdl.ljc.joyworkprogress.ui.calendar.WpsDatePicker;
 import com.jdl.ljc.joyworkprogress.ui.panel.ProgressHtmlPanel;
 import com.jdl.ljc.joyworkprogress.util.ProjectUtils;
 import com.jdl.ljc.joyworkprogress.util.RestUtils;
@@ -26,6 +29,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyVetoException;
 import java.net.URI;
 import java.util.Date;
 
@@ -33,8 +37,8 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
     private Project project;
     private ProgressHtmlPanel editorPane;
     private ComboBox<WorkProgressStatusEnum> progressStatusComboBox;
-    private JXDatePicker planWorkHoursPickerStart;
-    private JXDatePicker planWorkHoursPickerEnd;
+    private WpsDatePicker planWorkHoursPickerStart;
+    private WpsDatePicker planWorkHoursPickerEnd;
     private JTextField projectNameField;
     private JTextField prdField;
     private JTextField productField;
@@ -146,10 +150,8 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         y++;
         JLabel planWorkHoursLabel = new JLabel("计划工时：");
         JPanel dataPickerPanel = new JPanel();
-        planWorkHoursPickerStart = new JXDatePicker();
-        planWorkHoursPickerStart.setFormats("yyyy-MM-dd");
-        planWorkHoursPickerEnd = new JXDatePicker();
-        planWorkHoursPickerEnd.setFormats("yyyy-MM-dd");
+        planWorkHoursPickerStart = new WpsDatePicker();
+        planWorkHoursPickerEnd = new WpsDatePicker();
         UIManager.put("JXDatePicker.todayButtonText", "今日");
         dataPickerPanel.add(planWorkHoursPickerStart);
         dataPickerPanel.add(new JLabel("至"));
@@ -334,6 +336,11 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
                         } else if (StringUtils.isNotBlank(endShortTime) && StringUtils.isBlank(startShortTime)) {
                             Messages.showInfoMessage("请完成计划工时!", "提示");
                             return;
+                        }else if (StringUtils.isNotBlank(endShortTime) && StringUtils.isNotBlank(startShortTime)) {
+                            if (planWorkHoursPickerEnd.getDate().compareTo(planWorkHoursPickerStart.getDate()) < 0) {
+                                Messages.showInfoMessage("结束日期小于开始日期", "提示");
+                                return ;
+                            }
                         }
 
                         WpsSaveDto dto = getFormData(projectName);
@@ -381,7 +388,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         return dto;
     }
 
-    private String getDateTime(JXDatePicker picker, String fillTime) {
+    private String getDateTime(WpsDatePicker picker, String fillTime) {
         String shortDateTime = getShortDateTime(picker);
         if (StringUtils.isNoneBlank(shortDateTime)) {
             return shortDateTime + fillTime;
@@ -389,8 +396,8 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         return null;
     }
 
-    private static String getShortDateTime(JXDatePicker picker) {
-        return picker.getEditor().getText();
+    private static String getShortDateTime(WpsDatePicker picker) {
+        return picker.getDateFormat().format(picker.getDate());
     }
 
     private void setFormData(WpsDto wpsDto) {
@@ -404,11 +411,19 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         if (!StringUtil.isEmpty(wpsDto.getPlanStartTime())) {
 
             Date startDate = DateUtils.parseDate(wpsDto.getPlanStartTime(), WpsConfig.dateFormatPattern);
-            planWorkHoursPickerStart.setDate(startDate);
+            try {
+                planWorkHoursPickerStart.setDate(startDate);
+            } catch (PropertyVetoException e) {
+
+            }
         }
         if (!StringUtil.isEmpty(wpsDto.getPlanEndTime())) {
             Date endDate = DateUtils.parseDate(wpsDto.getPlanEndTime(), WpsConfig.dateFormatPattern);
-            planWorkHoursPickerEnd.setDate(endDate);
+            try {
+                planWorkHoursPickerEnd.setDate(endDate);
+            } catch (PropertyVetoException e) {
+
+            }
         }
         productField.setText(wpsDto.getProductManager());
         prdField.setText(wpsDto.getPrd());
