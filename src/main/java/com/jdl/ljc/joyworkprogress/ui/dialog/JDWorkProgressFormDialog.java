@@ -397,12 +397,15 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
     }
 
     private static String getShortDateTime(WpsDatePicker picker) {
-        return picker.getDateFormat().format(picker.getDate());
+        Date date = picker.getDate();
+        if(date==null){
+            return "";
+        }
+        return picker.getDateFormat().format(date);
     }
 
     private void setFormData(WpsDto wpsDto) {
         if (wpsDto == null) {
-            devBranchField.setText(ProjectUtils.getCurrentBranchName(project));
             devOwnerField.setText(WpsConfig.getInstance().getCurrentUserCode());
             dependenceCheckBox.setSelected(false);
             return;

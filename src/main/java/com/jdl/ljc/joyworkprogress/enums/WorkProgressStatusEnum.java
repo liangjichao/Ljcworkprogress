@@ -1,7 +1,7 @@
 package com.jdl.ljc.joyworkprogress.enums;
 
 public enum WorkProgressStatusEnum {
-    DEFAULT(0, "待审批"),
+    DEFAULT(0, "待排期"),
     UN_DEV(1, "待开发"),
     DEV_ING(2, "开发中"),
     DEV_FINISH(3, "开发完成"),
