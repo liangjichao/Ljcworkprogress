@@ -3,6 +3,7 @@ package com.jdl.ljc.joyworkprogress.ui.dialog;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.components.JBTextField;
+import com.intellij.util.ui.JBUI;
 import com.jdl.ljc.joyworkprogress.config.WpsPluginSetting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,6 +46,7 @@ public class WpsSettingDialog extends DialogWrapper {
         int y = 0;
         JLabel domainLabel = new JLabel("域名：");
         domainField = new JBTextField();
+        domainField.setPreferredSize(JBUI.size(200,30));
         constraints.gridx = 0;
         constraints.gridy = y;
         constraints.anchor = GridBagConstraints.WEST;

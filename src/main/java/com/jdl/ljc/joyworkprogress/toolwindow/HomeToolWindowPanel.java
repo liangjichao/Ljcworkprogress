@@ -13,9 +13,12 @@ import com.jdl.ljc.joyworkprogress.action.DeleteWorkProgressDialogAction;
 import com.jdl.ljc.joyworkprogress.action.EditWorkProgressDialogAction;
 import com.jdl.ljc.joyworkprogress.action.LocateWorkProgressDialogAction;
 import com.jdl.ljc.joyworkprogress.action.SettingAction;
+import com.jdl.ljc.joyworkprogress.config.WpsPluginSetting;
 import com.jdl.ljc.joyworkprogress.domain.WpsConfig;
+import com.jdl.ljc.joyworkprogress.ui.dialog.WpsSettingDialog;
 import com.jdl.ljc.joyworkprogress.ui.panel.SearchComboBoxPanel;
 import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressPanel;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -34,13 +37,10 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
         InitWorkTasker tasker = new InitWorkTasker(project);
         tasker.execute();
 
-
-
         gridPanel = new WorkProgressPanel(this,project);
 
         ActionToolbar leftToolbar = createToolbar(gridPanel);
         leftToolbar.setTargetComponent(gridPanel);
-
 
         searchComboBoxPanel = new SearchComboBoxPanel(this);
 
@@ -49,7 +49,15 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
         setToolbar(twoSideComponent);
         setContent(gridPanel);
 
-        gridPanel.refreshTableData();
+        if (WpsPluginSetting.getInstance().getState() != null&& StringUtils.isNotBlank(WpsPluginSetting.getInstance().getState().domain)) {
+            gridPanel.refreshTableData();
+        }else {
+            WpsSettingDialog dialog = new WpsSettingDialog(project);
+            if (dialog.showAndGet()) {
+                gridPanel.refreshTableData();
+            }
+        }
+
     }
 
     private class InitWorkTasker extends SwingWorker{
