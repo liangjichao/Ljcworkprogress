@@ -1,8 +1,8 @@
 package com.jdl.ljc.joyworkprogress.ui.panel;
 
 import com.intellij.ui.jcef.JCEFHtmlPanel;
-import com.jdl.ljc.joyworkprogress.util.FileUtils;
 import com.jdl.ljc.joyworkprogress.domain.vo.EditorContent;
+import com.jdl.ljc.joyworkprogress.util.FileUtils;
 import org.cef.CefClient;
 import org.cef.browser.CefBrowser;
 import org.cef.browser.CefFrame;
@@ -39,8 +39,8 @@ public class ProgressHtmlPanel extends JCEFHtmlPanel {
     }
     private String getIndexContent(String content) {
         String html = FileUtils.getResource("/html/index.html").replace("[!editor-content]", content);
-        html=html.replace("#{index}", FileUtils.getResource("/html/js/index.js"));
-        html=html.replace("#{style}", FileUtils.getResource("/html/css/style.css"));
+        html=html.replace("<!--#style-->", FileUtils.getResource("/html/css/style.css"));
+        html=html.replace("<!--#index-->", FileUtils.getResource("/html/js/index.js"));
         return html;
     }
 
