@@ -1,10 +1,14 @@
 package com.jdl.ljc.joyworkprogress.ui.panel;
 
+import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.ui.jcef.JCEFHtmlPanel;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
+
+import java.awt.*;
 
 /**
  * @author liangjichao
@@ -15,6 +19,8 @@ public class ProgressHtmlPanel extends JCEFHtmlPanel {
         super(null);
         String html = convertHTML(content);
         setHtml(html);
+        final EditorColorsScheme globalScheme = EditorColorsManager.getInstance().getGlobalScheme();
+        setPageBackgroundColor(colorToHex(globalScheme.getDefaultBackground()));
     }
 
     /**
@@ -31,5 +37,12 @@ public class ProgressHtmlPanel extends JCEFHtmlPanel {
         HtmlRenderer renderer=HtmlRenderer.builder(options).build();
         Node document = parser.parse(content);
         return renderer.render(document);
+    }
+
+    public String colorToHex(Color color) {
+        int r = color.getRed();;
+        int g = color.getGreen();
+        int b = color.getBlue();
+        return String.format("#%02x%02x%02x", r, g, b);
     }
 }
