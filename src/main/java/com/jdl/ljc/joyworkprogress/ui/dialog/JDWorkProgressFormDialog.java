@@ -2,12 +2,28 @@ package com.jdl.ljc.joyworkprogress.ui.dialog;
 
 import com.alibaba.fastjson2.util.DateUtils;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.browsers.actions.WebPreviewFileEditor;
+import com.intellij.ide.highlighter.HtmlFileType;
+import com.intellij.markdown.utils.MarkdownToHtmlConverter;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.editor.EditorSettings;
+import com.intellij.openapi.editor.ex.EditorEx;
+import com.intellij.openapi.editor.richcopy.view.HtmlSyntaxInfoReader;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.FileTypeManager;
+import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.NlsContexts;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.ui.EditorTextField;
+import com.intellij.util.text.MarkdownUtil;
 import com.jdl.ljc.joyworkprogress.domain.WpsConfig;
 import com.jdl.ljc.joyworkprogress.domain.dto.ResultDto;
 import com.jdl.ljc.joyworkprogress.domain.dto.WpsDto;
@@ -18,6 +34,9 @@ import com.jdl.ljc.joyworkprogress.ui.panel.ProgressHtmlPanel;
 import com.jdl.ljc.joyworkprogress.util.ProjectUtils;
 import com.jdl.ljc.joyworkprogress.util.RestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.intellij.markdown.parser.MarkdownParser;
+import org.intellij.markdown.parser.markerblocks.MarkdownParserUtil;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +50,6 @@ import java.util.Date;
 
 public class JDWorkProgressFormDialog extends DialogWrapper {
     private Project project;
-    private ProgressHtmlPanel editorPane;
     private ComboBox<WorkProgressStatusEnum> progressStatusComboBox;
     private WpsDatePicker planWorkHoursPickerStart;
     private WpsDatePicker planWorkHoursPickerEnd;
@@ -45,6 +63,8 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
     private WpsDto formData;
 
     private JCheckBox dependenceCheckBox;
+
+    private EditorTextField editorField;
 
     public JDWorkProgressFormDialog(@Nullable Project project, WpsDto formData) {
         super(project);
@@ -104,8 +124,14 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         if (formData != null && !StringUtil.isEmpty(formData.getDevInfo())) {
             content = formData.getDevInfo();
         }
-        editorPane = new ProgressHtmlPanel(content);
-        centerPanel.add(editorPane.getComponent(), BorderLayout.CENTER);
+
+//        Document document = EditorFactory.getInstance().createDocument(content);
+//        Editor editor = EditorFactory.getInstance().createEditor(document, project, FileTypeManager.getInstance().getFileTypeByExtension("md"), false);
+//        editor.getSettings().setLineNumbersShown(true);
+//        centerPanel.add(editor.getComponent(), BorderLayout.CENTER);
+
+        ProgressHtmlPanel panel = new ProgressHtmlPanel(content);
+        centerPanel.add(panel.getComponent(), BorderLayout.CENTER);
 
         return centerPanel;
     }
@@ -358,7 +384,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
 
     @NotNull
     private WpsSaveDto getFormData(String projectName) {
-        String editorContent = editorPane.getEditorContent();
+        String editorContent = editorField.getText();
         Object selectedItem = progressStatusComboBox.getSelectedItem();
         WorkProgressStatusEnum statusEnum = (WorkProgressStatusEnum) selectedItem;
         WpsSaveDto dto = new WpsSaveDto();

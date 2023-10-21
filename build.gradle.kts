@@ -24,7 +24,7 @@ dependencies{
         exclude(group = "org.slf4j",module = "slf4j-api")
     }
     implementation("com.alibaba:fastjson:2.0.28")
-
+    implementation("com.vladsch.flexmark:flexmark-all:0.64.8")
 }
 tasks {
     // Set the JVM compatibility versions
