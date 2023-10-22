@@ -21,7 +21,7 @@ import java.awt.*;
  */
 public class ProgressHtmlPanel extends JCEFHtmlPanel {
     public ProgressHtmlPanel(String content) {
-        super(null);
+        super(true,null,null);
         String html = initHTML(content);
         setHtml(html);
         final EditorColorsScheme globalScheme = EditorColorsManager.getInstance().getGlobalScheme();
