@@ -9,6 +9,8 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.EditorSettings;
+import com.intellij.openapi.editor.event.DocumentEvent;
+import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.richcopy.view.HtmlSyntaxInfoReader;
 import com.intellij.openapi.fileTypes.FileType;
@@ -23,7 +25,12 @@ import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.EditorTextField;
+import com.intellij.ui.JBSplitter;
+import com.intellij.ui.OnePixelSplitter;
+import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.text.MarkdownUtil;
+import com.intellij.util.ui.JBHtmlEditorKit;
+import com.intellij.util.ui.JBUI;
 import com.jdl.ljc.joyworkprogress.domain.WpsConfig;
 import com.jdl.ljc.joyworkprogress.domain.dto.ResultDto;
 import com.jdl.ljc.joyworkprogress.domain.dto.WpsDto;
@@ -63,8 +70,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
     private WpsDto formData;
 
     private JCheckBox dependenceCheckBox;
-
-    private EditorTextField editorField;
+    private Editor editor;
 
     public JDWorkProgressFormDialog(@Nullable Project project, WpsDto formData) {
         super(project);
@@ -125,14 +131,23 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
             content = formData.getDevInfo();
         }
 
-//        Document document = EditorFactory.getInstance().createDocument(content);
-//        Editor editor = EditorFactory.getInstance().createEditor(document, project, FileTypeManager.getInstance().getFileTypeByExtension("md"), false);
-//        editor.getSettings().setLineNumbersShown(true);
-//        centerPanel.add(editor.getComponent(), BorderLayout.CENTER);
+        ProgressHtmlPanel previewPanel = new ProgressHtmlPanel(content);
 
-        ProgressHtmlPanel panel = new ProgressHtmlPanel(content);
-        centerPanel.add(panel.getComponent(), BorderLayout.CENTER);
+        Document document = EditorFactory.getInstance().createDocument(content);
+        editor = EditorFactory.getInstance().createEditor(document, project, FileTypeManager.getInstance().getFileTypeByExtension("md"), false);
+        editor.getSettings().setLineNumbersShown(true);
+        editor.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void documentChanged(@NotNull DocumentEvent event) {
+                previewPanel.changeHtml(event.getDocument().getText());
+            }
+        });
 
+        JBSplitter splitter=new OnePixelSplitter(false);
+        splitter.setFirstComponent(editor.getComponent());
+        splitter.setSecondComponent(previewPanel.getComponent());
+
+        centerPanel.add(splitter, BorderLayout.CENTER);
         return centerPanel;
     }
 
@@ -384,7 +399,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
 
     @NotNull
     private WpsSaveDto getFormData(String projectName) {
-        String editorContent = editorField.getText();
+        String editorContent = editor.getDocument().getText();
         Object selectedItem = progressStatusComboBox.getSelectedItem();
         WorkProgressStatusEnum statusEnum = (WorkProgressStatusEnum) selectedItem;
         WpsSaveDto dto = new WpsSaveDto();

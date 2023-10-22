@@ -14,7 +14,7 @@
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
-   这是一个开发进度管理工具，帮助开发过程中记录开发进度，开发过程信息，项目开发信息等。
+   这是一个开发进度管理工具，帮助开发过程中记录开发进度，开发过程信息，项目需求信息，关联行云卡片等。
   ]]></description>
 
     <!-- Product and plugin compatibility requirements.
