@@ -4,14 +4,10 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.ui.jcef.JCEFHtmlPanel;
 import com.jdl.ljc.joyworkprogress.util.FileUtils;
-import com.vladsch.flexmark.html.HtmlRenderer;
-import com.vladsch.flexmark.parser.Parser;
-import com.vladsch.flexmark.util.ast.Node;
-import com.vladsch.flexmark.util.data.MutableDataSet;
+import com.jdl.ljc.joyworkprogress.util.StringUtils;
 import groovy.json.StringEscapeUtils;
 import org.cef.browser.CefBrowser;
 import org.cef.browser.CefFrame;
-import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
@@ -31,7 +27,7 @@ public class ProgressHtmlPanel extends JCEFHtmlPanel {
     }
 
     public void changeHtml(String content) {
-        String html = convertHTML(content);
+        String html = StringUtils.convertHTML(content);
         CefBrowser cefBrowser = getCefBrowser();
         CefFrame frame = cefBrowser.getMainFrame();
         html = StringEscapeUtils.escapeJavaScript(html);
@@ -49,18 +45,11 @@ public class ProgressHtmlPanel extends JCEFHtmlPanel {
      * @return
      */
     private static String initHTML(String content) {
-        String innerHTML = convertHTML(content);
+        String innerHTML = StringUtils.convertHTML(content);
         return FileUtils.getResource("/html/index.html").replace("[!editor-content]", innerHTML);
     }
 
-    @NotNull
-    private static String convertHTML(String content) {
-        MutableDataSet options = new MutableDataSet();
-        Parser parser=Parser.builder(options).build();
-        HtmlRenderer renderer=HtmlRenderer.builder(options).build();
-        Node document = parser.parse(content);
-        return renderer.render(document);
-    }
+
 
     public String colorToHex(Color color) {
         int r = color.getRed();;

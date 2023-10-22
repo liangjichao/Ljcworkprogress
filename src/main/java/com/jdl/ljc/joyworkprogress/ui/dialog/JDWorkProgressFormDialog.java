@@ -2,48 +2,31 @@ package com.jdl.ljc.joyworkprogress.ui.dialog;
 
 import com.alibaba.fastjson2.util.DateUtils;
 import com.intellij.icons.AllIcons;
-import com.intellij.ide.browsers.actions.WebPreviewFileEditor;
-import com.intellij.ide.highlighter.HtmlFileType;
-import com.intellij.markdown.utils.MarkdownToHtmlConverter;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.editor.EditorSettings;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
-import com.intellij.openapi.editor.ex.EditorEx;
-import com.intellij.openapi.editor.richcopy.view.HtmlSyntaxInfoReader;
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
-import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.NlsContexts;
-import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.ui.EditorTextField;
 import com.intellij.ui.JBSplitter;
 import com.intellij.ui.OnePixelSplitter;
 import com.intellij.ui.components.JBScrollPane;
-import com.intellij.util.text.MarkdownUtil;
-import com.intellij.util.ui.JBHtmlEditorKit;
-import com.intellij.util.ui.JBUI;
 import com.jdl.ljc.joyworkprogress.domain.WpsConfig;
 import com.jdl.ljc.joyworkprogress.domain.dto.ResultDto;
 import com.jdl.ljc.joyworkprogress.domain.dto.WpsDto;
 import com.jdl.ljc.joyworkprogress.domain.dto.WpsSaveDto;
 import com.jdl.ljc.joyworkprogress.enums.WorkProgressStatusEnum;
 import com.jdl.ljc.joyworkprogress.ui.calendar.WpsDatePicker;
-import com.jdl.ljc.joyworkprogress.ui.panel.ProgressHtmlPanel;
+import com.jdl.ljc.joyworkprogress.ui.panel.WpsMarkdownViewPanel;
 import com.jdl.ljc.joyworkprogress.util.ProjectUtils;
 import com.jdl.ljc.joyworkprogress.util.RestUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.intellij.markdown.parser.MarkdownParser;
-import org.intellij.markdown.parser.markerblocks.MarkdownParserUtil;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -131,7 +114,8 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
             content = formData.getDevInfo();
         }
 
-        ProgressHtmlPanel previewPanel = new ProgressHtmlPanel(content);
+        WpsMarkdownViewPanel markdownViewPanel = new WpsMarkdownViewPanel();
+        markdownViewPanel.setText(content);
 
         Document document = EditorFactory.getInstance().createDocument(content);
         editor = EditorFactory.getInstance().createEditor(document, project, FileTypeManager.getInstance().getFileTypeByExtension("md"), false);
@@ -139,13 +123,16 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         editor.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void documentChanged(@NotNull DocumentEvent event) {
-                previewPanel.changeHtml(event.getDocument().getText());
+                markdownViewPanel.setText(com.jdl.ljc.joyworkprogress.util.StringUtils.convertHTML(event.getDocument().getText()));
+
             }
         });
 
         JBSplitter splitter=new OnePixelSplitter(false);
         splitter.setFirstComponent(editor.getComponent());
-        splitter.setSecondComponent(previewPanel.getComponent());
+
+
+        splitter.setSecondComponent(new JBScrollPane(markdownViewPanel));
 
         centerPanel.add(splitter, BorderLayout.CENTER);
         return centerPanel;
