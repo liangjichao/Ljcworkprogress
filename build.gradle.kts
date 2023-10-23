@@ -17,7 +17,7 @@ intellij {
     version.set("2022.2.5")
     type.set("IC") // Target IDE Platform
 
-    plugins.set(listOf("Git4Idea"))
+    plugins.set(listOf("Git4Idea","org.intellij.plugins.markdown"))
 }
 dependencies{
     implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1"){

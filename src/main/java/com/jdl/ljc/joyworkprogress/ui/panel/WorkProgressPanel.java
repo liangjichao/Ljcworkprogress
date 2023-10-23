@@ -75,10 +75,8 @@ public class WorkProgressPanel extends JBPanel<WorkProgressPanel> {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
                     WpsDto wpsDto = getSelectRow();
-                    JDWorkProgressFormDialog dialog=new JDWorkProgressFormDialog(project, wpsDto);
-                    if (dialog.showAndGet()) {
-                        refreshTableData();
-                    }
+                    JDWorkProgressFormDialog dialog=new JDWorkProgressFormDialog(project, wpsDto,WorkProgressPanel.this);
+                    dialog.show();
                 }
             }
 

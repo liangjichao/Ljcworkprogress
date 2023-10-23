@@ -16,14 +16,14 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.JBSplitter;
 import com.intellij.ui.OnePixelSplitter;
-import com.intellij.ui.components.JBScrollPane;
 import com.jdl.ljc.joyworkprogress.domain.WpsConfig;
 import com.jdl.ljc.joyworkprogress.domain.dto.ResultDto;
 import com.jdl.ljc.joyworkprogress.domain.dto.WpsDto;
 import com.jdl.ljc.joyworkprogress.domain.dto.WpsSaveDto;
 import com.jdl.ljc.joyworkprogress.enums.WorkProgressStatusEnum;
 import com.jdl.ljc.joyworkprogress.ui.calendar.WpsDatePicker;
-import com.jdl.ljc.joyworkprogress.ui.panel.WpsMarkdownViewPanel;
+import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressPanel;
+import com.jdl.ljc.joyworkprogress.ui.panel.WpsMarkdownJCEFViewPanel;
 import com.jdl.ljc.joyworkprogress.util.ProjectUtils;
 import com.jdl.ljc.joyworkprogress.util.RestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -51,22 +51,23 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
     private JTextField cardField;
     private JTextField devOwnerField;
     private WpsDto formData;
-
     private JCheckBox dependenceCheckBox;
     private Editor editor;
+    private WorkProgressPanel panel;
 
-    public JDWorkProgressFormDialog(@Nullable Project project, WpsDto formData) {
+    public JDWorkProgressFormDialog(@Nullable Project project, WpsDto formData, WorkProgressPanel panel) {
         super(project);
         this.project = project;
         this.formData = formData;
+        this.panel = panel;
         setTitle("工作进度信息");
+        setModal(false);
         init();
         setFormData(formData);
     }
 
     @Override
     protected @Nullable JComponent createCenterPanel() {
-
         JPanel rootPanel = new JPanel(new BorderLayout());
         int rootWidth = ToolWindowManager.getInstance(project).getToolWindow("DevWorkProgress").getComponent().getRootPane().getWidth();
         int minWidth = 500;
@@ -75,17 +76,12 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
             minWidth = recommondWidth;
         }
         rootPanel.setPreferredSize(new Dimension(minWidth, 600));
-
         JPanel centerPanel = getCenterPanel();
         rootPanel.add(centerPanel, BorderLayout.CENTER);
-
         JPanel topPanel = getTopPanel();
         rootPanel.add(topPanel, BorderLayout.NORTH);
-
         JPanel bottomPanel = getBottomPanel();
         rootPanel.add(bottomPanel, BorderLayout.SOUTH);
-
-
         return rootPanel;
     }
 
@@ -93,16 +89,13 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         JPanel bottomPanel = new JPanel(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.insets = new Insets(5, 5, 5, 5);
-
         dependenceCheckBox = new JCheckBox("是否有依赖", true);
         dependenceCheckBox.setHorizontalAlignment(SwingConstants.LEFT);
-
         constraints.gridx = 0;
         constraints.gridy = 0;
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.weightx = 1.0;
         bottomPanel.add(dependenceCheckBox, constraints);
-
         return bottomPanel;
     }
 
@@ -113,29 +106,27 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         if (formData != null && !StringUtil.isEmpty(formData.getDevInfo())) {
             content = formData.getDevInfo();
         }
-
-        WpsMarkdownViewPanel markdownViewPanel = new WpsMarkdownViewPanel();
-        markdownViewPanel.setText(content);
-
+        WpsMarkdownJCEFViewPanel viewPanel = getMarkdownViewPanel(content);
         Document document = EditorFactory.getInstance().createDocument(content);
         editor = EditorFactory.getInstance().createEditor(document, project, FileTypeManager.getInstance().getFileTypeByExtension("md"), false);
         editor.getSettings().setLineNumbersShown(true);
         editor.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void documentChanged(@NotNull DocumentEvent event) {
-                markdownViewPanel.setText(com.jdl.ljc.joyworkprogress.util.StringUtils.convertHTML(event.getDocument().getText()));
-
+                viewPanel.setText(event.getDocument().getText());
             }
         });
-
-        JBSplitter splitter=new OnePixelSplitter(false);
+        JBSplitter splitter = new OnePixelSplitter(false);
         splitter.setFirstComponent(editor.getComponent());
-
-
-        splitter.setSecondComponent(new JBScrollPane(markdownViewPanel));
-
+        splitter.setSecondComponent(viewPanel);
         centerPanel.add(splitter, BorderLayout.CENTER);
         return centerPanel;
+    }
+
+    @NotNull
+    private WpsMarkdownJCEFViewPanel getMarkdownViewPanel(String content) {
+        WpsMarkdownJCEFViewPanel viewPanel = new WpsMarkdownJCEFViewPanel(project, content);
+        return viewPanel;
     }
 
     @NotNull
@@ -143,9 +134,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         JPanel topPanel = new JPanel(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.insets = new Insets(5, 5, 5, 5);
-
         int y = 0;
-
         JLabel progressLabel = new JLabel("进度：");
         //为状态添加下拉框编辑器
         progressStatusComboBox = new ComboBox<>();
@@ -161,7 +150,6 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         if (selectedStatus != null) {
             progressStatusComboBox.setSelectedItem(selectedStatus);
         }
-
         constraints.gridx = 0;
         constraints.gridy = y;
         constraints.anchor = GridBagConstraints.WEST;
@@ -170,7 +158,6 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.weightx = 1.0;
         topPanel.add(progressStatusComboBox, constraints);
-
         y++;
         JLabel planWorkHoursLabel = new JLabel("计划工时：");
         JPanel dataPickerPanel = new JPanel();
@@ -190,7 +177,6 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         constraints.fill = GridBagConstraints.NONE;
         constraints.weightx = 0;
         topPanel.add(dataPickerPanel, constraints);
-
         y++;
         JLabel titleLabel = new JLabel("<html>项目名称：<font color=\"red\">*</></html>");
         projectNameField = new JTextField();
@@ -204,7 +190,6 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.weightx = 1.0;
         topPanel.add(projectNameField, constraints);
-
         y++;
         JLabel prdLabel = new JLabel("PRD：");
         prdField = new JTextField();
@@ -220,7 +205,6 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
                 openBrowserLink(url);
             }
         });
-
         constraints.gridx = 0;
         constraints.gridy = y;
         constraints.anchor = GridBagConstraints.WEST;
@@ -231,7 +215,6 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.weightx = 1.0;
         topPanel.add(prdPanel, constraints);
-
         y++;
         JLabel productLabel = new JLabel("产品经理：");
         productField = new JTextField();
@@ -245,8 +228,6 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.weightx = 1.0;
         topPanel.add(productField, constraints);
-
-
         y++;
         JLabel devBranchLabel = new JLabel("开发分支：");
         devBranchField = new JTextField();
@@ -271,7 +252,6 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         });
         devBranchPanel.add(getBranchNameBtn, BorderLayout.EAST);
         topPanel.add(devBranchPanel, constraints);
-
         y++;
         JLabel appVersionLabel = new JLabel("应用版本：");
         appVersionField = new JTextField();
@@ -285,7 +265,6 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.weightx = 1.0;
         topPanel.add(appVersionField, constraints);
-
         y++;
         JLabel cardLabel = new JLabel("卡片：");
         cardField = new JTextField();
@@ -301,7 +280,6 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
                 openBrowserLink(url);
             }
         });
-
         constraints.gridx = 0;
         constraints.gridy = y;
         constraints.anchor = GridBagConstraints.WEST;
@@ -312,7 +290,6 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.weightx = 1.0;
         topPanel.add(cardPanel, constraints);
-
         y++;
         JLabel devOwnerLabel = new JLabel("开发人员：");
         devOwnerField = new JTextField();
@@ -326,7 +303,6 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.weightx = 1.0;
         topPanel.add(devOwnerField, constraints);
-
         return topPanel;
     }
 
@@ -360,13 +336,12 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
                         } else if (StringUtils.isNotBlank(endShortTime) && StringUtils.isBlank(startShortTime)) {
                             Messages.showInfoMessage("请完成计划工时!", "提示");
                             return;
-                        }else if (StringUtils.isNotBlank(endShortTime) && StringUtils.isNotBlank(startShortTime)) {
+                        } else if (StringUtils.isNotBlank(endShortTime) && StringUtils.isNotBlank(startShortTime)) {
                             if (planWorkHoursPickerEnd.getDate().compareTo(planWorkHoursPickerStart.getDate()) < 0) {
                                 Messages.showInfoMessage("结束日期小于开始日期", "提示");
-                                return ;
+                                return;
                             }
                         }
-
                         WpsSaveDto dto = getFormData(projectName);
                         String requestPath = "/wps/insert";
                         if (formData != null && formData.getId() != null && formData.getId() > 0) {
@@ -374,6 +349,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
                         }
                         ResultDto<String> resultDto = RestUtils.post(String.class, requestPath, dto);
                         if (resultDto.isSuccess()) {
+                            panel.refreshTableData();
                             close(DialogWrapper.OK_EXIT_CODE);
                         } else {
                             Messages.showInfoMessage(resultDto.getResultMessage(), "保存失败");
@@ -422,7 +398,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
 
     private static String getShortDateTime(WpsDatePicker picker) {
         Date date = picker.getDate();
-        if(date==null){
+        if (date == null) {
             return "";
         }
         return picker.getDateFormat().format(date);
@@ -436,12 +412,10 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         }
         projectNameField.setText(wpsDto.getProjectName());
         if (!StringUtil.isEmpty(wpsDto.getPlanStartTime())) {
-
             Date startDate = DateUtils.parseDate(wpsDto.getPlanStartTime(), WpsConfig.dateFormatPattern);
             try {
                 planWorkHoursPickerStart.setDate(startDate);
             } catch (PropertyVetoException e) {
-
             }
         }
         if (!StringUtil.isEmpty(wpsDto.getPlanEndTime())) {
@@ -449,7 +423,6 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
             try {
                 planWorkHoursPickerEnd.setDate(endDate);
             } catch (PropertyVetoException e) {
-
             }
         }
         productField.setText(wpsDto.getProductManager());
@@ -458,12 +431,11 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         devBranchField.setText(wpsDto.getDevBranchName());
         appVersionField.setText(wpsDto.getAppVersion());
         devOwnerField.setText(wpsDto.getUserCode());
-        dependenceCheckBox.setSelected((wpsDto.getForcedDependency()!=null&&wpsDto.getForcedDependency()==1));
+        dependenceCheckBox.setSelected((wpsDto.getForcedDependency() != null && wpsDto.getForcedDependency() == 1));
     }
 
     @Override
     protected void doOKAction() {
-
         //super.doOKAction();
     }
 }
