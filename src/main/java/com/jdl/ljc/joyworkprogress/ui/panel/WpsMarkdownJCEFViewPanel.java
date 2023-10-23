@@ -15,11 +15,12 @@ import java.awt.*;
  */
 public class WpsMarkdownJCEFViewPanel extends JPanel {
     private MarkdownJCEFHtmlPanel htmlPanel;
-    public WpsMarkdownJCEFViewPanel(Project project,String content) {
+
+    public WpsMarkdownJCEFViewPanel(Project project, String content) {
         super(new BorderLayout());
         htmlPanel = new MarkdownJCEFHtmlPanel(project, null);
         add(htmlPanel.getComponent(), BorderLayout.CENTER);
-        htmlPanel.setHtml(getConvertHTML(content),0);
+        htmlPanel.setHtml(getConvertHTML(content), 0);
     }
 
     @NotNull
@@ -27,7 +28,11 @@ public class WpsMarkdownJCEFViewPanel extends JPanel {
         return "<html><head></head>" + StringUtils.convertHTML(content) + "</html>";
     }
 
-    public void setText(String content) {
-        htmlPanel.setHtml(getConvertHTML(content));
+    public void updateContent(String content, int offset) {
+        htmlPanel.setHtml(getConvertHTML(content), offset);
+    }
+
+    public MarkdownJCEFHtmlPanel getComponent() {
+        return htmlPanel;
     }
 }

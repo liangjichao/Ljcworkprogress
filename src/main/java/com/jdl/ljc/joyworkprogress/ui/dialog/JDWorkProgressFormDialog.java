@@ -2,28 +2,21 @@ package com.jdl.ljc.joyworkprogress.ui.dialog;
 
 import com.alibaba.fastjson2.util.DateUtils;
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.editor.event.DocumentEvent;
-import com.intellij.openapi.editor.event.DocumentListener;
-import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.ui.JBSplitter;
-import com.intellij.ui.OnePixelSplitter;
 import com.jdl.ljc.joyworkprogress.domain.WpsConfig;
 import com.jdl.ljc.joyworkprogress.domain.dto.ResultDto;
 import com.jdl.ljc.joyworkprogress.domain.dto.WpsDto;
 import com.jdl.ljc.joyworkprogress.domain.dto.WpsSaveDto;
 import com.jdl.ljc.joyworkprogress.enums.WorkProgressStatusEnum;
+import com.jdl.ljc.joyworkprogress.ui.WpsMarkdownEditor;
 import com.jdl.ljc.joyworkprogress.ui.calendar.WpsDatePicker;
 import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressPanel;
-import com.jdl.ljc.joyworkprogress.ui.panel.WpsMarkdownJCEFViewPanel;
 import com.jdl.ljc.joyworkprogress.util.ProjectUtils;
 import com.jdl.ljc.joyworkprogress.util.RestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -52,8 +45,9 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
     private JTextField devOwnerField;
     private WpsDto formData;
     private JCheckBox dependenceCheckBox;
-    private Editor editor;
     private WorkProgressPanel panel;
+
+    private WpsMarkdownEditor editor;
 
     public JDWorkProgressFormDialog(@Nullable Project project, WpsDto formData, WorkProgressPanel panel) {
         super(project);
@@ -106,27 +100,11 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         if (formData != null && !StringUtil.isEmpty(formData.getDevInfo())) {
             content = formData.getDevInfo();
         }
-        WpsMarkdownJCEFViewPanel viewPanel = getMarkdownViewPanel(content);
-        Document document = EditorFactory.getInstance().createDocument(content);
-        editor = EditorFactory.getInstance().createEditor(document, project, FileTypeManager.getInstance().getFileTypeByExtension("md"), false);
-        editor.getSettings().setLineNumbersShown(true);
-        editor.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void documentChanged(@NotNull DocumentEvent event) {
-                viewPanel.setText(event.getDocument().getText());
-            }
-        });
-        JBSplitter splitter = new OnePixelSplitter(false);
-        splitter.setFirstComponent(editor.getComponent());
-        splitter.setSecondComponent(viewPanel);
-        centerPanel.add(splitter, BorderLayout.CENTER);
-        return centerPanel;
-    }
 
-    @NotNull
-    private WpsMarkdownJCEFViewPanel getMarkdownViewPanel(String content) {
-        WpsMarkdownJCEFViewPanel viewPanel = new WpsMarkdownJCEFViewPanel(project, content);
-        return viewPanel;
+        editor = new WpsMarkdownEditor(project, content);
+
+        centerPanel.add(editor.getComponent(), BorderLayout.CENTER);
+        return centerPanel;
     }
 
     @NotNull
@@ -362,7 +340,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
 
     @NotNull
     private WpsSaveDto getFormData(String projectName) {
-        String editorContent = editor.getDocument().getText();
+        String editorContent = editor.getText();
         Object selectedItem = progressStatusComboBox.getSelectedItem();
         WorkProgressStatusEnum statusEnum = (WorkProgressStatusEnum) selectedItem;
         WpsSaveDto dto = new WpsSaveDto();
