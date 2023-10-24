@@ -20,7 +20,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.StringWriter;
 
-public class WpsMarkdownViewPanel extends JEditorPane implements HyperlinkListener {
+public class WpsMarkdownViewPanel extends JEditorPane implements HyperlinkListener,WpsEditor{
 
     public WpsMarkdownViewPanel() {
         super(UIUtil.HTML_MIME, "");
@@ -70,4 +70,8 @@ public class WpsMarkdownViewPanel extends JEditorPane implements HyperlinkListen
         return super.getSelectedText();
     }
 
+    @Override
+    public void updateContent(String content, int offset) {
+        setText(content);
+    }
 }

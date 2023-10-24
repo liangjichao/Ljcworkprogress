@@ -11,7 +11,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.ui.JBSplitter;
 import com.intellij.ui.OnePixelSplitter;
+import com.intellij.ui.components.JBScrollPane;
 import com.jdl.ljc.joyworkprogress.ui.panel.WpsMarkdownJCEFViewPanel;
+import com.jdl.ljc.joyworkprogress.ui.panel.WpsMarkdownViewPanel;
+import com.jdl.ljc.joyworkprogress.util.ObjectUtils;
 import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanelEx;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,29 +31,44 @@ public class WpsMarkdownEditor {
     private JComponent myComponent;
 
     private Editor editor;
-    private WpsMarkdownJCEFViewPanel myPanel;
+    private JComponent viewEditor;
     public WpsMarkdownEditor(Project project,String content) {
-        myPanel = new WpsMarkdownJCEFViewPanel(project, content);
+
         Document document = EditorFactory.getInstance().createDocument(content);
         editor = EditorFactory.getInstance().createEditor(document, project, FileTypeManager.getInstance().getFileTypeByExtension("md"), false);
         editor.getSettings().setLineNumbersShown(true);
+        boolean useSimpleEditor = ObjectUtils.hasClazz("org.intellij.plugins.markdown.ui.preview.jcef.MarkdownJCEFHtmlPanel");
 
+        if (useSimpleEditor) {
+            WpsMarkdownJCEFViewPanel myPanel = new WpsMarkdownJCEFViewPanel(project, content);
+            EditorImpl myEditor = (EditorImpl)editor;
+            myEditor.getScrollPane().addMouseWheelListener(new PreciseVerticalScrollHelper(myEditor,
+                    () -> (myPanel.getComponent() instanceof MarkdownHtmlPanelEx)? (MarkdownHtmlPanelEx)myPanel.getComponent() : null));
+            editor.getDocument().addDocumentListener(new DocumentListener() {
+                @Override
+                public void documentChanged(@NotNull DocumentEvent event) {
+                    int s = myEditor.getScrollingModel().getVerticalScrollOffset();
+                    myPanel.updateContent(event.getDocument().getText(),s);
+                }
+            });
+            viewEditor=myPanel;
+        }else{
+            WpsMarkdownViewPanel viewPanel = new WpsMarkdownViewPanel();
+            viewPanel.setText(content);
+            editor.getDocument().addDocumentListener(new DocumentListener() {
+                @Override
+                public void documentChanged(@NotNull DocumentEvent event) {
+                    viewPanel.updateContent(event.getDocument().getText(),0);
+                }
+            });
+            viewEditor=new JBScrollPane(viewPanel);
+        }
 
-        EditorImpl myEditor = (EditorImpl)editor;
-        myEditor.getScrollPane().addMouseWheelListener(new PreciseVerticalScrollHelper(myEditor,
-                () -> (myPanel.getComponent() instanceof MarkdownHtmlPanelEx)? (MarkdownHtmlPanelEx)myPanel.getComponent() : null));
-
-        editor.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void documentChanged(@NotNull DocumentEvent event) {
-                int s = myEditor.getScrollingModel().getVerticalScrollOffset();
-                myPanel.updateContent(event.getDocument().getText(),s);
-            }
-        });
 
         JBSplitter splitter = new OnePixelSplitter(false);
         splitter.setFirstComponent(editor.getComponent());
-        splitter.setSecondComponent(myPanel);
+        splitter.setSecondComponent(viewEditor);
+
         myComponent = splitter;
     }
 
