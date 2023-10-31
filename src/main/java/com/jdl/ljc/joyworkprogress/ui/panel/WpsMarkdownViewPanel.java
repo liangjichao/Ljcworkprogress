@@ -8,6 +8,7 @@ import com.intellij.openapi.vcs.ui.FontUtil;
 import com.intellij.ui.BrowserHyperlinkListener;
 import com.intellij.util.ui.HTMLEditorKitBuilder;
 import com.intellij.util.ui.UIUtil;
+import com.jdl.ljc.joyworkprogress.util.FileUtils;
 import com.jdl.ljc.joyworkprogress.util.StringUtils;
 
 import javax.swing.*;
@@ -37,12 +38,17 @@ public class WpsMarkdownViewPanel extends JEditorPane implements HyperlinkListen
 
     @Override
     public void setText(String t) {
-        String html = StringUtils.convertHTML(t);
+        String html = String.format("""
+                <div class="markdown-body">%s</div>
+                """,StringUtils.convertHTML(t));
         String cssFontDeclaration = UIUtil.getCssFontDeclaration(FontUtil.getCommitMessageFont());
-        super.setText(new HtmlBuilder()
-                .append(HtmlChunk.raw(cssFontDeclaration).wrapWith("head"))
+        String css = String.format("%s<style>%s</style>",cssFontDeclaration,FileUtils.getResource("/html/markdown-view.css"));
+
+        String all = new HtmlBuilder()
+                .append(HtmlChunk.raw(css).wrapWith("head"))
                 .append(HtmlChunk.raw(html).wrapWith(HtmlChunk.body()))
-                .wrapWith(HtmlChunk.html()).toString());
+                .wrapWith(HtmlChunk.html()).toString();
+        super.setText(all);
     }
 
 
