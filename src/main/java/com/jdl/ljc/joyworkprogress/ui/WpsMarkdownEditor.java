@@ -12,9 +12,9 @@ import com.intellij.openapi.util.registry.Registry;
 import com.intellij.ui.JBSplitter;
 import com.intellij.ui.OnePixelSplitter;
 import com.intellij.ui.components.JBScrollPane;
+import com.intellij.ui.jcef.JBCefApp;
 import com.jdl.ljc.joyworkprogress.ui.panel.WpsMarkdownJCEFViewPanel;
 import com.jdl.ljc.joyworkprogress.ui.panel.WpsMarkdownViewPanel;
-import com.jdl.ljc.joyworkprogress.util.ObjectUtils;
 import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanelEx;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,9 +37,8 @@ public class WpsMarkdownEditor {
         Document document = EditorFactory.getInstance().createDocument(content);
         editor = EditorFactory.getInstance().createEditor(document, project, FileTypeManager.getInstance().getFileTypeByExtension("md"), false);
         editor.getSettings().setLineNumbersShown(true);
-        boolean useSimpleEditor = ObjectUtils.hasClazz("org.intellij.plugins.markdown.ui.preview.jcef.MarkdownJCEFHtmlPanel");
 
-        if (useSimpleEditor) {
+        if (!JBCefApp.isSupported()) {
             WpsMarkdownJCEFViewPanel myPanel = new WpsMarkdownJCEFViewPanel(project, content);
             EditorImpl myEditor = (EditorImpl)editor;
             myEditor.getScrollPane().addMouseWheelListener(new PreciseVerticalScrollHelper(myEditor,
