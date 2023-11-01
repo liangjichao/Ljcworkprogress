@@ -39,7 +39,7 @@ public class WpsMarkdownEditor {
         editor = EditorFactory.getInstance().createEditor(document, project, FileTypeManager.getInstance().getFileTypeByExtension("md"), false);
         editor.getSettings().setLineNumbersShown(true);
 
-        if (!JBCefApp.isSupported()) {
+        if (JBCefApp.isSupported()) {
             WpsMarkdownJCEFViewPanel myPanel = new WpsMarkdownJCEFViewPanel(project, content);
             EditorImpl myEditor = (EditorImpl)editor;
             myEditor.getScrollPane().addMouseWheelListener(new PreciseVerticalScrollHelper(
