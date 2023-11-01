@@ -8,9 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicMenuUI;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 public class UserMenu extends JBMenu {
     private String selectedText;

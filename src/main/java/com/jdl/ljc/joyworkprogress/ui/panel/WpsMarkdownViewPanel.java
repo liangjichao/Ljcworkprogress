@@ -23,13 +23,16 @@ import java.io.StringWriter;
 
 public class WpsMarkdownViewPanel extends JEditorPane implements HyperlinkListener,WpsEditor{
 
-    public WpsMarkdownViewPanel() {
+    public WpsMarkdownViewPanel(String content) {
         super(UIUtil.HTML_MIME, "");
         setEditable(false);
         setOpaque(false);
         putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
         addHyperlinkListener(this);
         setEditorKit(new HTMLEditorKitBuilder().withWordWrapViewFactory().build());
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(content)) {
+            setText(content);
+        }
     }
     @Override
     public Color getBackground() {

@@ -19,6 +19,7 @@ import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanelEx;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.util.function.Supplier;
@@ -38,11 +39,11 @@ public class WpsMarkdownEditor {
         editor = EditorFactory.getInstance().createEditor(document, project, FileTypeManager.getInstance().getFileTypeByExtension("md"), false);
         editor.getSettings().setLineNumbersShown(true);
 
-        if (JBCefApp.isSupported()) {
+        if (!JBCefApp.isSupported()) {
             WpsMarkdownJCEFViewPanel myPanel = new WpsMarkdownJCEFViewPanel(project, content);
             EditorImpl myEditor = (EditorImpl)editor;
-            myEditor.getScrollPane().addMouseWheelListener(new PreciseVerticalScrollHelper(myEditor,
-                    () -> (myPanel.getComponent() instanceof MarkdownHtmlPanelEx)? (MarkdownHtmlPanelEx)myPanel.getComponent() : null));
+            myEditor.getScrollPane().addMouseWheelListener(new PreciseVerticalScrollHelper(
+                    () -> (myPanel.getComponent() instanceof MarkdownHtmlPanelEx)? myPanel.getComponent() : null));
             editor.getDocument().addDocumentListener(new DocumentListener() {
                 @Override
                 public void documentChanged(@NotNull DocumentEvent event) {
@@ -52,15 +53,19 @@ public class WpsMarkdownEditor {
             });
             viewEditor=myPanel;
         }else{
-            WpsMarkdownViewPanel viewPanel = new WpsMarkdownViewPanel();
-            viewPanel.setText(content);
+            WpsMarkdownViewPanel viewPanel = new WpsMarkdownViewPanel(content);
+            JBScrollPane scrollPane = new JBScrollPane(viewPanel);
+
+            EditorImpl myEditor = (EditorImpl)editor;
+            myEditor.getScrollPane().addMouseWheelListener(new ViewScrollHelper(scrollPane));
+
             editor.getDocument().addDocumentListener(new DocumentListener() {
                 @Override
                 public void documentChanged(@NotNull DocumentEvent event) {
                     viewPanel.updateContent(event.getDocument().getText(),0);
                 }
             });
-            viewEditor=new JBScrollPane(viewPanel);
+            viewEditor= scrollPane;
         }
 
 
@@ -80,11 +85,9 @@ public class WpsMarkdownEditor {
     }
 
     private static class PreciseVerticalScrollHelper extends MouseAdapter {
-        private final @NotNull EditorImpl editor;
         private final @NotNull Supplier<MarkdownHtmlPanelEx> htmlPanelSupplier;
 
-        private PreciseVerticalScrollHelper(@NotNull EditorImpl editor, @NotNull Supplier<MarkdownHtmlPanelEx> htmlPanelSupplier) {
-            this.editor = editor;
+        private PreciseVerticalScrollHelper(@NotNull Supplier<MarkdownHtmlPanelEx> htmlPanelSupplier) {
             this.htmlPanelSupplier = htmlPanelSupplier;
         }
 
@@ -98,6 +101,29 @@ public class WpsMarkdownEditor {
                 final var multiplier = Registry.intValue("ide.browser.jcef.osr.wheelRotation.factor", 1);
                 final var amount = event.getScrollAmount() * event.getWheelRotation() * multiplier;
                 actualPanel.scrollBy(0, amount);
+            }
+        }
+
+
+    }
+    private static class ViewScrollHelper extends MouseAdapter {
+        private final @NotNull JBScrollPane scrollPane;
+
+        private ViewScrollHelper(@NotNull JBScrollPane htmlPanelSupplier) {
+            this.scrollPane = htmlPanelSupplier;
+        }
+
+        @Override
+        public void mouseWheelMoved(MouseWheelEvent event) {
+            if (scrollPane == null) {
+                return;
+            }
+            if (event.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
+                final var multiplier = Registry.intValue("ide.browser.jcef.osr.wheelRotation.factor", 1);
+                final var amount = event.getScrollAmount() * event.getWheelRotation() * multiplier;
+                JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
+
+                verticalScrollBar.setValue(verticalScrollBar.getValue()+amount);
             }
         }
 
