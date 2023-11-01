@@ -19,7 +19,6 @@ import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanelEx;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.util.function.Supplier;
@@ -58,7 +57,6 @@ public class WpsMarkdownEditor {
 
             EditorImpl myEditor = (EditorImpl)editor;
             myEditor.getScrollPane().addMouseWheelListener(new ViewScrollHelper(scrollPane));
-
             editor.getDocument().addDocumentListener(new DocumentListener() {
                 @Override
                 public void documentChanged(@NotNull DocumentEvent event) {

@@ -33,6 +33,7 @@ public class WpsMarkdownViewPanel extends JEditorPane implements HyperlinkListen
         if (org.apache.commons.lang3.StringUtils.isNotBlank(content)) {
             setText(content);
         }
+        setFont(FontUtil.getCommitMessageFont());
     }
     @Override
     public Color getBackground() {
@@ -44,8 +45,7 @@ public class WpsMarkdownViewPanel extends JEditorPane implements HyperlinkListen
         String html = String.format("""
                 <div class="markdown-body">%s</div>
                 """,StringUtils.convertHTML(t));
-        String cssFontDeclaration = UIUtil.getCssFontDeclaration(FontUtil.getCommitMessageFont());
-        String css = String.format("%s<style>%s</style>",cssFontDeclaration,FileUtils.getResource("/html/markdown-view.css"));
+        String css = String.format("<style>%s</style>",FileUtils.getResource("/html/markdown-view.css"));
 
         String all = new HtmlBuilder()
                 .append(HtmlChunk.raw(css).wrapWith("head"))
