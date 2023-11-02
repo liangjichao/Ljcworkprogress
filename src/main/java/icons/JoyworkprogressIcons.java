@@ -11,6 +11,7 @@ import javax.swing.Icon;
  */
 public class JoyworkprogressIcons {
     public static Icon ToolWindowIcon = IconLoader.getIcon("icons/JoyworkprogressLogo.svg", JoyworkprogressIcons.class);
+    public static Icon FULL_SCREEN = IconLoader.getIcon("icons/full_screen.svg", JoyworkprogressIcons.class);
 
     public JoyworkprogressIcons() {
     }

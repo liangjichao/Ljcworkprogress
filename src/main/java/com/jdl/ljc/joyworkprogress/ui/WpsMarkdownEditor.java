@@ -1,5 +1,8 @@
 package com.jdl.ljc.joyworkprogress.ui;
 
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
@@ -13,12 +16,16 @@ import com.intellij.ui.JBSplitter;
 import com.intellij.ui.OnePixelSplitter;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.jcef.JBCefApp;
+import com.jdl.ljc.joyworkprogress.action.editor.EditorButtonAction;
+import com.jdl.ljc.joyworkprogress.enums.EditorButtonEnum;
 import com.jdl.ljc.joyworkprogress.ui.panel.WpsMarkdownJCEFViewPanel;
 import com.jdl.ljc.joyworkprogress.ui.panel.WpsMarkdownViewPanel;
+import icons.JoyworkprogressIcons;
 import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanelEx;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.util.function.Supplier;
@@ -71,7 +78,22 @@ public class WpsMarkdownEditor {
         splitter.setFirstComponent(editor.getComponent());
         splitter.setSecondComponent(viewEditor);
 
+        JPanel editorPanel = new JPanel(new BorderLayout());
+        ActionToolbar toolbar = createToolbar();
+        toolbar.setTargetComponent(editorPanel);
+        editorPanel.add(toolbar.getComponent(), BorderLayout.NORTH);
+        editorPanel.add(splitter, BorderLayout.CENTER);
+
         myComponent = splitter;
+    }
+
+    private ActionToolbar createToolbar() {
+        DefaultActionGroup actionGroup = new DefaultActionGroup("WPS_EDITOR_GROUP", false);
+
+        actionGroup.add(new EditorButtonAction(EditorButtonEnum.FULL_SCREENT.name(), JoyworkprogressIcons.FULL_SCREEN, this));
+
+        ActionManager actionManager = ActionManager.getInstance();
+        return actionManager.createActionToolbar("WPS_EDITOR_TOOLBAR", actionGroup, true);
     }
 
     public String getText() {
