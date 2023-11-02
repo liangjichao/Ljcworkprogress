@@ -18,6 +18,7 @@ import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.jcef.JBCefApp;
 import com.jdl.ljc.joyworkprogress.action.editor.EditorButtonAction;
 import com.jdl.ljc.joyworkprogress.enums.EditorButtonEnum;
+import com.jdl.ljc.joyworkprogress.ui.dialog.JDWorkProgressFormDialog;
 import com.jdl.ljc.joyworkprogress.ui.panel.WpsMarkdownJCEFViewPanel;
 import com.jdl.ljc.joyworkprogress.ui.panel.WpsMarkdownViewPanel;
 import icons.JoyworkprogressIcons;
@@ -39,8 +40,10 @@ public class WpsMarkdownEditor {
 
     private Editor editor;
     private JComponent viewEditor;
-    public WpsMarkdownEditor(Project project,String content) {
 
+    private JDWorkProgressFormDialog formDialog;
+    public WpsMarkdownEditor(Project project,String content,JDWorkProgressFormDialog formDialog) {
+        this.formDialog = formDialog;
         Document document = EditorFactory.getInstance().createDocument(content);
         editor = EditorFactory.getInstance().createEditor(document, project, FileTypeManager.getInstance().getFileTypeByExtension("md"), false);
         editor.getSettings().setLineNumbersShown(true);
@@ -94,6 +97,10 @@ public class WpsMarkdownEditor {
 
         ActionManager actionManager = ActionManager.getInstance();
         return actionManager.createActionToolbar("WPS_EDITOR_TOOLBAR", actionGroup, true);
+    }
+
+    public JDWorkProgressFormDialog getFormDialog() {
+        return formDialog;
     }
 
     public String getText() {

@@ -101,7 +101,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
             content = formData.getDevInfo();
         }
 
-        editor = new WpsMarkdownEditor(project, content);
+        editor = new WpsMarkdownEditor(project, content,this);
 
         centerPanel.add(editor.getComponent(), BorderLayout.CENTER);
         return centerPanel;
