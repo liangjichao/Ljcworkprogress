@@ -3,7 +3,6 @@ package com.jdl.ljc.joyworkprogress.util;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vfs.VirtualFile;
-import git4idea.GitUserRegistry;
 import git4idea.GitUtil;
 import git4idea.config.GitConfigUtil;
 import git4idea.repo.GitRepository;

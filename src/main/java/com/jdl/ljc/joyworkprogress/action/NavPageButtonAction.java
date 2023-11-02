@@ -6,8 +6,6 @@ import com.jdl.ljc.joyworkprogress.domain.dto.WpsPageDto;
 import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressNavPanel;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-
 /**
  * @author liangjichao
  * @date 2023/10/17 12:09 PM

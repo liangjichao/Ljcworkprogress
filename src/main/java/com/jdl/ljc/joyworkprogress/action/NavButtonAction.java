@@ -2,7 +2,6 @@ package com.jdl.ljc.joyworkprogress.action;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.ui.components.JBTextArea;
 import com.jdl.ljc.joyworkprogress.domain.dto.WpsPageDto;
 import com.jdl.ljc.joyworkprogress.enums.NavButtonEnum;
 import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressNavPanel;

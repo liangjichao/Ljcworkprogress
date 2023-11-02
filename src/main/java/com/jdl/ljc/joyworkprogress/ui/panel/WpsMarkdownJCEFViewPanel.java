@@ -2,7 +2,6 @@ package com.jdl.ljc.joyworkprogress.ui.panel;
 
 import com.intellij.openapi.project.Project;
 import com.jdl.ljc.joyworkprogress.util.StringUtils;
-import org.intellij.plugins.markdown.ui.preview.jcef.JCEFHtmlPanelProvider;
 import org.intellij.plugins.markdown.ui.preview.jcef.MarkdownJCEFHtmlPanel;
 import org.jetbrains.annotations.NotNull;
 

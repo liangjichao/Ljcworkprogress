@@ -1,7 +1,6 @@
 package com.jdl.ljc.joyworkprogress.ui.calendar;
 
 import com.michaelbaranov.microba.calendar.CalendarResources;
-import com.michaelbaranov.microba.calendar.DefaultCalendarResources;
 
 import java.io.IOException;
 import java.util.Locale;

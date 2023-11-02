@@ -1,6 +1,5 @@
 package com.jdl.ljc.joyworkprogress.ui.panel;
 
-import com.intellij.find.SearchTextArea;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -10,7 +9,6 @@ import com.intellij.ui.ExperimentalUI;
 import com.intellij.ui.IconManager;
 import com.intellij.ui.SearchTextField;
 import com.intellij.ui.components.JBPanel;
-import com.intellij.ui.components.JBTextArea;
 import com.intellij.util.ui.JBUI;
 import com.jdl.ljc.joyworkprogress.domain.WpsConfig;
 import com.jdl.ljc.joyworkprogress.domain.vo.WpsQueryDto;
@@ -22,9 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 public class SearchComboBoxPanel extends JBPanel implements Disposable {
     private JMenuBar menuBar;

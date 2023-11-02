@@ -89,7 +89,7 @@ public class WpsMarkdownEditor {
         editorPanel.add(toolbar.getComponent(), BorderLayout.NORTH);
         editorPanel.add(splitter, BorderLayout.CENTER);
 
-        myComponent = splitter;
+        myComponent = editorPanel;
     }
     public String getSelectionText() {
         return this.editor.getSelectionModel().getSelectedText();

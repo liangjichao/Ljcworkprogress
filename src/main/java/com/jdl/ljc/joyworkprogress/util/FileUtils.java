@@ -1,11 +1,8 @@
 package com.jdl.ljc.joyworkprogress.util;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
 public class FileUtils {
     public static String getResource(String name) {

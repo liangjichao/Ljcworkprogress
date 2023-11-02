@@ -2,7 +2,6 @@ package com.jdl.ljc.joyworkprogress.ui.dialog;
 
 import com.alibaba.fastjson2.util.DateUtils;
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -49,6 +48,10 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
 
     private WpsMarkdownEditor editor;
 
+    private JPanel topPanel;
+
+    private JPanel bottomPanel;
+
     public JDWorkProgressFormDialog(@Nullable Project project, WpsDto formData, WorkProgressPanel panel) {
         super(project);
         this.project = project;
@@ -72,9 +75,9 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         rootPanel.setPreferredSize(new Dimension(minWidth, 600));
         JPanel centerPanel = getCenterPanel();
         rootPanel.add(centerPanel, BorderLayout.CENTER);
-        JPanel topPanel = getTopPanel();
+        topPanel = getTopPanel();
         rootPanel.add(topPanel, BorderLayout.NORTH);
-        JPanel bottomPanel = getBottomPanel();
+        bottomPanel = getBottomPanel();
         rootPanel.add(bottomPanel, BorderLayout.SOUTH);
         return rootPanel;
     }
@@ -282,6 +285,11 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         constraints.weightx = 1.0;
         topPanel.add(devOwnerField, constraints);
         return topPanel;
+    }
+
+    public void full() {
+        topPanel.setVisible(!topPanel.isVisible());
+        bottomPanel.setVisible(!bottomPanel.isVisible());
     }
 
     private static void openBrowserLink(String url) {

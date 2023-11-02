@@ -14,7 +14,6 @@ import com.jdl.ljc.joyworkprogress.action.NavPageButtonAction;
 import com.jdl.ljc.joyworkprogress.domain.dto.WpsPageDto;
 import com.jdl.ljc.joyworkprogress.enums.NavButtonEnum;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.jdesktop.swingx.JXTextField;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;

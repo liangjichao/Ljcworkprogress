@@ -1,10 +1,8 @@
 package com.jdl.ljc.joyworkprogress.ui.dialog;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.util.ui.JBUI;
-import com.jdl.ljc.joyworkprogress.config.WpsPluginSetting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
