@@ -14,10 +14,12 @@ import com.intellij.openapi.editor.impl.EditorImpl;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.registry.Registry;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.JBSplitter;
 import com.intellij.ui.OnePixelSplitter;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.jcef.JBCefApp;
+import com.intellij.util.ui.JBUI;
 import com.jdl.ljc.joyworkprogress.action.editor.EditorButtonAction;
 import com.jdl.ljc.joyworkprogress.enums.EditorButtonEnum;
 import com.jdl.ljc.joyworkprogress.ui.dialog.JDWorkProgressFormDialog;
@@ -28,6 +30,10 @@ import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanelEx;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import javax.swing.plaf.PanelUI;
+import javax.swing.plaf.basic.BasicPanelUI;
+import javax.swing.plaf.basic.BasicSplitPaneDivider;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseWheelEvent;
@@ -44,6 +50,7 @@ public class WpsMarkdownEditor {
     private JComponent viewEditor;
 
     private JDWorkProgressFormDialog formDialog;
+    private JBSplitter editorSplitter;
     public WpsMarkdownEditor(Project project,String content,JDWorkProgressFormDialog formDialog) {
         this.formDialog = formDialog;
         Document document = EditorFactory.getInstance().createDocument(content);
@@ -51,18 +58,18 @@ public class WpsMarkdownEditor {
         editor.getSettings().setLineNumbersShown(true);
 
         if (JBCefApp.isSupported()) {
-            WpsMarkdownJCEFViewPanel myPanel = new WpsMarkdownJCEFViewPanel(project, content);
+            WpsMarkdownJCEFViewPanel viewPanel = new WpsMarkdownJCEFViewPanel(project, content);
             EditorImpl myEditor = (EditorImpl)editor;
             myEditor.getScrollPane().addMouseWheelListener(new PreciseVerticalScrollHelper(
-                    () -> (myPanel.getComponent() instanceof MarkdownHtmlPanelEx)? myPanel.getComponent() : null));
+                    () -> (viewPanel.getComponent() instanceof MarkdownHtmlPanelEx)? viewPanel.getComponent() : null));
             editor.getDocument().addDocumentListener(new DocumentListener() {
                 @Override
                 public void documentChanged(@NotNull DocumentEvent event) {
                     int s = myEditor.getScrollingModel().getVerticalScrollOffset();
-                    myPanel.updateContent(event.getDocument().getText(),s);
+                    viewPanel.updateContent(event.getDocument().getText(),s);
                 }
             });
-            viewEditor=myPanel;
+            viewEditor=viewPanel;
         }else{
             WpsMarkdownViewPanel viewPanel = new WpsMarkdownViewPanel(content);
             JBScrollPane scrollPane = new JBScrollPane(viewPanel);
@@ -79,17 +86,35 @@ public class WpsMarkdownEditor {
         }
 
 
-        JBSplitter splitter = new OnePixelSplitter(false);
-        splitter.setFirstComponent(editor.getComponent());
-        splitter.setSecondComponent(viewEditor);
+        editorSplitter = new OnePixelSplitter(false);
+        editorSplitter.setDividerWidth(1);
+        JPanel divider = editorSplitter.getDivider();
+        divider.setBackground(JBColor.border().brighter());
+
+        editorSplitter.setFirstComponent(editor.getComponent());
+        editorSplitter.setSecondComponent(viewEditor);
+
 
         JPanel editorPanel = new JPanel(new BorderLayout());
         ActionToolbar toolbar = createToolbar();
         toolbar.setTargetComponent(editorPanel);
         editorPanel.add(toolbar.getComponent(), BorderLayout.NORTH);
-        editorPanel.add(splitter, BorderLayout.CENTER);
+        editorPanel.add(editorSplitter, BorderLayout.CENTER);
 
         myComponent = editorPanel;
+    }
+
+    public void changeSplitter(String uid) {
+        if (EditorButtonEnum.EDITOR.name().equals(uid)) {
+            editorSplitter.getFirstComponent().setVisible(true);
+            editorSplitter.getSecondComponent().setVisible(false);
+        }else if (EditorButtonEnum.EDITOR_AND_PREVIEW.name().equals(uid)) {
+            editorSplitter.getFirstComponent().setVisible(true);
+            editorSplitter.getSecondComponent().setVisible(true);
+        }else if (EditorButtonEnum.PREVIEW.name().equals(uid)) {
+            editorSplitter.getFirstComponent().setVisible(false);
+            editorSplitter.getSecondComponent().setVisible(true);
+        }
     }
     public String getSelectionText() {
         return this.editor.getSelectionModel().getSelectedText();
@@ -123,6 +148,10 @@ public class WpsMarkdownEditor {
         DefaultActionGroup actionGroup = new DefaultActionGroup("WPS_EDITOR_GROUP", false);
 
         actionGroup.add(new EditorButtonAction(EditorButtonEnum.FULL_SCREENT.name(), JoyworkprogressIcons.FULL_SCREEN, this));
+        actionGroup.addSeparator();
+        actionGroup.add(new EditorButtonAction(EditorButtonEnum.EDITOR.name(), JoyworkprogressIcons.EDITOR, this));
+        actionGroup.add(new EditorButtonAction(EditorButtonEnum.EDITOR_AND_PREVIEW.name(), JoyworkprogressIcons.EDITOR_AND_PREVIEW, this));
+        actionGroup.add(new EditorButtonAction(EditorButtonEnum.PREVIEW.name(), JoyworkprogressIcons.PREVIEW, this));
 
         ActionManager actionManager = ActionManager.getInstance();
         return actionManager.createActionToolbar("WPS_EDITOR_TOOLBAR", actionGroup, true);

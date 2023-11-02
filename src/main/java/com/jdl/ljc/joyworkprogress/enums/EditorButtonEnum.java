@@ -6,5 +6,15 @@ package com.jdl.ljc.joyworkprogress.enums;
  */
 public enum EditorButtonEnum {
     FULL_SCREENT,
-    LINK
+    LINK,
+    EDITOR,
+    EDITOR_AND_PREVIEW,
+    PREVIEW;
+
+    public static boolean spliterBtn(String uid) {
+        if (EDITOR.name().equals(uid)||EDITOR_AND_PREVIEW.name().equals(uid)||PREVIEW.name().equals(uid)) {
+            return true;
+        }
+        return false;
+    }
 }

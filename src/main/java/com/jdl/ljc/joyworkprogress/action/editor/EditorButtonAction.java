@@ -40,6 +40,8 @@ public class EditorButtonAction extends AnAction {
                     editor.replateText(MarkdownTextUtils.createLink(title, url));
                 }
             }
+        }else if(EditorButtonEnum.spliterBtn(uid)){
+            editor.changeSplitter(uid);
         }
 
     }
