@@ -3,6 +3,8 @@ package com.jdl.ljc.joyworkprogress.ui;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
@@ -89,7 +91,34 @@ public class WpsMarkdownEditor {
 
         myComponent = splitter;
     }
+    public String getSelectionText() {
+        return this.editor.getSelectionModel().getSelectedText();
+    }
 
+    public void insertText(String text) {
+        ApplicationManager.getApplication().runWriteAction(() -> {
+            CommandProcessor.getInstance().executeCommand(editor.getProject(), () -> {
+                int offset = editor.getCaretModel().getOffset();
+                editor.getDocument().insertString(offset, text);
+                editor.getCaretModel().moveToOffset(offset + text.length());
+            }, "Insert Text", null);
+        });
+
+    }
+
+    public void replateText(String text) {
+        ApplicationManager.getApplication().runWriteAction(() -> {
+            CommandProcessor.getInstance().executeCommand(editor.getProject(), () -> {
+                int start = editor.getSelectionModel().getSelectionStart();
+                int end = editor.getSelectionModel().getSelectionEnd();
+                editor.getDocument().replaceString(start, end, text);
+                editor.getCaretModel().moveToOffset(start
+                        + text.length());
+                editor.getSelectionModel().removeSelection();
+            }, "Insert Text", null);
+        });
+
+    }
     private ActionToolbar createToolbar() {
         DefaultActionGroup actionGroup = new DefaultActionGroup("WPS_EDITOR_GROUP", false);
 
