@@ -93,6 +93,10 @@ public class WpsMarkdownEditor {
             editorSplitter.getFirstComponent().setVisible(false);
             editorSplitter.getSecondComponent().setVisible(true);
         }
+        editorSplitter.getFirstComponent().revalidate();
+        editorSplitter.getFirstComponent().repaint();
+        editorSplitter.getSecondComponent().revalidate();
+        editorSplitter.getSecondComponent().repaint();
     }
     public String getSelectionText() {
         return editorPanel.getEditorArea().getSelectedText();
