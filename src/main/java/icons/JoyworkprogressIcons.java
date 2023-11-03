@@ -15,6 +15,7 @@ public class JoyworkprogressIcons {
     public static Icon EDITOR = IconLoader.getIcon("icons/editor.svg", JoyworkprogressIcons.class);
     public static Icon EDITOR_AND_PREVIEW = IconLoader.getIcon("icons/editorAndPreview.svg", JoyworkprogressIcons.class);
     public static Icon PREVIEW = IconLoader.getIcon("icons/preview.svg", JoyworkprogressIcons.class);
+    public static Icon BROWSER = IconLoader.getIcon("icons/browser.svg", JoyworkprogressIcons.class);
 
     public JoyworkprogressIcons() {
     }

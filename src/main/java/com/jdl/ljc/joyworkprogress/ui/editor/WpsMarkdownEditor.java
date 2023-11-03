@@ -125,6 +125,7 @@ public class WpsMarkdownEditor {
         DefaultActionGroup actionGroup = new DefaultActionGroup("WPS_EDITOR_GROUP", false);
 
         actionGroup.add(new EditorButtonAction(EditorButtonEnum.FULL_SCREENT.name(), JoyworkprogressIcons.FULL_SCREEN, this));
+        actionGroup.add(new EditorButtonAction(EditorButtonEnum.BROWSER.name(), JoyworkprogressIcons.BROWSER, this));
         actionGroup.addSeparator();
         actionGroup.add(new EditorButtonAction(EditorButtonEnum.EDITOR.name(), JoyworkprogressIcons.EDITOR, this));
         actionGroup.add(new EditorButtonAction(EditorButtonEnum.EDITOR_AND_PREVIEW.name(), JoyworkprogressIcons.EDITOR_AND_PREVIEW, this));

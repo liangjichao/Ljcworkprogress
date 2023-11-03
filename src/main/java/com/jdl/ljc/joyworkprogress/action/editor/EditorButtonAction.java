@@ -42,6 +42,8 @@ public class EditorButtonAction extends AnAction {
             }
         }else if(EditorButtonEnum.spliterBtn(uid)){
             editor.changeSplitter(uid);
+        } else if (EditorButtonEnum.BROWSER.name().equals(uid)) {
+
         }
 
     }

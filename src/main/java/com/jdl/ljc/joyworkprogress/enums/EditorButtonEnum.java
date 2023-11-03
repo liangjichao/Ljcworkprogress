@@ -6,6 +6,7 @@ package com.jdl.ljc.joyworkprogress.enums;
  */
 public enum EditorButtonEnum {
     FULL_SCREENT,
+    BROWSER,
     LINK,
     EDITOR,
     EDITOR_AND_PREVIEW,
