@@ -6,4 +6,6 @@ package com.jdl.ljc.joyworkprogress.ui.editor;
  */
 public interface WpsViewPanel {
     void updateContent(String content, int offset);
+
+    String getConvertHTML(String content);
 }

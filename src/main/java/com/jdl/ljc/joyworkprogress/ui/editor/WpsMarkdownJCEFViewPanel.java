@@ -23,15 +23,17 @@ public class WpsMarkdownJCEFViewPanel extends JPanel implements WpsViewPanel {
         htmlPanel.setHtml(getConvertHTML(content), 0);
     }
 
-    @NotNull
-    private static String getConvertHTML(String content) {
-        return "<html><head></head>" + StringUtils.convertHTML(content) + "</html>";
+    @Override
+    public String getConvertHTML(String content) {
+        return "<html lang=\"zh\"><head><meta charset=\"UTF-8\"><title>Wps Markdown Preview</title></head>" + StringUtils.convertHTML(content) + "</html>";
     }
 
     @Override
     public void updateContent(String content, int offset) {
         htmlPanel.setHtml(getConvertHTML(content), offset);
     }
+
+
 
     public MarkdownJCEFHtmlPanel getComponent() {
         return htmlPanel;

@@ -11,6 +11,7 @@ import com.intellij.util.ui.UIUtil;
 import com.jdl.ljc.joyworkprogress.ui.editor.WpsViewPanel;
 import com.jdl.ljc.joyworkprogress.util.FileUtils;
 import com.jdl.ljc.joyworkprogress.util.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -43,16 +44,21 @@ public class WpsMarkdownViewPanel extends JEditorPane implements HyperlinkListen
 
     @Override
     public void setText(String t) {
+        String all = getConvertHTML(t);
+        super.setText(all);
+    }
+
+    @Override
+    public String getConvertHTML(String t) {
         String html = String.format("""
                 <div class="markdown-body">%s</div>
                 """,StringUtils.convertHTML(t));
-        String css = String.format("<style>%s</style>",FileUtils.getResource("/html/markdown-view.css"));
+        String css = String.format("<meta charset=\"UTF-8\"><style>%s</style>",FileUtils.getResource("/html/markdown-view.css"));
 
-        String all = new HtmlBuilder()
+        return new HtmlBuilder()
                 .append(HtmlChunk.raw(css).wrapWith("head"))
                 .append(HtmlChunk.raw(html).wrapWith(HtmlChunk.body()))
-                .wrapWith(HtmlChunk.html()).toString();
-        super.setText(all);
+                .wrapWith(HtmlChunk.html().attr("lang","zh")).toString();
     }
 
 

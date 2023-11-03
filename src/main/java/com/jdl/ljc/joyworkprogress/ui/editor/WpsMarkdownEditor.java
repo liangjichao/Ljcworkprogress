@@ -1,11 +1,14 @@
 package com.jdl.ljc.joyworkprogress.ui.editor;
 
+import com.intellij.ide.BrowserUtil;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.JBSplitter;
@@ -16,6 +19,10 @@ import com.jdl.ljc.joyworkprogress.action.editor.EditorButtonAction;
 import com.jdl.ljc.joyworkprogress.enums.EditorButtonEnum;
 import com.jdl.ljc.joyworkprogress.ui.dialog.JDWorkProgressFormDialog;
 import com.jdl.ljc.joyworkprogress.ui.editor.listener.EditorDocumentListener;
+import com.jdl.ljc.joyworkprogress.ui.editor.preview.CommonResourceProvider;
+import com.jdl.ljc.joyworkprogress.ui.editor.preview.Resource;
+import com.jdl.ljc.joyworkprogress.ui.editor.preview.ResourceProvider;
+import com.jdl.ljc.joyworkprogress.ui.editor.preview.WpsStaticServer;
 import icons.JoyworkprogressIcons;
 import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanelEx;
 import org.jetbrains.annotations.NotNull;
@@ -24,13 +31,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseWheelEvent;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
  * @author liangjichao
  * @date 2023/10/23 5:00 PM
  */
-public class WpsMarkdownEditor {
+public class WpsMarkdownEditor implements Disposable {
+    private final String pageBaseName = String.format("markdown-preview-index-%s.html", hashCode());
+    private ResourceProvider resourceProvider = new MyAggregatingResourceProvider();
+
     private JComponent myComponent;
 
     private JComponent viewEditor;
@@ -39,28 +51,33 @@ public class WpsMarkdownEditor {
 
     private JDWorkProgressFormDialog formDialog;
     private JBSplitter editorSplitter;
+    private WpsViewPanel wpsViewPanel;
 
     private Project project;
-    public WpsMarkdownEditor(Project project,String content,JDWorkProgressFormDialog formDialog) {
-        this.project=project;
+
+    public WpsMarkdownEditor(Project project, String content, JDWorkProgressFormDialog formDialog) {
+        Disposer.register(this, WpsStaticServer.getInstance().registerResourceProvider(resourceProvider));
+        this.project = project;
         this.formDialog = formDialog;
         editorPanel = ApplicationManager.getApplication().getService(WpsEditorPanel.class);
         editorPanel.getEditorArea().setText(content);
 
         if (JBCefApp.isSupported()) {
             WpsMarkdownJCEFViewPanel viewPanel = new WpsMarkdownJCEFViewPanel(project, content);
+            wpsViewPanel=viewPanel;
             editorPanel.getScrollPane().addMouseWheelListener(new PreciseVerticalScrollHelper(
-                    () -> (viewPanel.getComponent() instanceof MarkdownHtmlPanelEx)? viewPanel.getComponent() : null));
-            editorPanel.getEditorArea().getDocument().addDocumentListener(new EditorDocumentListener(editorPanel,viewPanel));
+                    () -> (viewPanel.getComponent() instanceof MarkdownHtmlPanelEx) ? viewPanel.getComponent() : null));
+            editorPanel.getEditorArea().getDocument().addDocumentListener(new EditorDocumentListener(editorPanel, viewPanel));
 
-            viewEditor=viewPanel;
-        }else{
+            viewEditor = viewPanel;
+        } else {
             WpsMarkdownViewPanel viewPanel = new WpsMarkdownViewPanel(content);
+            wpsViewPanel=viewPanel;
             JBScrollPane scrollPane = new JBScrollPane(viewPanel);
 
             editorPanel.getScrollPane().addMouseWheelListener(new ViewScrollHelper(scrollPane));
-            editorPanel.getEditorArea().getDocument().addDocumentListener(new EditorDocumentListener(editorPanel,viewPanel));
-            viewEditor= scrollPane;
+            editorPanel.getEditorArea().getDocument().addDocumentListener(new EditorDocumentListener(editorPanel, viewPanel));
+            viewEditor = scrollPane;
         }
 
 
@@ -80,16 +97,17 @@ public class WpsMarkdownEditor {
         editorPanel.add(editorSplitter, BorderLayout.CENTER);
 
         myComponent = editorPanel;
+
     }
 
     public void changeSplitter(String uid) {
         if (EditorButtonEnum.EDITOR.name().equals(uid)) {
             editorSplitter.getFirstComponent().setVisible(true);
             editorSplitter.getSecondComponent().setVisible(false);
-        }else if (EditorButtonEnum.EDITOR_AND_PREVIEW.name().equals(uid)) {
+        } else if (EditorButtonEnum.EDITOR_AND_PREVIEW.name().equals(uid)) {
             editorSplitter.getFirstComponent().setVisible(true);
             editorSplitter.getSecondComponent().setVisible(true);
-        }else if (EditorButtonEnum.PREVIEW.name().equals(uid)) {
+        } else if (EditorButtonEnum.PREVIEW.name().equals(uid)) {
             editorSplitter.getFirstComponent().setVisible(false);
             editorSplitter.getSecondComponent().setVisible(true);
         }
@@ -98,6 +116,7 @@ public class WpsMarkdownEditor {
         editorSplitter.getSecondComponent().revalidate();
         editorSplitter.getSecondComponent().repaint();
     }
+
     public String getSelectionText() {
         return editorPanel.getEditorArea().getSelectedText();
     }
@@ -106,7 +125,7 @@ public class WpsMarkdownEditor {
         ApplicationManager.getApplication().runWriteAction(() -> {
             CommandProcessor.getInstance().executeCommand(project, () -> {
                 int offset = editorPanel.getEditorArea().getCaretPosition();
-                editorPanel.getEditorArea().insert(text,offset);
+                editorPanel.getEditorArea().insert(text, offset);
                 editorPanel.getEditorArea().moveCaretPosition(offset + text.length());
             }, "Insert Text", null);
         });
@@ -121,6 +140,13 @@ public class WpsMarkdownEditor {
         });
 
     }
+
+    public void openView() {
+
+        String viewUrl = WpsStaticServer.getStaticUrl(resourceProvider, pageBaseName);
+        BrowserUtil.browse(viewUrl);
+    }
+
     private ActionToolbar createToolbar() {
         DefaultActionGroup actionGroup = new DefaultActionGroup("WPS_EDITOR_GROUP", false);
 
@@ -147,6 +173,11 @@ public class WpsMarkdownEditor {
         return myComponent;
     }
 
+    @Override
+    public void dispose() {
+
+    }
+
     private static class PreciseVerticalScrollHelper extends MouseAdapter {
         private final @NotNull Supplier<MarkdownHtmlPanelEx> htmlPanelSupplier;
 
@@ -169,6 +200,7 @@ public class WpsMarkdownEditor {
 
 
     }
+
     private static class ViewScrollHelper extends MouseAdapter {
         private final @NotNull JBScrollPane scrollPane;
 
@@ -186,10 +218,35 @@ public class WpsMarkdownEditor {
                 final var amount = event.getScrollAmount() * event.getWheelRotation() * multiplier;
                 JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
 
-                verticalScrollBar.setValue(verticalScrollBar.getValue()+amount);
+                verticalScrollBar.setValue(verticalScrollBar.getValue() + amount);
             }
         }
 
 
+    }
+
+    private class MyAggregatingResourceProvider implements ResourceProvider {
+        private static List<String> internalResources = new ArrayList<>();
+
+        public Boolean canProvide(String resourceName) {
+            return internalResources.contains(resourceName) ||
+                    resourceName.equals(pageBaseName);
+        }
+
+        public Resource loadResource(String resourceName) {
+            if (resourceName.equals(pageBaseName)) {
+                return new Resource(buildIndexContent().getBytes(), "text/html");
+            } else if (internalResources.contains(resourceName)) {
+                return CommonResourceProvider.loadInternalResource(this.getClass(), resourceName, null);
+            } else {
+                return null;
+            }
+
+        }
+
+        private String buildIndexContent() {
+            String text = editorPanel.getEditorArea().getText();
+            return wpsViewPanel.getConvertHTML(text);
+        }
     }
 }
