@@ -26,7 +26,7 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="DevWorkProgress" anchor="bottom" icon="JoyworkprogressIcons.ToolWindowIcon" factoryClass="com.jdl.ljc.joyworkprogress.DevWorkProgressWindowFactory" />
+        <toolWindow id="WPS" anchor="bottom" icon="JoyworkprogressIcons.ToolWindowIcon" factoryClass="com.jdl.ljc.joyworkprogress.DevWorkProgressWindowFactory" />
         <applicationService serviceImplementation="com.jdl.ljc.joyworkprogress.config.WpsPluginSetting"/>
     </extensions>
     <actions>

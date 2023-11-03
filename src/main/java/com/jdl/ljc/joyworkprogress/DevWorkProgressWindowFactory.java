@@ -28,7 +28,7 @@ public class DevWorkProgressWindowFactory implements ToolWindowFactory, DumbAwar
         ContentManager contentManager = toolWindow.getContentManager();
         HomeToolWindowPanel panel = new HomeToolWindowPanel(project);
 
-        Content content = contentManager.getFactory().createContent(panel, "", false);
+        Content content = contentManager.getFactory().createContent(panel, "工作进度列表", false);
         contentManager.addContent(content);
 
     }

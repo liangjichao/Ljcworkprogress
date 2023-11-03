@@ -5,13 +5,10 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.editor.impl.EditorImpl;
-import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.ui.JBColor;
@@ -19,21 +16,20 @@ import com.intellij.ui.JBSplitter;
 import com.intellij.ui.OnePixelSplitter;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.jcef.JBCefApp;
-import com.intellij.util.ui.JBUI;
 import com.jdl.ljc.joyworkprogress.action.editor.EditorButtonAction;
 import com.jdl.ljc.joyworkprogress.enums.EditorButtonEnum;
 import com.jdl.ljc.joyworkprogress.ui.dialog.JDWorkProgressFormDialog;
 import com.jdl.ljc.joyworkprogress.ui.panel.WpsMarkdownJCEFViewPanel;
 import com.jdl.ljc.joyworkprogress.ui.panel.WpsMarkdownViewPanel;
 import icons.JoyworkprogressIcons;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rtextarea.RTextScrollPane;
 import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanelEx;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.plaf.PanelUI;
-import javax.swing.plaf.basic.BasicPanelUI;
-import javax.swing.plaf.basic.BasicSplitPaneDivider;
-import javax.swing.plaf.basic.BasicSplitPaneUI;
+import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseWheelEvent;
@@ -53,22 +49,50 @@ public class WpsMarkdownEditor {
     private JBSplitter editorSplitter;
     public WpsMarkdownEditor(Project project,String content,JDWorkProgressFormDialog formDialog) {
         this.formDialog = formDialog;
-        Document document = EditorFactory.getInstance().createDocument(content);
-        editor = EditorFactory.getInstance().createEditor(document, project, FileTypeManager.getInstance().getFileTypeByExtension("md"), false);
-        editor.getSettings().setLineNumbersShown(true);
+
+        RSyntaxTextArea editorArea = new RSyntaxTextArea(content);
+        editorArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_MARKDOWN);
+        RTextScrollPane editorScrollPane = new RTextScrollPane(editorArea);
+
+//        Document document = EditorFactory.getInstance().createDocument(content);
+//        editor = EditorFactory.getInstance().createEditor(document, project, FileTypeManager.getInstance().getFileTypeByExtension("md"), false);
+//        editor.getSettings().setLineNumbersShown(true);
 
         if (JBCefApp.isSupported()) {
             WpsMarkdownJCEFViewPanel viewPanel = new WpsMarkdownJCEFViewPanel(project, content);
-            EditorImpl myEditor = (EditorImpl)editor;
-            myEditor.getScrollPane().addMouseWheelListener(new PreciseVerticalScrollHelper(
+            editorScrollPane.addMouseWheelListener(new PreciseVerticalScrollHelper(
                     () -> (viewPanel.getComponent() instanceof MarkdownHtmlPanelEx)? viewPanel.getComponent() : null));
-            editor.getDocument().addDocumentListener(new DocumentListener() {
+            editorArea.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
                 @Override
-                public void documentChanged(@NotNull DocumentEvent event) {
-                    int s = myEditor.getScrollingModel().getVerticalScrollOffset();
-                    viewPanel.updateContent(event.getDocument().getText(),s);
+                public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                    documentChanged(e);
+                }
+
+                @Override
+                public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                    documentChanged(e);
+                }
+
+                @Override
+                public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                    documentChanged(e);
+                }
+                public void documentChanged(javax.swing.event.DocumentEvent e) {
+                    int s = editorScrollPane.getVerticalScrollBar().getValue();
+                    try {
+                        viewPanel.updateContent(e.getDocument().getText(0,e.getDocument().getLength()),s);
+                    } catch (BadLocationException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
             });
+//            editor.getDocument().addDocumentListener(new DocumentListener() {
+//                @Override
+//                public void documentChanged(@NotNull DocumentEvent event) {
+//                    int s = myEditor.getScrollingModel().getVerticalScrollOffset();
+//                    viewPanel.updateContent(event.getDocument().getText(),s);
+//                }
+//            });
             viewEditor=viewPanel;
         }else{
             WpsMarkdownViewPanel viewPanel = new WpsMarkdownViewPanel(content);
@@ -91,7 +115,7 @@ public class WpsMarkdownEditor {
         JPanel divider = editorSplitter.getDivider();
         divider.setBackground(JBColor.border().brighter());
 
-        editorSplitter.setFirstComponent(editor.getComponent());
+        editorSplitter.setFirstComponent(editorScrollPane);
         editorSplitter.setSecondComponent(viewEditor);
 
 

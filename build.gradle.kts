@@ -25,6 +25,7 @@ dependencies{
     }
     implementation("com.alibaba:fastjson:2.0.28")
     implementation("com.vladsch.flexmark:flexmark-all:0.64.8")
+    implementation("com.fifesoft:rsyntaxtextarea:3.3.4")
 }
 tasks {
     // Set the JVM compatibility versions
