@@ -13,7 +13,7 @@ import com.jdl.ljc.joyworkprogress.domain.dto.ResultDto;
 import com.jdl.ljc.joyworkprogress.domain.dto.WpsDto;
 import com.jdl.ljc.joyworkprogress.domain.dto.WpsSaveDto;
 import com.jdl.ljc.joyworkprogress.enums.WorkProgressStatusEnum;
-import com.jdl.ljc.joyworkprogress.ui.WpsMarkdownEditor;
+import com.jdl.ljc.joyworkprogress.ui.editor.WpsMarkdownEditor;
 import com.jdl.ljc.joyworkprogress.ui.calendar.WpsDatePicker;
 import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressPanel;
 import com.jdl.ljc.joyworkprogress.util.ProjectUtils;

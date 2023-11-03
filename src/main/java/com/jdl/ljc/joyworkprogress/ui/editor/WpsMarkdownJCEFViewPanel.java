@@ -1,4 +1,4 @@
-package com.jdl.ljc.joyworkprogress.ui.panel;
+package com.jdl.ljc.joyworkprogress.ui.editor;
 
 import com.intellij.openapi.project.Project;
 import com.jdl.ljc.joyworkprogress.ui.editor.WpsViewPanel;

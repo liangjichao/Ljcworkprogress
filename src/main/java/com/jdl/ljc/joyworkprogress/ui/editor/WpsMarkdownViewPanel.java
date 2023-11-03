@@ -1,4 +1,4 @@
-package com.jdl.ljc.joyworkprogress.ui.panel;
+package com.jdl.ljc.joyworkprogress.ui.editor;
 
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.util.text.HtmlBuilder;

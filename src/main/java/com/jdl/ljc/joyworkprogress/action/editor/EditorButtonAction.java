@@ -3,7 +3,7 @@ package com.jdl.ljc.joyworkprogress.action.editor;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.jdl.ljc.joyworkprogress.enums.EditorButtonEnum;
-import com.jdl.ljc.joyworkprogress.ui.WpsMarkdownEditor;
+import com.jdl.ljc.joyworkprogress.ui.editor.WpsMarkdownEditor;
 import com.jdl.ljc.joyworkprogress.ui.dialog.EditorLinkDialog;
 import com.jdl.ljc.joyworkprogress.util.MarkdownTextUtils;
 import org.apache.commons.lang3.StringUtils;

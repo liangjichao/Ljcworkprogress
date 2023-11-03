@@ -1,4 +1,4 @@
-package com.jdl.ljc.joyworkprogress.ui;
+package com.jdl.ljc.joyworkprogress.ui.editor;
 
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
@@ -15,10 +15,7 @@ import com.intellij.ui.jcef.JBCefApp;
 import com.jdl.ljc.joyworkprogress.action.editor.EditorButtonAction;
 import com.jdl.ljc.joyworkprogress.enums.EditorButtonEnum;
 import com.jdl.ljc.joyworkprogress.ui.dialog.JDWorkProgressFormDialog;
-import com.jdl.ljc.joyworkprogress.ui.editor.WpsEditorPanel;
 import com.jdl.ljc.joyworkprogress.ui.editor.listener.EditorDocumentListener;
-import com.jdl.ljc.joyworkprogress.ui.panel.WpsMarkdownJCEFViewPanel;
-import com.jdl.ljc.joyworkprogress.ui.panel.WpsMarkdownViewPanel;
 import icons.JoyworkprogressIcons;
 import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanelEx;
 import org.jetbrains.annotations.NotNull;
