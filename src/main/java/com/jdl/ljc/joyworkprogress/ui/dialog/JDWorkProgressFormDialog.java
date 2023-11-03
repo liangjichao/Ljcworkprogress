@@ -66,7 +66,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
     @Override
     protected @Nullable JComponent createCenterPanel() {
         JPanel rootPanel = new JPanel(new BorderLayout());
-        int rootWidth = ToolWindowManager.getInstance(project).getToolWindow("DevWorkProgress").getComponent().getRootPane().getWidth();
+        int rootWidth = ToolWindowManager.getInstance(project).getToolWindow("WPS").getComponent().getRootPane().getWidth();
         int minWidth = 500;
         int recommondWidth = 873;
         if (rootWidth > recommondWidth) {

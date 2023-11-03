@@ -8,6 +8,7 @@ import com.intellij.openapi.vcs.ui.FontUtil;
 import com.intellij.ui.BrowserHyperlinkListener;
 import com.intellij.util.ui.HTMLEditorKitBuilder;
 import com.intellij.util.ui.UIUtil;
+import com.jdl.ljc.joyworkprogress.ui.editor.WpsViewPanel;
 import com.jdl.ljc.joyworkprogress.util.FileUtils;
 import com.jdl.ljc.joyworkprogress.util.StringUtils;
 
@@ -21,7 +22,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.StringWriter;
 
-public class WpsMarkdownViewPanel extends JEditorPane implements HyperlinkListener,WpsEditor{
+public class WpsMarkdownViewPanel extends JEditorPane implements HyperlinkListener, WpsViewPanel {
 
     public WpsMarkdownViewPanel(String content) {
         super(UIUtil.HTML_MIME, "");
