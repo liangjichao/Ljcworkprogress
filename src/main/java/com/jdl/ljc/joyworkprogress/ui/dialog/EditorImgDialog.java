@@ -8,12 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 
 /**
  * @author liangjichao
@@ -31,18 +26,19 @@ public class EditorImgDialog extends DialogWrapper {
     }
 
     private void initData() {
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        if (clipboard.isDataFlavorAvailable(DataFlavor.imageFlavor)) {
-            try {
-                Transferable transferable = clipboard.getContents(null);
-                if (transferable != null && transferable.isDataFlavorSupported(DataFlavor.imageFlavor)) {
-                    Image image = (Image) transferable.getTransferData(DataFlavor.imageFlavor);
-
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
+//        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+//        if (clipboard.isDataFlavorAvailable(DataFlavor.imageFlavor)) {
+//            try {
+//                Transferable transferable = clipboard.getContents(null);
+//                if (transferable != null && transferable.isDataFlavorSupported(DataFlavor.imageFlavor)) {
+//                    Image image = (Image) transferable.getTransferData(DataFlavor.imageFlavor);
+//                    String imageBase64 = MarkdownTextUtils.imageToBase64(image);
+//                    urlField.setText(imageBase64);
+//                }
+//            } catch (Exception e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
     }
 
     @Override
