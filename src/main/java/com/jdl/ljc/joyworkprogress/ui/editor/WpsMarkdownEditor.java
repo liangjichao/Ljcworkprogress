@@ -66,7 +66,6 @@ public class WpsMarkdownEditor implements Disposable {
             WpsMarkdownViewPanel viewPanel = new WpsMarkdownViewPanel(content, editorPanel);
             wpsViewPanel = viewPanel;
             JBScrollPane scrollPane = new JBScrollPane(viewPanel);
-
             editorPanel.getScrollPane().addMouseWheelListener(new ViewScrollHelper(scrollPane));
             editorPanel.getEditorArea().getDocument().addDocumentListener(new EditorDocumentListener(editorPanel, viewPanel));
             viewEditor = scrollPane;

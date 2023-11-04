@@ -80,7 +80,6 @@ public class WpsMarkdownViewPanel extends JEditorPane implements HyperlinkListen
         return  WpsStaticServer.getStaticUrl(resourceProvider, pageBaseName);
     }
 
-
     @Override
     public void hyperlinkUpdate(HyperlinkEvent e) {
         BrowserHyperlinkListener.INSTANCE.hyperlinkUpdate(e);
