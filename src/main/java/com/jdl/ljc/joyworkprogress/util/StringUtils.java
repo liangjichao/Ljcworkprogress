@@ -1,10 +1,20 @@
 package com.jdl.ljc.joyworkprogress.util;
 
 import com.intellij.openapi.util.text.StringUtil;
+import com.vladsch.flexmark.ext.anchorlink.AnchorLinkExtension;
+import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension;
+import com.vladsch.flexmark.ext.ins.InsExtension;
+import com.vladsch.flexmark.ext.resizable.image.ResizableImageExtension;
+import com.vladsch.flexmark.ext.superscript.SuperscriptExtension;
+import com.vladsch.flexmark.ext.tables.TablesExtension;
+import com.vladsch.flexmark.ext.toc.SimTocExtension;
+import com.vladsch.flexmark.ext.typographic.TypographicExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
+
+import java.util.Arrays;
 
 public class StringUtils {
     public static String lastSplitText(String input) {
@@ -18,8 +28,37 @@ public class StringUtils {
         return input.substring(0, input.length());
     }
 
+    /**
+     * 样例：
+     * <pre>
+     * | day         | time  |   spent |
+     * |:------------|:-----:|--------:|
+     * | nov. 2. tue | 10:00 |  4h 40m |
+     * | nov. 3. thu | 11:00 |      4h |
+     * | nov. 7. mon | 10:20 |  4h 20m |
+     * | total:             ||     13h |
+     *
+     * ![Resizable Image](path/to/image.jpg){width=500 height=300}
+     *
+     * This is a ^superscript^ text
+     *
+     * This is a \"quoted\" text with 'apostrophes' and three dots...
+     *
+     * This is some ~~inserted~~ text.
+     * </pre>
+     * @param content
+     * @return
+     */
     public static String convertHTML(String content) {
         MutableDataSet options = new MutableDataSet();
+
+        options.set(Parser.EXTENSIONS, Arrays.asList(TablesExtension.create(), StrikethroughExtension.create()
+                , ResizableImageExtension.create(), SuperscriptExtension.create()
+        , TypographicExtension.create(), AnchorLinkExtension.create()
+        , InsExtension.create()));
+        options.set(HtmlRenderer.SOFT_BREAK, "<br />\n");
+        options.set(HtmlRenderer.GENERATE_HEADER_ID, true);
+
         Parser parser=Parser.builder(options).build();
         HtmlRenderer renderer=HtmlRenderer.builder(options).build();
         Node document = parser.parse(content);
