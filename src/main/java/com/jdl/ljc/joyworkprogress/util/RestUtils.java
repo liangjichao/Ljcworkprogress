@@ -21,7 +21,7 @@ import java.util.List;
 public class RestUtils {
     public static <T> ResultDto<T> post(Class<T> resultValueClazz, String requestPath, Object param) {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            String url = String.format("http://%s%s", getDomain(), requestPath);
+            String url = String.format("http://%s%s", AppUtils.getDomain(), requestPath);
             HttpEntity postEntity = new StringEntity(JSON.toJSONString(param), StandardCharsets.UTF_8);
             ClassicHttpRequest httpPost = ClassicRequestBuilder.post(url).setEntity(postEntity).build();
             httpPost.addHeader("Content-Type", ContentType.APPLICATION_JSON);
@@ -35,17 +35,12 @@ public class RestUtils {
         }
     }
 
-    private static String getDomain() {
-        if (WpsPluginSetting.getInstance().getState() != null) {
-            return WpsPluginSetting.getInstance().getState().domain;
-        }
-        return "localhost";
-    }
+
 
     @SuppressWarnings("unused")
     public static <T> ResultDto<List<T>> postList(Class<T> resultValueClazz, String requestPath, Object param) {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            String url = String.format("http://%s%s", getDomain(), requestPath);
+            String url = String.format("http://%s%s", AppUtils.getDomain(), requestPath);
             HttpEntity postEntity = new StringEntity(JSON.toJSONString(param), StandardCharsets.UTF_8);
             ClassicHttpRequest httpPost = ClassicRequestBuilder.post(url).setEntity(postEntity).build();
             httpPost.addHeader("Content-Type", ContentType.APPLICATION_JSON);
