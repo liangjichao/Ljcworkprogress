@@ -107,6 +107,8 @@ public class WpsMarkdownEditor implements Disposable {
         editorSplitter.getFirstComponent().repaint();
         editorSplitter.getSecondComponent().revalidate();
         editorSplitter.getSecondComponent().repaint();
+        editorSplitter.revalidate();
+        editorSplitter.repaint();
     }
 
     public String getSelectionText() {
