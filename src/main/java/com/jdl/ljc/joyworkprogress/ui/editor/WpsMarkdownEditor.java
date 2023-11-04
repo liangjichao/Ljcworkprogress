@@ -54,7 +54,7 @@ public class WpsMarkdownEditor implements Disposable {
         editorPanel = ApplicationManager.getApplication().getService(WpsEditorPanel.class);
         editorPanel.getEditorArea().setText(content);
 
-        if (!JBCefApp.isSupported()) {
+        if (JBCefApp.isSupported()) {
             WpsMarkdownJCEFViewPanel viewPanel = ApplicationManager.getApplication().getService(WpsMarkdownJCEFViewPanel.class);
             viewPanel.updateContent(content, 0);
             wpsViewPanel = viewPanel;
@@ -141,6 +141,7 @@ public class WpsMarkdownEditor implements Disposable {
         DefaultActionGroup actionGroup = new DefaultActionGroup("WPS_EDITOR_GROUP", false);
 
         actionGroup.add(new EditorButtonAction(EditorButtonEnum.FULL_SCREENT.name(), JoyworkprogressIcons.FULL_SCREEN, this));
+        actionGroup.add(new EditorButtonAction(EditorButtonEnum.LINK.name(), JoyworkprogressIcons.LINK, this));
         if (!JBCefApp.isSupported()) {
             actionGroup.add(new EditorButtonAction(EditorButtonEnum.BROWSER.name(), JoyworkprogressIcons.BROWSER, this));
         }

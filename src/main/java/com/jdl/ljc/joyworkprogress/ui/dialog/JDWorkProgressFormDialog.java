@@ -98,7 +98,6 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
 
     private JPanel getCenterPanel() {
         JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.add(new JLabel("开发明细："), BorderLayout.NORTH);
         String content = "";
         if (formData != null && !StringUtil.isEmpty(formData.getDevInfo())) {
             content = formData.getDevInfo();
