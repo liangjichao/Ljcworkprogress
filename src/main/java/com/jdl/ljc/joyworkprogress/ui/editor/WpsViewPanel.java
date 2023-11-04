@@ -8,4 +8,6 @@ public interface WpsViewPanel {
     void updateContent(String content, int offset);
 
     String getConvertHTML(String content);
+
+    String getViewUrl();
 }

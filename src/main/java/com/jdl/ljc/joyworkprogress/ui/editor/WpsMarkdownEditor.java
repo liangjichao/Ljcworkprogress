@@ -8,7 +8,6 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.JBSplitter;
@@ -19,10 +18,6 @@ import com.jdl.ljc.joyworkprogress.action.editor.EditorButtonAction;
 import com.jdl.ljc.joyworkprogress.enums.EditorButtonEnum;
 import com.jdl.ljc.joyworkprogress.ui.dialog.JDWorkProgressFormDialog;
 import com.jdl.ljc.joyworkprogress.ui.editor.listener.EditorDocumentListener;
-import com.jdl.ljc.joyworkprogress.ui.editor.preview.CommonResourceProvider;
-import com.jdl.ljc.joyworkprogress.ui.editor.preview.Resource;
-import com.jdl.ljc.joyworkprogress.ui.editor.preview.ResourceProvider;
-import com.jdl.ljc.joyworkprogress.ui.editor.preview.WpsStaticServer;
 import icons.JoyworkprogressIcons;
 import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanelEx;
 import org.jetbrains.annotations.NotNull;
@@ -31,8 +26,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseWheelEvent;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -40,8 +33,7 @@ import java.util.function.Supplier;
  * @date 2023/10/23 5:00 PM
  */
 public class WpsMarkdownEditor implements Disposable {
-    private final String pageBaseName = String.format("markdown-preview-index-%s.html", hashCode());
-    private ResourceProvider resourceProvider = new MyAggregatingResourceProvider();
+
 
     private JComponent myComponent;
 
@@ -56,7 +48,7 @@ public class WpsMarkdownEditor implements Disposable {
     private Project project;
 
     public WpsMarkdownEditor(Project project, String content, JDWorkProgressFormDialog formDialog) {
-        Disposer.register(this, WpsStaticServer.getInstance().registerResourceProvider(resourceProvider));
+
         this.project = project;
         this.formDialog = formDialog;
         editorPanel = ApplicationManager.getApplication().getService(WpsEditorPanel.class);
@@ -64,15 +56,15 @@ public class WpsMarkdownEditor implements Disposable {
 
         if (JBCefApp.isSupported()) {
             WpsMarkdownJCEFViewPanel viewPanel = new WpsMarkdownJCEFViewPanel(project, content);
-            wpsViewPanel=viewPanel;
+            wpsViewPanel = viewPanel;
             editorPanel.getScrollPane().addMouseWheelListener(new PreciseVerticalScrollHelper(
                     () -> (viewPanel.getComponent() instanceof MarkdownHtmlPanelEx) ? viewPanel.getComponent() : null));
             editorPanel.getEditorArea().getDocument().addDocumentListener(new EditorDocumentListener(editorPanel, viewPanel));
 
             viewEditor = viewPanel;
         } else {
-            WpsMarkdownViewPanel viewPanel = new WpsMarkdownViewPanel(content);
-            wpsViewPanel=viewPanel;
+            WpsMarkdownViewPanel viewPanel = new WpsMarkdownViewPanel(content, editorPanel);
+            wpsViewPanel = viewPanel;
             JBScrollPane scrollPane = new JBScrollPane(viewPanel);
 
             editorPanel.getScrollPane().addMouseWheelListener(new ViewScrollHelper(scrollPane));
@@ -142,9 +134,7 @@ public class WpsMarkdownEditor implements Disposable {
     }
 
     public void openView() {
-
-        String viewUrl = WpsStaticServer.getStaticUrl(resourceProvider, pageBaseName);
-        BrowserUtil.browse(viewUrl);
+        BrowserUtil.browse(wpsViewPanel.getViewUrl());
     }
 
     private ActionToolbar createToolbar() {
@@ -225,28 +215,5 @@ public class WpsMarkdownEditor implements Disposable {
 
     }
 
-    private class MyAggregatingResourceProvider implements ResourceProvider {
-        private static List<String> internalResources = new ArrayList<>();
 
-        public Boolean canProvide(String resourceName) {
-            return internalResources.contains(resourceName) ||
-                    resourceName.equals(pageBaseName);
-        }
-
-        public Resource loadResource(String resourceName) {
-            if (resourceName.equals(pageBaseName)) {
-                return new Resource(buildIndexContent().getBytes(), "text/html");
-            } else if (internalResources.contains(resourceName)) {
-                return CommonResourceProvider.loadInternalResource(this.getClass(), resourceName, null);
-            } else {
-                return null;
-            }
-
-        }
-
-        private String buildIndexContent() {
-            String text = editorPanel.getEditorArea().getText();
-            return wpsViewPanel.getConvertHTML(text);
-        }
-    }
 }

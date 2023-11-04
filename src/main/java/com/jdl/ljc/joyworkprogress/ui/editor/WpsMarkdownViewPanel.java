@@ -1,6 +1,8 @@
 package com.jdl.ljc.joyworkprogress.ui.editor;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.HtmlBuilder;
 import com.intellij.openapi.util.text.HtmlChunk;
 import com.intellij.openapi.util.text.StringUtil;
@@ -9,6 +11,10 @@ import com.intellij.ui.BrowserHyperlinkListener;
 import com.intellij.util.ui.HTMLEditorKitBuilder;
 import com.intellij.util.ui.UIUtil;
 import com.jdl.ljc.joyworkprogress.ui.editor.WpsViewPanel;
+import com.jdl.ljc.joyworkprogress.ui.editor.preview.CommonResourceProvider;
+import com.jdl.ljc.joyworkprogress.ui.editor.preview.Resource;
+import com.jdl.ljc.joyworkprogress.ui.editor.preview.ResourceProvider;
+import com.jdl.ljc.joyworkprogress.ui.editor.preview.WpsStaticServer;
 import com.jdl.ljc.joyworkprogress.util.FileUtils;
 import com.jdl.ljc.joyworkprogress.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -22,11 +28,19 @@ import javax.swing.text.Position;
 import java.awt.*;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
-public class WpsMarkdownViewPanel extends JEditorPane implements HyperlinkListener, WpsViewPanel {
+public class WpsMarkdownViewPanel extends JEditorPane implements HyperlinkListener, WpsViewPanel,Disposable {
+    private final String pageBaseName = String.format("markdown-preview-index-%s.html", hashCode());
+    private ResourceProvider resourceProvider = new MyAggregatingResourceProvider();
 
-    public WpsMarkdownViewPanel(String content) {
+    private WpsEditorPanel editorPanel;
+
+    public WpsMarkdownViewPanel(String content,WpsEditorPanel editorPanel) {
         super(UIUtil.HTML_MIME, "");
+        this.editorPanel = editorPanel;
+        Disposer.register(this, WpsStaticServer.getInstance().registerResourceProvider(resourceProvider));
         setEditable(false);
         setOpaque(false);
         putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
@@ -61,6 +75,11 @@ public class WpsMarkdownViewPanel extends JEditorPane implements HyperlinkListen
                 .wrapWith(HtmlChunk.html().attr("lang","zh")).toString();
     }
 
+    @Override
+    public String getViewUrl() {
+        return  WpsStaticServer.getStaticUrl(resourceProvider, pageBaseName);
+    }
+
 
     @Override
     public void hyperlinkUpdate(HyperlinkEvent e) {
@@ -89,5 +108,35 @@ public class WpsMarkdownViewPanel extends JEditorPane implements HyperlinkListen
     @Override
     public void updateContent(String content, int offset) {
         setText(content);
+    }
+
+    @Override
+    public void dispose() {
+
+    }
+
+    private class MyAggregatingResourceProvider implements ResourceProvider {
+        private static List<String> internalResources = new ArrayList<>();
+
+        public Boolean canProvide(String resourceName) {
+            return internalResources.contains(resourceName) ||
+                    resourceName.equals(pageBaseName);
+        }
+
+        public Resource loadResource(String resourceName) {
+            if (resourceName.equals(pageBaseName)) {
+                return new Resource(buildIndexContent().getBytes(), "text/html");
+            } else if (internalResources.contains(resourceName)) {
+                return CommonResourceProvider.loadInternalResource(this.getClass(), resourceName, null);
+            } else {
+                return null;
+            }
+
+        }
+
+        private String buildIndexContent() {
+            String text = editorPanel.getEditorArea().getText();
+            return getConvertHTML(text);
+        }
     }
 }

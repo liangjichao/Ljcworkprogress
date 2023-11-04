@@ -1,13 +1,15 @@
 package com.jdl.ljc.joyworkprogress.ui.editor;
 
 import com.intellij.openapi.project.Project;
-import com.jdl.ljc.joyworkprogress.ui.editor.WpsViewPanel;
 import com.jdl.ljc.joyworkprogress.util.StringUtils;
+import org.cef.browser.CefBrowser;
+import org.cef.callback.CefStringVisitor;
+import org.cef.handler.CefLoadHandlerAdapter;
 import org.intellij.plugins.markdown.ui.preview.jcef.MarkdownJCEFHtmlPanel;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author liangjichao
@@ -21,11 +23,17 @@ public class WpsMarkdownJCEFViewPanel extends JPanel implements WpsViewPanel {
         htmlPanel = new MarkdownJCEFHtmlPanel(project, null);
         add(htmlPanel.getComponent(), BorderLayout.CENTER);
         htmlPanel.setHtml(getConvertHTML(content), 0);
+
     }
 
     @Override
     public String getConvertHTML(String content) {
         return "<html lang=\"zh\"><head><meta charset=\"UTF-8\"><title>Wps Markdown Preview</title></head>" + StringUtils.convertHTML(content) + "</html>";
+    }
+
+    @Override
+    public String getViewUrl() {
+        return htmlPanel.getCefBrowser().getURL();
     }
 
     @Override
