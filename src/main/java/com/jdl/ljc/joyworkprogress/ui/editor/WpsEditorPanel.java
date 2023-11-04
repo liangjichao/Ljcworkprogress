@@ -1,7 +1,6 @@
 package com.jdl.ljc.joyworkprogress.ui.editor;
 
 import com.intellij.openapi.components.Service;
-import com.intellij.ui.components.JBViewport;
 import com.intellij.util.ui.JBUI;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;

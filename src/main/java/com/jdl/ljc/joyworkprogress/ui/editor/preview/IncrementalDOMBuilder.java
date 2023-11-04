@@ -2,11 +2,7 @@ package com.jdl.ljc.joyworkprogress.ui.editor.preview;
 
 import kotlin.text.Charsets;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Attribute;
-import org.jsoup.nodes.DataNode;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Node;
-import org.jsoup.nodes.TextNode;
+import org.jsoup.nodes.*;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

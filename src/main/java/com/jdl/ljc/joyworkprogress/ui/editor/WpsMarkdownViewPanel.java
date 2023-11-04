@@ -10,14 +10,12 @@ import com.intellij.openapi.vcs.ui.FontUtil;
 import com.intellij.ui.BrowserHyperlinkListener;
 import com.intellij.util.ui.HTMLEditorKitBuilder;
 import com.intellij.util.ui.UIUtil;
-import com.jdl.ljc.joyworkprogress.ui.editor.WpsViewPanel;
 import com.jdl.ljc.joyworkprogress.ui.editor.preview.CommonResourceProvider;
 import com.jdl.ljc.joyworkprogress.ui.editor.preview.Resource;
 import com.jdl.ljc.joyworkprogress.ui.editor.preview.ResourceProvider;
 import com.jdl.ljc.joyworkprogress.ui.editor.preview.WpsStaticServer;
 import com.jdl.ljc.joyworkprogress.util.FileUtils;
 import com.jdl.ljc.joyworkprogress.util.StringUtils;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
