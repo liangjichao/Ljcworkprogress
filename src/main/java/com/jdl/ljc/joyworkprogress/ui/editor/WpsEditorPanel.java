@@ -1,6 +1,8 @@
 package com.jdl.ljc.joyworkprogress.ui.editor;
 
 import com.intellij.openapi.components.Service;
+import com.intellij.ui.components.JBViewport;
+import com.intellij.util.ui.JBUI;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;
@@ -19,6 +21,7 @@ public final class WpsEditorPanel {
 
     public WpsEditorPanel() {
         editorArea = new RSyntaxTextArea();
+        editorArea.setBorder(JBUI.Borders.empty(10));
         editorArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_MARKDOWN);
         try {
             Theme theme = Theme.load(getClass().getResourceAsStream(
