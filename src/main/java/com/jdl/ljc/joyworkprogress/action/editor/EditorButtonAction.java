@@ -3,6 +3,7 @@ package com.jdl.ljc.joyworkprogress.action.editor;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.jdl.ljc.joyworkprogress.enums.EditorButtonEnum;
+import com.jdl.ljc.joyworkprogress.ui.dialog.EditorImgDialog;
 import com.jdl.ljc.joyworkprogress.ui.dialog.EditorLinkDialog;
 import com.jdl.ljc.joyworkprogress.ui.editor.WpsMarkdownEditor;
 import com.jdl.ljc.joyworkprogress.util.MarkdownTextUtils;
@@ -44,6 +45,18 @@ public class EditorButtonAction extends AnAction {
             editor.changeSplitter(uid);
         } else if (EditorButtonEnum.BROWSER.name().equals(uid)) {
             editor.openView();
+        } else if (EditorButtonEnum.IMG.name().equals(uid)) {
+            EditorImgDialog dialog = new EditorImgDialog();
+            dialog.show();
+            String url = dialog.getURLText();
+            String selectText = editor.getSelectionText();
+            if (StringUtils.isNoneBlank(url)) {
+                if (StringUtils.isBlank(selectText)) {
+                    editor.insertText(MarkdownTextUtils.createImg(url));
+                }else{
+                    editor.replateText(MarkdownTextUtils.createImg(url));
+                }
+            }
         }
 
     }

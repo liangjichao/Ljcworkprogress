@@ -143,6 +143,7 @@ public class WpsMarkdownEditor implements Disposable {
 
         actionGroup.add(new EditorButtonAction(EditorButtonEnum.FULL_SCREENT.name(), JoyworkprogressIcons.FULL_SCREEN, this));
         actionGroup.add(new EditorButtonAction(EditorButtonEnum.LINK.name(), JoyworkprogressIcons.LINK, this));
+        actionGroup.add(new EditorButtonAction(EditorButtonEnum.IMG.name(), JoyworkprogressIcons.IMG, this));
         if (!JBCefApp.isSupported()) {
             actionGroup.add(new EditorButtonAction(EditorButtonEnum.BROWSER.name(), JoyworkprogressIcons.BROWSER, this));
         }

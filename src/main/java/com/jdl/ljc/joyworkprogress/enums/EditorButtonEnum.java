@@ -8,6 +8,7 @@ public enum EditorButtonEnum {
     FULL_SCREENT,
     BROWSER,
     LINK,
+    IMG,
     EDITOR,
     EDITOR_AND_PREVIEW,
     PREVIEW;
