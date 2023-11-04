@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.JBSplitter;
@@ -34,7 +35,6 @@ import java.util.function.Supplier;
  */
 public class WpsMarkdownEditor implements Disposable {
 
-
     private JComponent myComponent;
 
     private JComponent viewEditor;
@@ -55,7 +55,8 @@ public class WpsMarkdownEditor implements Disposable {
         editorPanel.getEditorArea().setText(content);
 
         if (JBCefApp.isSupported()) {
-            WpsMarkdownJCEFViewPanel viewPanel = new WpsMarkdownJCEFViewPanel(project, content);
+            WpsMarkdownJCEFViewPanel viewPanel = ApplicationManager.getApplication().getService(WpsMarkdownJCEFViewPanel.class);
+            viewPanel.updateContent(content, 0);
             wpsViewPanel = viewPanel;
             editorPanel.getScrollPane().addMouseWheelListener(new PreciseVerticalScrollHelper(
                     () -> (viewPanel.getComponent() instanceof MarkdownHtmlPanelEx) ? viewPanel.getComponent() : null));
@@ -140,7 +141,9 @@ public class WpsMarkdownEditor implements Disposable {
         DefaultActionGroup actionGroup = new DefaultActionGroup("WPS_EDITOR_GROUP", false);
 
         actionGroup.add(new EditorButtonAction(EditorButtonEnum.FULL_SCREENT.name(), JoyworkprogressIcons.FULL_SCREEN, this));
-        actionGroup.add(new EditorButtonAction(EditorButtonEnum.BROWSER.name(), JoyworkprogressIcons.BROWSER, this));
+        if (!JBCefApp.isSupported()) {
+            actionGroup.add(new EditorButtonAction(EditorButtonEnum.BROWSER.name(), JoyworkprogressIcons.BROWSER, this));
+        }
         actionGroup.addSeparator();
         actionGroup.add(new EditorButtonAction(EditorButtonEnum.EDITOR.name(), JoyworkprogressIcons.EDITOR, this));
         actionGroup.add(new EditorButtonAction(EditorButtonEnum.EDITOR_AND_PREVIEW.name(), JoyworkprogressIcons.EDITOR_AND_PREVIEW, this));

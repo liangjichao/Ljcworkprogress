@@ -1,29 +1,25 @@
 package com.jdl.ljc.joyworkprogress.ui.editor;
 
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.components.Service;
 import com.jdl.ljc.joyworkprogress.util.StringUtils;
-import org.cef.browser.CefBrowser;
-import org.cef.callback.CefStringVisitor;
-import org.cef.handler.CefLoadHandlerAdapter;
 import org.intellij.plugins.markdown.ui.preview.jcef.MarkdownJCEFHtmlPanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author liangjichao
  * @date 2023/10/23 11:31 AM
  */
-public class WpsMarkdownJCEFViewPanel extends JPanel implements WpsViewPanel {
+@Service(Service.Level.APP)
+public final class WpsMarkdownJCEFViewPanel extends JPanel implements WpsViewPanel {
     private MarkdownJCEFHtmlPanel htmlPanel;
 
-    public WpsMarkdownJCEFViewPanel(Project project, String content) {
+    public WpsMarkdownJCEFViewPanel() {
         super(new BorderLayout());
-        htmlPanel = new MarkdownJCEFHtmlPanel(project, null);
+        htmlPanel = new MarkdownJCEFHtmlPanel(null, null);
         add(htmlPanel.getComponent(), BorderLayout.CENTER);
-        htmlPanel.setHtml(getConvertHTML(content), 0);
-
+//        htmlPanel.setHtml(getConvertHTML(content), 0);
     }
 
     @Override
