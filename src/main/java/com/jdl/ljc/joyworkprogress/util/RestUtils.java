@@ -3,7 +3,6 @@ package com.jdl.ljc.joyworkprogress.util;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
-import com.jdl.ljc.joyworkprogress.config.WpsPluginSetting;
 import com.jdl.ljc.joyworkprogress.domain.dto.ResultDto;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
@@ -19,6 +18,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class RestUtils {
+    public static String get(String url) {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            ClassicHttpRequest httpRequest = ClassicRequestBuilder.get(url).build();
+            httpRequest.addHeader("Content-Type", ContentType.APPLICATION_JSON);
+            return httpClient.execute(httpRequest, response -> EntityUtils.toString(response.getEntity()));
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
     public static <T> ResultDto<T> post(Class<T> resultValueClazz, String requestPath, Object param) {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             String url = String.format("http://%s%s", AppUtils.getDomain(), requestPath);
@@ -34,7 +43,6 @@ public class RestUtils {
             return ResultDto.fail(e.getMessage());
         }
     }
-
 
 
     @SuppressWarnings("unused")
