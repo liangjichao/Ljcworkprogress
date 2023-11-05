@@ -20,7 +20,7 @@ public final class WpsEditorPanel {
 
     public WpsEditorPanel() {
         editorArea = new RSyntaxTextArea();
-        editorArea.setBorder(JBUI.Borders.empty(10));
+        editorArea.setBorder(JBUI.Borders.empty(20));
         editorArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_MARKDOWN);
         try {
             Theme theme = Theme.load(getClass().getResourceAsStream(

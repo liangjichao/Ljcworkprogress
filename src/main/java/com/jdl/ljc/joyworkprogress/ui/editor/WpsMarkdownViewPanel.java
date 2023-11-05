@@ -1,6 +1,8 @@
 package com.jdl.ljc.joyworkprogress.ui.editor;
 
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.Service;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.HtmlBuilder;
@@ -30,24 +32,22 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WpsMarkdownViewPanel extends JEditorPane implements HyperlinkListener, WpsViewPanel,Disposable {
+@Service(Service.Level.APP)
+public final class WpsMarkdownViewPanel extends JEditorPane implements HyperlinkListener, WpsViewPanel,Disposable {
     private final String pageBaseName = String.format("markdown-preview-index-%s.html", hashCode());
     private ResourceProvider resourceProvider = new MyAggregatingResourceProvider();
 
     private WpsEditorPanel editorPanel;
 
-    public WpsMarkdownViewPanel(String content,WpsEditorPanel editorPanel) {
+    public WpsMarkdownViewPanel() {
         super(UIUtil.HTML_MIME, "");
-        this.editorPanel = editorPanel;
+        this.editorPanel = ApplicationManager.getApplication().getService(WpsEditorPanel.class);
         Disposer.register(this, WpsStaticServer.getInstance().registerResourceProvider(resourceProvider));
         setEditable(false);
         setOpaque(false);
         putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
         addHyperlinkListener(this);
         setEditorKit(new HTMLEditorKitBuilder().withWordWrapViewFactory().build());
-        if (org.apache.commons.lang3.StringUtils.isNotBlank(content)) {
-            setText(content);
-        }
         setFont(FontUtil.getCommitMessageFont());
     }
     @Override

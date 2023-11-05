@@ -53,7 +53,7 @@ public class WpsMarkdownEditor implements Disposable {
         editorPanel = ApplicationManager.getApplication().getService(WpsEditorPanel.class);
         editorPanel.getEditorArea().setText(content);
 
-        if (JBCefApp.isSupported()) {
+        if (!JBCefApp.isSupported()) {
             WpsMarkdownJCEFViewPanel viewPanel = ApplicationManager.getApplication().getService(WpsMarkdownJCEFViewPanel.class);
             viewPanel.updateContent(content, 0);
             wpsViewPanel = viewPanel;
@@ -63,7 +63,8 @@ public class WpsMarkdownEditor implements Disposable {
 
             viewEditor = viewPanel;
         } else {
-            WpsMarkdownViewPanel viewPanel = new WpsMarkdownViewPanel(content, editorPanel);
+            WpsMarkdownViewPanel viewPanel = ApplicationManager.getApplication().getService(WpsMarkdownViewPanel.class);
+            viewPanel.setText(content);
             wpsViewPanel = viewPanel;
             JBScrollPane scrollPane = new JBScrollPane(viewPanel);
             editorPanel.getScrollPane().addMouseWheelListener(new ViewScrollHelper(scrollPane));
