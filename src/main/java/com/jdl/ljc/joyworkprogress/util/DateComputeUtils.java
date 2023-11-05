@@ -24,7 +24,7 @@ public class DateComputeUtils {
         int workingDays = 0;
         LocalDate currentDate = startDay;
         while (!currentDate.isAfter(endDay)) {
-            if (excludeDay(currentDate)) {
+            if (excludeHoliDay(currentDate)) {
                 workingDays++;
             }
             currentDate = currentDate.plusDays(1);
@@ -33,10 +33,7 @@ public class DateComputeUtils {
         return workingDays;
     }
 
-    private static boolean excludeDay(LocalDate currentDate) {
-        return currentDate.getDayOfWeek() != DayOfWeek.SATURDAY &&
-                currentDate.getDayOfWeek() != DayOfWeek.SUNDAY;
-    }
+
     private static boolean excludeHoliDay(LocalDate currentDate) {
         String month = currentDate.format(DateTimeFormatter.ofPattern("yyyyMM"));
         List<Integer> holidayList = Lists.newArrayList();
