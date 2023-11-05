@@ -34,6 +34,10 @@ public class DateComputeUtils {
     }
 
     private static boolean excludeDay(LocalDate currentDate) {
+        return currentDate.getDayOfWeek() != DayOfWeek.SATURDAY &&
+                currentDate.getDayOfWeek() != DayOfWeek.SUNDAY;
+    }
+    private static boolean excludeHoliDay(LocalDate currentDate) {
         String month = currentDate.format(DateTimeFormatter.ofPattern("yyyyMM"));
         List<Integer> holidayList = Lists.newArrayList();
         if (!holidayMap.containsKey(month)) {
@@ -53,8 +57,7 @@ public class DateComputeUtils {
         if (holidayList.contains(currentDate.getDayOfYear())) {
             return false;
         }
-        return currentDate.getDayOfWeek() != DayOfWeek.SATURDAY &&
-                currentDate.getDayOfWeek() != DayOfWeek.SUNDAY;
+        return true;
     }
 
     /**
