@@ -8,7 +8,6 @@ import com.jdl.ljc.joyworkprogress.domain.vo.HolidayResultVo;
 import com.jdl.ljc.joyworkprogress.domain.vo.HolidayVo;
 import com.jdl.ljc.joyworkprogress.enums.HolidayTypeEnum;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
