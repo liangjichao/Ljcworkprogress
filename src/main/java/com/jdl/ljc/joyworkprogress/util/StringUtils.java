@@ -61,6 +61,7 @@ public class StringUtils {
         options.set(HtmlRenderer.SOFT_BREAK, "<br />\n");
         options.set(HtmlRenderer.GENERATE_HEADER_ID, true);
         String imgBaseUrl = String.format("http://%s%s", AppUtils.getDomain(),"/img/");
+        imgBaseUrl = "https://github.githubassets.com/images/icons/emoji/";
         options.set(EmojiExtension.ROOT_IMAGE_PATH, imgBaseUrl);
 
         Parser parser=Parser.builder(options).build();
