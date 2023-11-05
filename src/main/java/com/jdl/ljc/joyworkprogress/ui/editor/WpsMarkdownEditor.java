@@ -53,7 +53,7 @@ public class WpsMarkdownEditor implements Disposable {
         editorPanel = ApplicationManager.getApplication().getService(WpsEditorPanel.class);
         editorPanel.getEditorArea().setText(content);
 
-        if (!JBCefApp.isSupported()) {
+        if (JBCefApp.isSupported()) {
             WpsMarkdownJCEFViewPanel viewPanel = ApplicationManager.getApplication().getService(WpsMarkdownJCEFViewPanel.class);
             viewPanel.updateContent(content, 0);
             wpsViewPanel = viewPanel;
