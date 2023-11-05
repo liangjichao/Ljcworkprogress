@@ -12,10 +12,10 @@ import java.text.SimpleDateFormat;
 public class WpsDatePicker extends DatePicker {
     public WpsDatePicker() {
         super(null);
+        setUI(new WpsDatePickerUI());
         setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
         setPreferredSize(JBUI.size(200,30));
         setResources(new WpsCalendarResources());
-        setUI(new WpsDatePickerUI());
     }
 
     @Override

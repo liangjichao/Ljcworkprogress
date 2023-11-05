@@ -16,6 +16,7 @@ import com.jdl.ljc.joyworkprogress.enums.WorkProgressStatusEnum;
 import com.jdl.ljc.joyworkprogress.ui.calendar.WpsDatePicker;
 import com.jdl.ljc.joyworkprogress.ui.editor.WpsMarkdownEditor;
 import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressPanel;
+import com.jdl.ljc.joyworkprogress.util.DateComputeUtils;
 import com.jdl.ljc.joyworkprogress.util.ProjectUtils;
 import com.jdl.ljc.joyworkprogress.util.RestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +27,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
 import java.net.URI;
 import java.util.Date;
@@ -51,6 +54,8 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
     private JPanel topPanel;
 
     private JPanel bottomPanel;
+
+    private JLabel dayLabel;
 
     public JDWorkProgressFormDialog(@Nullable Project project, WpsDto formData, WorkProgressPanel panel) {
         super(project);
@@ -103,7 +108,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
             content = formData.getDevInfo();
         }
 
-        editor = new WpsMarkdownEditor(project, content,this);
+        editor = new WpsMarkdownEditor(project, content, this);
 
         centerPanel.add(editor.getComponent(), BorderLayout.CENTER);
         return centerPanel;
@@ -143,10 +148,45 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         JPanel dataPickerPanel = new JPanel();
         planWorkHoursPickerStart = new WpsDatePicker();
         planWorkHoursPickerEnd = new WpsDatePicker();
-        UIManager.put("JXDatePicker.todayButtonText", "今日");
+        planWorkHoursPickerStart.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if ("date".equals(evt.getPropertyName())) {
+                    calculateDays(planWorkHoursPickerStart,planWorkHoursPickerEnd);
+                }
+            }
+        });
+        planWorkHoursPickerStart.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if ("value".equals(e.getActionCommand())) {
+                    WpsDatePicker startDate = (WpsDatePicker) e.getSource();
+                    calculateDays(startDate, planWorkHoursPickerEnd);
+                }
+            }
+        });
+        planWorkHoursPickerEnd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if ("value".equals(e.getActionCommand())) {
+                    WpsDatePicker endDate = (WpsDatePicker) e.getSource();
+                    calculateDays(planWorkHoursPickerStart, endDate);
+                }
+            }
+        });
+        planWorkHoursPickerEnd.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if ("date".equals(evt.getPropertyName())) {
+                    calculateDays(planWorkHoursPickerStart,planWorkHoursPickerEnd);
+                }
+            }
+        });
         dataPickerPanel.add(planWorkHoursPickerStart);
         dataPickerPanel.add(new JLabel("至"));
         dataPickerPanel.add(planWorkHoursPickerEnd);
+        dayLabel = new JLabel();
+        dataPickerPanel.add(dayLabel);
         constraints.gridx = 0;
         constraints.gridy = y;
         constraints.anchor = GridBagConstraints.WEST;
@@ -417,6 +457,16 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         appVersionField.setText(wpsDto.getAppVersion());
         devOwnerField.setText(wpsDto.getUserCode());
         dependenceCheckBox.setSelected((wpsDto.getForcedDependency() != null && wpsDto.getForcedDependency() == 1));
+
+        calculateDays(planWorkHoursPickerStart, planWorkHoursPickerEnd);
+    }
+
+    private void calculateDays(WpsDatePicker startPicker, WpsDatePicker endPicker) {
+        String start = getShortDateTime(startPicker);
+        String end = getShortDateTime(endPicker);
+        if (StringUtils.isNotBlank(start) && StringUtils.isNotBlank(end)) {
+            dayLabel.setText(DateComputeUtils.calculateWorkingDays(start, end) + "天");
+        }
     }
 
     @Override

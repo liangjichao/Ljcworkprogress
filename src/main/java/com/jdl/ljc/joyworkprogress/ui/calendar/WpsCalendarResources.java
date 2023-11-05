@@ -28,7 +28,7 @@ public class WpsCalendarResources implements CalendarResources {
         String language = locale.getLanguage();
         String word = (String)this.strings.get(language + "." + key);
         if (word == null) {
-            word = (String)this.strings.get("en." + key);
+            word = (String)this.strings.get("zh." + key);
         }
 
         return word;
