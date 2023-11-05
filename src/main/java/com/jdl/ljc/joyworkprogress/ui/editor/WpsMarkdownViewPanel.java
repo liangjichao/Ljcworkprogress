@@ -15,6 +15,7 @@ import com.jdl.ljc.joyworkprogress.ui.editor.preview.Resource;
 import com.jdl.ljc.joyworkprogress.ui.editor.preview.ResourceProvider;
 import com.jdl.ljc.joyworkprogress.ui.editor.preview.WpsStaticServer;
 import com.jdl.ljc.joyworkprogress.util.FileUtils;
+import com.jdl.ljc.joyworkprogress.util.MarkdownTextUtils;
 import com.jdl.ljc.joyworkprogress.util.StringUtils;
 
 import javax.swing.*;
@@ -64,7 +65,7 @@ public class WpsMarkdownViewPanel extends JEditorPane implements HyperlinkListen
     public String getConvertHTML(String t) {
         String html = String.format("""
                 <div class="markdown-body">%s</div>
-                """,StringUtils.convertHTML(t));
+                """, MarkdownTextUtils.convertHTML(t));
         String css = String.format("<meta charset=\"UTF-8\"><style>%s</style>",FileUtils.getResource("/html/markdown-view.css"));
 
         return new HtmlBuilder()

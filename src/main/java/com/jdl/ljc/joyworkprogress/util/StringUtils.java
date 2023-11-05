@@ -28,45 +28,5 @@ public class StringUtils {
         return input.substring(0, input.length());
     }
 
-    /**
-     * 样例：
-     * <pre>
-     * | day         | time  |   spent |
-     * |:------------|:-----:|--------:|
-     * | nov. 2. tue | 10:00 |  4h 40m |
-     * | nov. 3. thu | 11:00 |      4h |
-     * | nov. 7. mon | 10:20 |  4h 20m |
-     * | total:             ||     13h |
-     *
-     * ![Resizable Image](path/to/image.jpg){width=500 height=300}
-     *
-     * This is a ^superscript^ text
-     *
-     * This is a \"quoted\" text with 'apostrophes' and three dots...
-     *
-     * This is some ~~inserted~~ text.
-     *
-     * This is an example with emoji :smile: :heart:
-     * </pre>
-     * @param content
-     * @return
-     */
-    public static String convertHTML(String content) {
-        MutableDataSet options = new MutableDataSet();
 
-        options.set(Parser.EXTENSIONS, Arrays.asList(TablesExtension.create(), StrikethroughExtension.create()
-                , ResizableImageExtension.create(), SuperscriptExtension.create()
-        , TypographicExtension.create(), AnchorLinkExtension.create()
-        , InsExtension.create(), EmojiExtension.create()));
-        options.set(HtmlRenderer.SOFT_BREAK, "<br />\n");
-        options.set(HtmlRenderer.GENERATE_HEADER_ID, true);
-        String imgBaseUrl = String.format("http://%s%s", AppUtils.getDomain(),"/img/");
-        imgBaseUrl = "https://github.githubassets.com/images/icons/emoji/";
-        options.set(EmojiExtension.ROOT_IMAGE_PATH, imgBaseUrl);
-
-        Parser parser=Parser.builder(options).build();
-        HtmlRenderer renderer=HtmlRenderer.builder(options).build();
-        Node document = parser.parse(content);
-        return renderer.render(document);
-    }
 }

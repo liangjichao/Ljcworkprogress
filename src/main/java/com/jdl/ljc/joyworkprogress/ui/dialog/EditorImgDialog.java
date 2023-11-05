@@ -16,6 +16,9 @@ import java.awt.event.ActionEvent;
  */
 public class EditorImgDialog extends DialogWrapper {
     private JBTextField urlField;
+    private JBTextField widthField;
+
+    private JBTextField heightField;
 
     public EditorImgDialog() {
         super(true);
@@ -44,7 +47,7 @@ public class EditorImgDialog extends DialogWrapper {
     @Override
     protected @Nullable JComponent createCenterPanel() {
         JPanel rootPanel = new JPanel(new BorderLayout());
-        rootPanel.setPreferredSize(new Dimension(400, 80));
+        rootPanel.setPreferredSize(new Dimension(400, 150));
         JPanel topPanel = getFormPanel();
         rootPanel.add(topPanel, BorderLayout.CENTER);
         return rootPanel;
@@ -66,6 +69,32 @@ public class EditorImgDialog extends DialogWrapper {
         constraints.weightx = 1.0;
         formPanel.add(urlField, constraints);
 
+
+        y++;
+        widthField = new JBTextField();
+        constraints.gridx = 0;
+        constraints.gridy = y;
+        constraints.anchor = GridBagConstraints.WEST;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.weightx = 0;
+        formPanel.add(new JLabel("宽："), constraints);
+        constraints.gridx = 1;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.weightx = 1.0;
+        formPanel.add(widthField, constraints);
+
+        y++;
+        heightField = new JBTextField();
+        constraints.gridx = 0;
+        constraints.gridy = y;
+        constraints.anchor = GridBagConstraints.WEST;
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.weightx = 0;
+        formPanel.add(new JLabel("高："), constraints);
+        constraints.gridx = 1;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.weightx = 1.0;
+        formPanel.add(heightField, constraints);
         return formPanel;
     }
 
@@ -86,5 +115,13 @@ public class EditorImgDialog extends DialogWrapper {
 
     public String getURLText() {
         return urlField.getText();
+    }
+
+    public String getWidthText(){
+        return widthField.getText();
+    }
+
+    public String getHeightText(){
+        return heightField.getText();
     }
 }

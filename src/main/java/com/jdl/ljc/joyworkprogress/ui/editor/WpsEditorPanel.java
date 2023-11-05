@@ -30,6 +30,7 @@ public final class WpsEditorPanel {
             throw new RuntimeException(e);
         }
         editorScrollPane = new RTextScrollPane(editorArea);
+        editorScrollPane.setBorder(JBUI.Borders.empty());
     }
 
 

@@ -52,9 +52,9 @@ public class EditorButtonAction extends AnAction {
             String selectText = editor.getSelectionText();
             if (StringUtils.isNoneBlank(url)) {
                 if (StringUtils.isBlank(selectText)) {
-                    editor.insertText(MarkdownTextUtils.createImg(url));
+                    editor.insertText(MarkdownTextUtils.createImg(url,dialog.getWidthText(),dialog.getHeightText()));
                 }else{
-                    editor.replateText(MarkdownTextUtils.createImg(url));
+                    editor.replateText(MarkdownTextUtils.createImg(url,dialog.getWidthText(),dialog.getHeightText()));
                 }
             }
         }

@@ -1,6 +1,7 @@
 package com.jdl.ljc.joyworkprogress.ui.editor;
 
 import com.intellij.openapi.components.Service;
+import com.jdl.ljc.joyworkprogress.util.MarkdownTextUtils;
 import com.jdl.ljc.joyworkprogress.util.StringUtils;
 import org.intellij.plugins.markdown.ui.preview.jcef.MarkdownJCEFHtmlPanel;
 
@@ -24,7 +25,7 @@ public final class WpsMarkdownJCEFViewPanel extends JPanel implements WpsViewPan
 
     @Override
     public String getConvertHTML(String content) {
-        return "<html lang=\"zh\"><head><meta charset=\"UTF-8\"><title>Wps Markdown Preview</title></head>" + StringUtils.convertHTML(content) + "</html>";
+        return "<html lang=\"zh\"><head><meta charset=\"UTF-8\"><title>Wps Markdown Preview</title></head>" + MarkdownTextUtils.convertHTML(content) + "</html>";
     }
 
     @Override
