@@ -8,7 +8,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.ui.components.TwoSideComponent;
 import com.intellij.util.ui.JBUI;
-import com.jdl.ljc.joyworkprogress.action.*;
+import com.jdl.ljc.joyworkprogress.action.AddWorkProgressDialogAction;
+import com.jdl.ljc.joyworkprogress.action.DeleteWorkProgressDialogAction;
+import com.jdl.ljc.joyworkprogress.action.EditWorkProgressDialogAction;
+import com.jdl.ljc.joyworkprogress.action.LocateWorkProgressDialogAction;
+import com.jdl.ljc.joyworkprogress.action.SettingAction;
 import com.jdl.ljc.joyworkprogress.config.WpsPluginSetting;
 import com.jdl.ljc.joyworkprogress.domain.WpsConfig;
 import com.jdl.ljc.joyworkprogress.ui.dialog.WpsSettingDialog;
@@ -30,8 +34,7 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
         initialize(project);
     }
     private void initialize(Project project) {
-        InitWorkTasker tasker = new InitWorkTasker(project);
-        tasker.execute();
+
 
         gridPanel = new WorkProgressPanel(this,project);
 
@@ -45,16 +48,11 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
         setToolbar(twoSideComponent);
         setContent(gridPanel);
 
-        if (WpsPluginSetting.getInstance().getState() != null&& StringUtils.isNotBlank(WpsPluginSetting.getInstance().getState().domain)) {
-            gridPanel.refreshTableData();
-        }else {
-            WpsSettingDialog dialog = new WpsSettingDialog(project);
-            if (dialog.showAndGet()) {
-                gridPanel.refreshTableData();
-            }
-        }
+        InitWorkTasker tasker = new InitWorkTasker(project);
+        tasker.execute();
 
     }
+
 
     private class InitWorkTasker extends SwingWorker{
         private Project project;
@@ -62,8 +60,17 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
             this.project=project;
         }
         @Override
-        protected Object doInBackground() throws Exception {
+        protected Object doInBackground() {
             WpsConfig.getInstance().init(project);
+
+            if (WpsPluginSetting.getInstance().getState() != null&& StringUtils.isNotBlank(WpsPluginSetting.getInstance().getState().domain)) {
+                gridPanel.refreshTableData();
+            }else {
+                WpsSettingDialog dialog = new WpsSettingDialog(project);
+                if (dialog.showAndGet()) {
+                    gridPanel.refreshTableData();
+                }
+            }
             return null;
         }
     }

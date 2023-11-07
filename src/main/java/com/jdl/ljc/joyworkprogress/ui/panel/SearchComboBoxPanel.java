@@ -35,9 +35,10 @@ public class SearchComboBoxPanel extends JBPanel implements Disposable {
         menuBar = new JMenuBar();
         menuBar.setBorder(JBUI.Borders.empty());
 
+        iconBtn = new CancelActionButton(new CancelAction(), "CANCEL_SELECTED_WORK_USER");
+        iconBtn.setVisible(false);
 
-        UserMenu menu = new UserMenu("User", AllIcons.General.ArrowDown);
-        userMenu = menu;
+        userMenu = new UserMenu(AllIcons.General.ArrowDown,iconBtn);
         userMenu.setSelectedRun(new Runnable() {
             @Override
             public void run() {
@@ -48,9 +49,6 @@ public class SearchComboBoxPanel extends JBPanel implements Disposable {
             }
         });
         menuBar.add(userMenu);
-        iconBtn = new CancelActionButton(new CancelAction(), "CANCEL_SELECTED_WORK_USER");
-        iconBtn.setVisible(false);
-
 
         searchArea = new SearchTextField(false) {
             @Override
@@ -68,39 +66,7 @@ public class SearchComboBoxPanel extends JBPanel implements Disposable {
                 rootPanel.getGridPanel().refreshTableData();
             }
         };
-//        searchArea.addPropertyChangeListener(new PropertyChangeListener() {
-//            @Override
-//            public void propertyChange(PropertyChangeEvent evt) {
-//                if (SearchTextArea.JUST_CLEARED_KEY.equals(evt.getPropertyName())) {
-//                    Object v = evt.getNewValue();
-//                    if (v != null) {
-//                        myTextArea.setText("");
-//                        panel.refreshTableData(getQueryDto());
-//                    }
-//                }
-//            }
-//        });
-//        searchArea.getTextArea().addKeyListener(new KeyListener() {
-//            @Override
-//            public void keyTyped(KeyEvent e) {
-//
-//            }
-//
-//            @Override
-//            public void keyPressed(KeyEvent e) {
-//                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-//                    panel.refreshTableData(getQueryDto());
-//                }
-//            }
-//
-//            @Override
-//            public void keyReleased(KeyEvent e) {
-//
-//            }
-//        });
-
         add(searchArea);
-
         add(menuBar);
         add(iconBtn);
     }
@@ -113,7 +79,6 @@ public class SearchComboBoxPanel extends JBPanel implements Disposable {
             selectedText = WpsConfig.getInstance().getCurrentUserCode();
         }
         queryDto.setUserCode(selectedText);
-
         return queryDto;
     }
 
@@ -148,5 +113,9 @@ public class SearchComboBoxPanel extends JBPanel implements Disposable {
 
             rootPanel.getGridPanel().refreshTableData();
         }
+    }
+
+    public UserMenu getUserMenu() {
+        return userMenu;
     }
 }

@@ -1,8 +1,10 @@
 package com.jdl.ljc.joyworkprogress.ui;
 
+import com.intellij.openapi.actionSystem.impl.ActionButton;
 import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.ui.components.JBMenu;
 import com.intellij.util.ui.JBUI;
+import com.jdl.ljc.joyworkprogress.domain.WpsConfig;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
@@ -20,11 +22,10 @@ public class UserMenu extends JBMenu {
 
     private static LinkedList<String> recentList = new LinkedList<>();
     private int maxRecentSize = 5;
-    public UserMenu(String text, Icon icon) {
+    public UserMenu(Icon icon, ActionButton iconBtn) {
         super();
-        setText(text);
+        initText(iconBtn);
         this.menuIcon = icon;
-        showMenuIcon = true;
 
         setUI(new BasicMenuUI(){
             @Override
@@ -38,6 +39,8 @@ public class UserMenu extends JBMenu {
         });
 
         addMenuList();
+
+
     }
     private void addMenuList() {
         removeAll();
@@ -99,12 +102,23 @@ public class UserMenu extends JBMenu {
             if (selectedRun != null) {
                 selectedRun.run();
             }
-
-
         }
         setText(showUserTxt);
+    }
 
-
+    public void initText(ActionButton iconBtn) {
+        selectedText = "";
+        String showUserTxt = "User";
+        if (StringUtils.isNotBlank(WpsConfig.getInstance().getCurrentUserCode())) {
+            selectedText = "me";
+            showUserTxt = showUserTxt + ":" + selectedText;
+            showMenuIcon = false;
+            iconBtn.setVisible(true);
+        }else{
+            showMenuIcon = true;
+            iconBtn.setVisible(false);
+        }
+        setText(showUserTxt);
     }
 
     public void setSelectedRun(Runnable selectedRun) {
