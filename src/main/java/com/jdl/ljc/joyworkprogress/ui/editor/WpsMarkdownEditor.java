@@ -46,14 +46,16 @@ public class WpsMarkdownEditor implements Disposable {
 
     private Project project;
 
+    private boolean cefApp;
+
     public WpsMarkdownEditor(Project project, String content, JDWorkProgressFormDialog formDialog) {
 
         this.project = project;
         this.formDialog = formDialog;
         editorPanel = ApplicationManager.getApplication().getService(WpsEditorPanel.class);
         editorPanel.getEditorArea().setText(content);
-
-        if (JBCefApp.isSupported()) {
+        cefApp=!JBCefApp.isSupported();
+        if (cefApp) {
             WpsMarkdownJCEFViewPanel viewPanel = ApplicationManager.getApplication().getService(WpsMarkdownJCEFViewPanel.class);
             viewPanel.updateContent(content, 0);
             wpsViewPanel = viewPanel;
@@ -63,13 +65,15 @@ public class WpsMarkdownEditor implements Disposable {
 
             viewEditor = viewPanel;
         } else {
-            WpsMarkdownViewPanel viewPanel = ApplicationManager.getApplication().getService(WpsMarkdownViewPanel.class);
-            viewPanel.setText(content);
+//            WpsMarkdownViewPanel viewPanel = ApplicationManager.getApplication().getService(WpsMarkdownViewPanel.class);
+//            viewPanel.setText(content);
+//            wpsViewPanel = viewPanel;
+//            JBScrollPane scrollPane = new JBScrollPane(viewPanel);
+//            editorPanel.getScrollPane().addMouseWheelListener(new ViewScrollHelper(scrollPane));
+//            editorPanel.getEditorArea().getDocument().addDocumentListener(new EditorDocumentListener(editorPanel, viewPanel));
+//            viewEditor = scrollPane;
+            WpsMarkdownBrowserView viewPanel = ApplicationManager.getApplication().getService(WpsMarkdownBrowserView.class);
             wpsViewPanel = viewPanel;
-            JBScrollPane scrollPane = new JBScrollPane(viewPanel);
-            editorPanel.getScrollPane().addMouseWheelListener(new ViewScrollHelper(scrollPane));
-            editorPanel.getEditorArea().getDocument().addDocumentListener(new EditorDocumentListener(editorPanel, viewPanel));
-            viewEditor = scrollPane;
         }
 
 
@@ -77,7 +81,6 @@ public class WpsMarkdownEditor implements Disposable {
         editorSplitter.setDividerWidth(1);
         JPanel divider = editorSplitter.getDivider();
         divider.setBackground(JBColor.border().brighter());
-
         editorSplitter.setFirstComponent(editorPanel.getScrollPane());
         editorSplitter.setSecondComponent(viewEditor);
 
@@ -145,13 +148,15 @@ public class WpsMarkdownEditor implements Disposable {
         actionGroup.add(new EditorButtonAction(EditorButtonEnum.FULL_SCREENT.name(), JoyworkprogressIcons.FULL_SCREEN, this));
         actionGroup.add(new EditorButtonAction(EditorButtonEnum.LINK.name(), JoyworkprogressIcons.LINK, this));
         actionGroup.add(new EditorButtonAction(EditorButtonEnum.IMG.name(), JoyworkprogressIcons.IMG, this));
-        if (!JBCefApp.isSupported()) {
+        if (!cefApp) {
+            actionGroup.addSeparator();
             actionGroup.add(new EditorButtonAction(EditorButtonEnum.BROWSER.name(), JoyworkprogressIcons.BROWSER, this));
+        } else {
+            actionGroup.addSeparator();
+            actionGroup.add(new EditorButtonAction(EditorButtonEnum.EDITOR.name(), JoyworkprogressIcons.EDITOR, this));
+            actionGroup.add(new EditorButtonAction(EditorButtonEnum.EDITOR_AND_PREVIEW.name(), JoyworkprogressIcons.EDITOR_AND_PREVIEW, this));
+            actionGroup.add(new EditorButtonAction(EditorButtonEnum.PREVIEW.name(), JoyworkprogressIcons.PREVIEW, this));
         }
-        actionGroup.addSeparator();
-        actionGroup.add(new EditorButtonAction(EditorButtonEnum.EDITOR.name(), JoyworkprogressIcons.EDITOR, this));
-        actionGroup.add(new EditorButtonAction(EditorButtonEnum.EDITOR_AND_PREVIEW.name(), JoyworkprogressIcons.EDITOR_AND_PREVIEW, this));
-        actionGroup.add(new EditorButtonAction(EditorButtonEnum.PREVIEW.name(), JoyworkprogressIcons.PREVIEW, this));
 
         ActionManager actionManager = ActionManager.getInstance();
         return actionManager.createActionToolbar("WPS_EDITOR_TOOLBAR", actionGroup, true);
