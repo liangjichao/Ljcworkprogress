@@ -54,7 +54,7 @@ public class WpsMarkdownEditor implements Disposable {
         this.formDialog = formDialog;
         editorPanel = ApplicationManager.getApplication().getService(WpsEditorPanel.class);
         editorPanel.getEditorArea().setText(content);
-        cefApp=!JBCefApp.isSupported();
+        cefApp=JBCefApp.isSupported();
         if (cefApp) {
             WpsMarkdownJCEFViewPanel viewPanel = ApplicationManager.getApplication().getService(WpsMarkdownJCEFViewPanel.class);
             viewPanel.updateContent(content, 0);
