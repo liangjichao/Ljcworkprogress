@@ -62,7 +62,7 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
         @Override
         protected Object doInBackground() {
             WpsConfig.getInstance().init(project);
-
+            searchComboBoxPanel.getUserMenu().editSelectedMenuItem("me");
             if (WpsPluginSetting.getInstance().getState() != null&& StringUtils.isNotBlank(WpsPluginSetting.getInstance().getState().domain)) {
                 gridPanel.refreshTableData();
             }else {

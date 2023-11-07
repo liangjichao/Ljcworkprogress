@@ -22,10 +22,12 @@ public class UserMenu extends JBMenu {
 
     private static LinkedList<String> recentList = new LinkedList<>();
     private int maxRecentSize = 5;
+    private ActionButton iconBtn;
     public UserMenu(Icon icon, ActionButton iconBtn) {
         super();
         initText(iconBtn);
         this.menuIcon = icon;
+        this.iconBtn=iconBtn;
 
         setUI(new BasicMenuUI(){
             @Override
@@ -95,11 +97,15 @@ public class UserMenu extends JBMenu {
             if (recentList.size() >= maxRecentSize) {
                 recentList.remove();
             }
-            recentList.add(text);
+            if (!recentList.contains(text)) {
+                recentList.add(text);
+            }
+
             addMenuList();
 
             showMenuIcon=false;
             if (selectedRun != null) {
+                iconBtn.setVisible(true);
                 selectedRun.run();
             }
         }

@@ -42,10 +42,8 @@ public class SearchComboBoxPanel extends JBPanel implements Disposable {
         userMenu.setSelectedRun(new Runnable() {
             @Override
             public void run() {
-                iconBtn.setVisible(true);
-                if (StringUtils.isNotBlank(userMenu.getSelectedText())) {
-                    rootPanel.getGridPanel().refreshTableData();
-                }
+                String selectedText = userMenu.getSelectedText();
+                selectedMenu(selectedText);
             }
         });
         menuBar.add(userMenu);
@@ -69,6 +67,12 @@ public class SearchComboBoxPanel extends JBPanel implements Disposable {
         add(searchArea);
         add(menuBar);
         add(iconBtn);
+    }
+
+    public void selectedMenu(String selectedText) {
+        if (StringUtils.isNotBlank(selectedText)) {
+            rootPanel.getGridPanel().refreshTableData();
+        }
     }
 
     public WpsQueryDto getQueryDto() {
