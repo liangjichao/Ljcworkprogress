@@ -10,7 +10,7 @@ import com.jdl.ljc.joyworkprogress.util.ProjectUtils;
 import javax.swing.*;
 
 public class LocateWorkProgressDialogAction extends AnAction {
-    private WorkProgressPanel panel;
+    private final WorkProgressPanel panel;
 
     public LocateWorkProgressDialogAction(Icon icon, WorkProgressPanel panel) {
         super(icon);
@@ -20,8 +20,9 @@ public class LocateWorkProgressDialogAction extends AnAction {
     @Override
     public void actionPerformed(AnActionEvent e) {
         Project project = e.getData(PlatformDataKeys.PROJECT);
-        String currentBranchName = ProjectUtils.getCurrentBranchName(project);
-
-        panel.refreshTableData(currentBranchName);
+        if (project != null) {
+            String currentBranchName = ProjectUtils.getCurrentBranchName(project);
+            panel.refreshTableData(currentBranchName);
+        }
     }
 }

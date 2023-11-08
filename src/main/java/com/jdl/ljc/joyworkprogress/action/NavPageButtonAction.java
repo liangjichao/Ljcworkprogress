@@ -1,5 +1,6 @@
 package com.jdl.ljc.joyworkprogress.action;
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.jdl.ljc.joyworkprogress.domain.dto.WpsPageDto;
@@ -37,5 +38,10 @@ public class NavPageButtonAction extends AnAction {
             }
             e.getPresentation().setText(title);
         }
+    }
+
+    @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+        return super.getActionUpdateThread();
     }
 }

@@ -13,9 +13,9 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class EditorButtonAction extends AnAction {
-    private String uid;
+    private final String uid;
 
-    private WpsMarkdownEditor editor;
+    private final WpsMarkdownEditor editor;
     public EditorButtonAction(String uid,Icon icon,WpsMarkdownEditor editor) {
         super(icon);
         this.uid = uid;

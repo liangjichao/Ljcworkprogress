@@ -1,5 +1,6 @@
 package com.jdl.ljc.joyworkprogress.action;
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.jdl.ljc.joyworkprogress.domain.dto.WpsPageDto;
@@ -14,8 +15,8 @@ import javax.swing.*;
  * @date 2023/10/17 12:09 PM
  */
 public class NavButtonAction extends AnAction {
-    private WorkProgressNavPanel navPanel;
-    private String uid;
+    private final WorkProgressNavPanel navPanel;
+    private final String uid;
 
     public NavButtonAction(String uid, Icon icon, WorkProgressNavPanel navPanel) {
         super(icon);
@@ -43,6 +44,7 @@ public class NavButtonAction extends AnAction {
 
     @Override
     public boolean displayTextInToolbar() {
+        super.displayTextInToolbar();
         return false;
     }
 
@@ -54,21 +56,22 @@ public class NavButtonAction extends AnAction {
         updatePageNavBtn(e);
     }
 
+    @Override
+    public @NotNull ActionUpdateThread getActionUpdateThread() {
+        return super.getActionUpdateThread();
+    }
+
     private void updatePageNavBtn(@NotNull AnActionEvent e) {
-        Long cpage = navPanel.getCpage();
+        Long currentPage = navPanel.getCpage();
         WpsPageDto pageDto = navPanel.getPageDto();
         if (NavButtonEnum.NEXT.name().equals(uid) || NavButtonEnum.LAST.name().equals(uid)) {
-            if (pageDto == null || pageDto.getTotalPage() <= 1 || pageDto.getTotalPage().equals(cpage)) {
+            if (pageDto == null || pageDto.getTotalPage() <= 1 || pageDto.getTotalPage().equals(currentPage)) {
                 e.getPresentation().setEnabled(false);
-            } else if (pageDto != null && pageDto.getTotalPage() >= cpage + 1) {
+            } else if (pageDto.getTotalPage() >= currentPage + 1) {
                 e.getPresentation().setEnabled(true);
             }
         } else if (NavButtonEnum.PREV.name().equals(uid) || NavButtonEnum.FIRST.name().equals(uid)) {
-            if (pageDto == null || cpage <= 1) {
-                e.getPresentation().setEnabled(false);
-            } else if (pageDto != null && cpage > 1) {
-                e.getPresentation().setEnabled(true);
-            }
+            e.getPresentation().setEnabled(pageDto != null && currentPage > 1);
         }
     }
 }

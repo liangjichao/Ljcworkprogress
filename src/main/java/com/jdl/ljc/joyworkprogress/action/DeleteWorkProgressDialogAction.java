@@ -7,11 +7,12 @@ import com.jdl.ljc.joyworkprogress.domain.dto.ResultDto;
 import com.jdl.ljc.joyworkprogress.domain.dto.WpsDto;
 import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressPanel;
 import com.jdl.ljc.joyworkprogress.util.RestUtils;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
 public class DeleteWorkProgressDialogAction extends AnAction {
-    private WorkProgressPanel panel;
+    private final WorkProgressPanel panel;
 
     public DeleteWorkProgressDialogAction(Icon icon, WorkProgressPanel panel) {
         super(icon);
@@ -19,7 +20,7 @@ public class DeleteWorkProgressDialogAction extends AnAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         WpsDto wpsDto = this.panel.getSelectRow();
         if (wpsDto == null) {
             Messages.showInfoMessage("请选择一条记录!","提示");

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  * @date 2023/10/18 5:35 PM
  */
 public class SettingAction extends AnAction {
-    private Project project;
+    private final Project project;
     public SettingAction(Project project) {
         super(AllIcons.General.Settings);
         this.project=project;

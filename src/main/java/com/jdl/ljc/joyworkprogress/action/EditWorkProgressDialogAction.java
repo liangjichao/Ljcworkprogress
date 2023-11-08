@@ -12,7 +12,7 @@ import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressPanel;
 import javax.swing.*;
 
 public class EditWorkProgressDialogAction extends AnAction {
-    private WorkProgressPanel panel;
+    private final WorkProgressPanel panel;
 
     public EditWorkProgressDialogAction(Icon icon, WorkProgressPanel panel) {
         super(icon);
