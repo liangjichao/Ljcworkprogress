@@ -33,9 +33,6 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
 import java.net.URI;
 import java.util.Date;
@@ -159,38 +156,26 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         JPanel dataPickerPanel = new JPanel();
         planWorkHoursPickerStart = new WpsDatePicker();
         planWorkHoursPickerEnd = new WpsDatePicker();
-        planWorkHoursPickerStart.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if ("date".equals(evt.getPropertyName())) {
-                    calculateDays(planWorkHoursPickerStart,planWorkHoursPickerEnd);
-                }
+        planWorkHoursPickerStart.addPropertyChangeListener(evt -> {
+            if ("date".equals(evt.getPropertyName())) {
+                calculateDays(planWorkHoursPickerStart,planWorkHoursPickerEnd);
             }
         });
-        planWorkHoursPickerStart.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if ("value".equals(e.getActionCommand())) {
-                    WpsDatePicker startDate = (WpsDatePicker) e.getSource();
-                    calculateDays(startDate, planWorkHoursPickerEnd);
-                }
+        planWorkHoursPickerStart.addActionListener(e -> {
+            if ("value".equals(e.getActionCommand())) {
+                WpsDatePicker startDate = (WpsDatePicker) e.getSource();
+                calculateDays(startDate, planWorkHoursPickerEnd);
             }
         });
-        planWorkHoursPickerEnd.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if ("value".equals(e.getActionCommand())) {
-                    WpsDatePicker endDate = (WpsDatePicker) e.getSource();
-                    calculateDays(planWorkHoursPickerStart, endDate);
-                }
+        planWorkHoursPickerEnd.addActionListener(e -> {
+            if ("value".equals(e.getActionCommand())) {
+                WpsDatePicker endDate = (WpsDatePicker) e.getSource();
+                calculateDays(planWorkHoursPickerStart, endDate);
             }
         });
-        planWorkHoursPickerEnd.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if ("date".equals(evt.getPropertyName())) {
-                    calculateDays(planWorkHoursPickerStart,planWorkHoursPickerEnd);
-                }
+        planWorkHoursPickerEnd.addPropertyChangeListener(evt -> {
+            if ("date".equals(evt.getPropertyName())) {
+                calculateDays(planWorkHoursPickerStart,planWorkHoursPickerEnd);
             }
         });
         dataPickerPanel.add(planWorkHoursPickerStart);
@@ -199,17 +184,14 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         dayLabel = new JLabel();
         dataPickerPanel.add(dayLabel);
         JButton dayCopyBtn = new JDIconButton(JoyworkprogressIcons.COPY);
-        dayCopyBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                String startDate = getShortDateTime(planWorkHoursPickerStart);
-                String endDate = getShortDateTime(planWorkHoursPickerEnd);
-                if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate)) {
-                    String copyContent = String.format("%s至%s",startDate,endDate);
-                    StringSelection selection = new StringSelection(copyContent);
-                    clipboard.setContents(selection,null);
-                }
+        dayCopyBtn.addActionListener(e -> {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            String startDate = getShortDateTime(planWorkHoursPickerStart);
+            String endDate = getShortDateTime(planWorkHoursPickerEnd);
+            if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate)) {
+                String copyContent = String.format("%s至%s",startDate,endDate);
+                StringSelection selection = new StringSelection(copyContent);
+                clipboard.setContents(selection,null);
             }
         });
         dataPickerPanel.add(dayCopyBtn);
@@ -245,12 +227,9 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         JPanel prdPanel = new JPanel(new BorderLayout());
         prdPanel.add(prdField, BorderLayout.CENTER);
         prdPanel.add(prdLinkBtn, BorderLayout.EAST);
-        prdLinkBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String url = prdField.getText();
-                openBrowserLink(url);
-            }
+        prdLinkBtn.addActionListener(e -> {
+            String url = prdField.getText();
+            openBrowserLink(url);
         });
         constraints.gridx = 0;
         constraints.gridy = y;
@@ -291,12 +270,9 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         devBranchPanel.add(devBranchField, BorderLayout.CENTER);
         JButton getBranchNameBtn = new JButton(AllIcons.Actions.Checked);
         getBranchNameBtn.setPreferredSize(new Dimension(30, 30));
-        getBranchNameBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (project != null) {
-                    devBranchField.setText(ProjectUtils.getCurrentBranchName(project));
-                }
+        getBranchNameBtn.addActionListener(e -> {
+            if (project != null) {
+                devBranchField.setText(ProjectUtils.getCurrentBranchName(project));
             }
         });
         devBranchPanel.add(getBranchNameBtn, BorderLayout.EAST);
@@ -322,12 +298,9 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         JPanel cardPanel = new JPanel(new BorderLayout());
         cardPanel.add(cardField, BorderLayout.CENTER);
         cardPanel.add(openLinkBtn, BorderLayout.EAST);
-        openLinkBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String url = cardField.getText();
-                openBrowserLink(url);
-            }
+        openLinkBtn.addActionListener(e -> {
+            String url = cardField.getText();
+            openBrowserLink(url);
         });
         constraints.gridx = 0;
         constraints.gridy = y;
@@ -340,14 +313,13 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         constraints.weightx = 1.0;
         topPanel.add(cardPanel, constraints);
         y++;
-        JLabel devOwnerLabel = new JLabel("开发人员：");
         devOwnerField = new JTextField();
         constraints.gridx = 0;
         constraints.gridy = y;
         constraints.anchor = GridBagConstraints.WEST;
         constraints.fill = GridBagConstraints.NONE;
         constraints.weightx = 0;
-        topPanel.add(devOwnerLabel, constraints);
+        topPanel.add(new JLabel("开发人员："), constraints);
         constraints.gridx = 1;
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.weightx = 1.0;
