@@ -2,29 +2,36 @@ package com.jdl.ljc.joyworkprogress.ui.dialog;
 
 import com.alibaba.fastjson2.util.DateUtils;
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.util.ui.JBUI;
 import com.jdl.ljc.joyworkprogress.domain.WpsConfig;
 import com.jdl.ljc.joyworkprogress.domain.dto.ResultDto;
 import com.jdl.ljc.joyworkprogress.domain.dto.WpsDto;
 import com.jdl.ljc.joyworkprogress.domain.dto.WpsSaveDto;
 import com.jdl.ljc.joyworkprogress.enums.WorkProgressStatusEnum;
+import com.jdl.ljc.joyworkprogress.ui.JDIconButton;
 import com.jdl.ljc.joyworkprogress.ui.calendar.WpsDatePicker;
 import com.jdl.ljc.joyworkprogress.ui.editor.WpsMarkdownEditor;
 import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressPanel;
 import com.jdl.ljc.joyworkprogress.util.DateComputeUtils;
 import com.jdl.ljc.joyworkprogress.util.ProjectUtils;
 import com.jdl.ljc.joyworkprogress.util.RestUtils;
+import icons.JoyworkprogressIcons;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -34,7 +41,8 @@ import java.net.URI;
 import java.util.Date;
 
 public class JDWorkProgressFormDialog extends DialogWrapper {
-    private Project project;
+    private static final Logger LOG = Logger.getInstance(JDWorkProgressFormDialog.class);
+    private final Project project;
     private ComboBox<WorkProgressStatusEnum> progressStatusComboBox;
     private WpsDatePicker planWorkHoursPickerStart;
     private WpsDatePicker planWorkHoursPickerEnd;
@@ -45,9 +53,9 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
     private JTextField appVersionField;
     private JTextField cardField;
     private JTextField devOwnerField;
-    private WpsDto formData;
+    private final WpsDto formData;
     private JCheckBox dependenceCheckBox;
-    private WorkProgressPanel panel;
+    private final WorkProgressPanel panel;
 
     private WpsMarkdownEditor editor;
 
@@ -71,11 +79,14 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
     @Override
     protected @Nullable JComponent createCenterPanel() {
         JPanel rootPanel = new JPanel(new BorderLayout());
-        int rootWidth = ToolWindowManager.getInstance(project).getToolWindow("WPS").getComponent().getRootPane().getWidth();
+        ToolWindow wps = ToolWindowManager.getInstance(project).getToolWindow("WPS");
         int minWidth = 500;
-        int recommondWidth = 873;
-        if (rootWidth > recommondWidth) {
-            minWidth = recommondWidth;
+        if (wps != null) {
+            int rootWidth = wps.getComponent().getRootPane().getWidth();
+            int recommendWidth = 873;
+            if (rootWidth > recommendWidth) {
+                minWidth = recommendWidth;
+            }
         }
         rootPanel.setPreferredSize(new Dimension(minWidth, 600));
         JPanel centerPanel = getCenterPanel();
@@ -90,7 +101,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
     private JPanel getBottomPanel() {
         JPanel bottomPanel = new JPanel(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
-        constraints.insets = new Insets(5, 5, 5, 5);
+        constraints.insets = JBUI.insets(5);
         dependenceCheckBox = new JCheckBox("是否有依赖", true);
         dependenceCheckBox.setHorizontalAlignment(SwingConstants.LEFT);
         constraints.gridx = 0;
@@ -118,7 +129,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
     private JPanel getTopPanel() {
         JPanel topPanel = new JPanel(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
-        constraints.insets = new Insets(5, 5, 5, 5);
+        constraints.insets = JBUI.insets(5);
         int y = 0;
         JLabel progressLabel = new JLabel("进度：");
         //为状态添加下拉框编辑器
@@ -187,6 +198,22 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         dataPickerPanel.add(planWorkHoursPickerEnd);
         dayLabel = new JLabel();
         dataPickerPanel.add(dayLabel);
+        JButton dayCopyBtn = new JDIconButton(JoyworkprogressIcons.COPY);
+        dayCopyBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                String startDate = getShortDateTime(planWorkHoursPickerStart);
+                String endDate = getShortDateTime(planWorkHoursPickerEnd);
+                if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate)) {
+                    String copyContent = String.format("%s至%s",startDate,endDate);
+                    StringSelection selection = new StringSelection(copyContent);
+                    clipboard.setContents(selection,null);
+                }
+            }
+        });
+        dataPickerPanel.add(dayCopyBtn);
+
         constraints.gridx = 0;
         constraints.gridy = y;
         constraints.anchor = GridBagConstraints.WEST;
@@ -267,7 +294,9 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         getBranchNameBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                devBranchField.setText(ProjectUtils.getCurrentBranchName(project));
+                if (project != null) {
+                    devBranchField.setText(ProjectUtils.getCurrentBranchName(project));
+                }
             }
         });
         devBranchPanel.add(getBranchNameBtn, BorderLayout.EAST);
@@ -388,13 +417,15 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
     @NotNull
     private WpsSaveDto getFormData(String projectName) {
         String editorContent = editor.getText();
-        Object selectedItem = progressStatusComboBox.getSelectedItem();
-        WorkProgressStatusEnum statusEnum = (WorkProgressStatusEnum) selectedItem;
         WpsSaveDto dto = new WpsSaveDto();
         if (formData != null) {
             dto.setId(formData.getId());
         }
-        dto.setProgressStatus(statusEnum.getCode());
+        Object selectedItem = progressStatusComboBox.getSelectedItem();
+        if (selectedItem != null) {
+            WorkProgressStatusEnum statusEnum = (WorkProgressStatusEnum) selectedItem;
+            dto.setProgressStatus(statusEnum.getCode());
+        }
         dto.setStartTime(getDateTime(planWorkHoursPickerStart, " 00:00:00"));
         dto.setEndTime(getDateTime(planWorkHoursPickerEnd, " 23:59:59"));
         dto.setDevInfo(editorContent);
@@ -441,6 +472,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
             try {
                 planWorkHoursPickerStart.setDate(startDate);
             } catch (PropertyVetoException e) {
+                LOG.error("设置计划开始工时失败",e);
             }
         }
         if (!StringUtil.isEmpty(wpsDto.getPlanEndTime())) {
@@ -448,6 +480,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
             try {
                 planWorkHoursPickerEnd.setDate(endDate);
             } catch (PropertyVetoException e) {
+                LOG.error("设置计划结束工时失败",e);
             }
         }
         productField.setText(wpsDto.getProductManager());

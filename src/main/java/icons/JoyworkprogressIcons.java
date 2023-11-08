@@ -2,7 +2,7 @@ package icons;
 
 import com.intellij.openapi.util.IconLoader;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 
 /**
@@ -18,6 +18,7 @@ public class JoyworkprogressIcons {
     public static Icon PREVIEW = IconLoader.getIcon("icons/preview.svg", JoyworkprogressIcons.class);
     public static Icon BROWSER = IconLoader.getIcon("icons/browser.svg", JoyworkprogressIcons.class);
     public static Icon IMG = IconLoader.getIcon("icons/img.svg", JoyworkprogressIcons.class);
+    public static Icon COPY = IconLoader.getIcon("icons/copy.svg", JoyworkprogressIcons.class);
 
     public JoyworkprogressIcons() {
     }
