@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.jdl.ljc"
-version = "1.1-SNAPSHOT"
+version = "1.4-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -30,15 +30,15 @@ dependencies{
 tasks {
     // Set the JVM compatibility versions
     withType<JavaCompile> {
-        sourceCompatibility = "17"
-        targetCompatibility = "17"
+        sourceCompatibility = "11"
+        targetCompatibility = "11"
     }
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = "17"
+        kotlinOptions.jvmTarget = "11"
     }
 
     patchPluginXml {
-        sinceBuild.set("222")
+        sinceBuild.set("211")
         untilBuild.set("232.*")
     }
 
@@ -53,10 +53,10 @@ tasks {
     }
 
     compileKotlin {
-        kotlinOptions.jvmTarget = "17"
+        kotlinOptions.jvmTarget = "11"
     }
 
     compileTestKotlin {
-        kotlinOptions.jvmTarget = "17"
+        kotlinOptions.jvmTarget = "11"
     }
 }

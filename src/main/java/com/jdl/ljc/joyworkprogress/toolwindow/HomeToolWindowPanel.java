@@ -15,6 +15,7 @@ import com.jdl.ljc.joyworkprogress.action.LocateWorkProgressDialogAction;
 import com.jdl.ljc.joyworkprogress.action.SettingAction;
 import com.jdl.ljc.joyworkprogress.config.WpsPluginSetting;
 import com.jdl.ljc.joyworkprogress.domain.WpsConfig;
+import com.jdl.ljc.joyworkprogress.domain.WpsState;
 import com.jdl.ljc.joyworkprogress.ui.dialog.WpsSettingDialog;
 import com.jdl.ljc.joyworkprogress.ui.panel.SearchComboBoxPanel;
 import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressPanel;
@@ -51,27 +52,32 @@ public class HomeToolWindowPanel extends SimpleToolWindowPanel {
         InitWorkTasker tasker = new InitWorkTasker(project);
         tasker.execute();
 
+
+        WpsState state = WpsPluginSetting.getInstance().getState();
+        if (state != null&& StringUtils.isNotBlank(state.domain)) {
+            searchComboBoxPanel.getUserMenu().editSelectedMenuItem("me");
+//            gridPanel.refreshTableData();
+        }else {
+            WpsSettingDialog dialog = new WpsSettingDialog(project);
+            if (dialog.showAndGet()) {
+                searchComboBoxPanel.getUserMenu().editSelectedMenuItem("me");
+//                gridPanel.refreshTableData();
+            }
+        }
+
     }
 
 
-    private class InitWorkTasker extends SwingWorker{
+    private class InitWorkTasker extends SwingWorker<String,Void>{
         private Project project;
         public InitWorkTasker(Project project){
             this.project=project;
         }
         @Override
-        protected Object doInBackground() {
+        protected String doInBackground() {
             WpsConfig.getInstance().init(project);
-            searchComboBoxPanel.getUserMenu().editSelectedMenuItem("me");
-            if (WpsPluginSetting.getInstance().getState() != null&& StringUtils.isNotBlank(WpsPluginSetting.getInstance().getState().domain)) {
-                gridPanel.refreshTableData();
-            }else {
-                WpsSettingDialog dialog = new WpsSettingDialog(project);
-                if (dialog.showAndGet()) {
-                    gridPanel.refreshTableData();
-                }
-            }
-            return null;
+
+            return "";
         }
     }
 

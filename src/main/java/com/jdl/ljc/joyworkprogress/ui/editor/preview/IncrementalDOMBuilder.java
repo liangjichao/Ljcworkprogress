@@ -17,16 +17,16 @@ public class IncrementalDOMBuilder {
 
     }
 
-    public String generateCode() {
-        return String.format("""
-                    ()=>{
-                        const o=(tag,...attrs) => IncrementalDOM.elementOpen(tag,...attrs.map(decodeURIComponent));
-                        const t = content => IncrementalDOM.text(decodeURIComponent(content));
-                        const c = IncrementalDOM.elementClose;
-                        %s
-                    }
-                """, buildDomCode());
-    }
+//    public String generateCode() {
+//        return String.format("""
+//                    ()=>{
+//                        const o=(tag,...attrs) => IncrementalDOM.elementOpen(tag,...attrs.map(decodeURIComponent));
+//                        const t = content => IncrementalDOM.text(decodeURIComponent(content));
+//                        const c = IncrementalDOM.elementClose;
+//                        %s
+//                    }
+//                """, buildDomCode());
+//    }
 
     private String buildDomCode() {
         return buildCode(document.body());

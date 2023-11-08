@@ -61,9 +61,7 @@ public final class WpsMarkdownViewPanel extends JEditorPane implements Hyperlink
 
     @Override
     public String getConvertHTML(String t) {
-        String html = String.format("""
-                <div class="markdown-body">%s</div>
-                """, MarkdownTextUtils.convertHTML(t));
+        String html = String.format("<div class=\"markdown-body\">%s</div>", MarkdownTextUtils.convertHTML(t));
         String css = String.format("<meta charset=\"UTF-8\"><style>%s</style>", FileUtils.getResource("/html/markdown-view.css"));
 
         return new HtmlBuilder()
@@ -111,7 +109,7 @@ public final class WpsMarkdownViewPanel extends JEditorPane implements Hyperlink
     }
 
     private class MyAggregatingResourceProvider implements ResourceProvider {
-        private static List<String> internalResources = new ArrayList<>();
+        private List<String> internalResources = new ArrayList<>();
 
         public Boolean canProvide(String resourceName) {
             return internalResources.contains(resourceName) ||

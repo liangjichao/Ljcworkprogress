@@ -18,15 +18,14 @@ import com.jdl.ljc.joyworkprogress.action.editor.EditorButtonAction;
 import com.jdl.ljc.joyworkprogress.enums.EditorButtonEnum;
 import com.jdl.ljc.joyworkprogress.ui.dialog.JDWorkProgressFormDialog;
 import com.jdl.ljc.joyworkprogress.ui.editor.listener.EditorDocumentListener;
+import com.jdl.ljc.joyworkprogress.util.ObjectUtils;
 import icons.JoyworkprogressIcons;
-import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanelEx;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseWheelEvent;
-import java.util.function.Supplier;
 
 /**
  * @author liangjichao
@@ -54,13 +53,12 @@ public class WpsMarkdownEditor implements Disposable {
         this.formDialog = formDialog;
         editorPanel = ApplicationManager.getApplication().getService(WpsEditorPanel.class);
         editorPanel.getEditorArea().setText(content);
-        cefApp=JBCefApp.isSupported();
+        cefApp=JBCefApp.isSupported()&& ObjectUtils.hasClazz("com.intellij.ui.jcef.JCEFHtmlPanel");
         if (cefApp) {
             WpsMarkdownJCEFViewPanel viewPanel = ApplicationManager.getApplication().getService(WpsMarkdownJCEFViewPanel.class);
             viewPanel.updateContent(content, 0);
             wpsViewPanel = viewPanel;
-            editorPanel.getScrollPane().addMouseWheelListener(new PreciseVerticalScrollHelper(
-                    () -> (viewPanel.getComponent() instanceof MarkdownHtmlPanelEx) ? viewPanel.getComponent() : null));
+            editorPanel.getScrollPane().addMouseWheelListener(new PreciseVerticalScrollHelper(viewPanel));
             editorPanel.getEditorArea().getDocument().addDocumentListener(new EditorDocumentListener(editorPanel, viewPanel));
 
             viewEditor = viewPanel;
@@ -180,15 +178,15 @@ public class WpsMarkdownEditor implements Disposable {
     }
 
     private static class PreciseVerticalScrollHelper extends MouseAdapter {
-        private final @NotNull Supplier<MarkdownHtmlPanelEx> htmlPanelSupplier;
+        private final WpsMarkdownJCEFViewPanel viewPanel;
 
-        private PreciseVerticalScrollHelper(@NotNull Supplier<MarkdownHtmlPanelEx> htmlPanelSupplier) {
-            this.htmlPanelSupplier = htmlPanelSupplier;
+        private PreciseVerticalScrollHelper(WpsMarkdownJCEFViewPanel viewPanel) {
+            this.viewPanel = viewPanel;
         }
 
         @Override
         public void mouseWheelMoved(MouseWheelEvent event) {
-            final var actualPanel = htmlPanelSupplier.get();
+            final var actualPanel = viewPanel.getComponent();
             if (actualPanel == null) {
                 return;
             }

@@ -100,12 +100,9 @@ public class SearchComboBoxPanel extends JBPanel implements Disposable {
     }
 
     private class CancelAction extends AnAction {
-        private static final Icon CLOSE_ICON = ExperimentalUI.isNewUI() ?
-                IconManager.getInstance().getIcon("expui/general/closeSmall.svg", AllIcons.class) :
-                AllIcons.Actions.Close;
 
         public CancelAction() {
-            super(CLOSE_ICON);
+            super(AllIcons.Actions.Close);
         }
 
         @Override
