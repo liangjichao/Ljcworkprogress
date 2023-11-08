@@ -380,7 +380,17 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         devOwnerField.setText(wpsDto.getUserCode());
         dependenceCheckBox.setSelected((wpsDto.getForcedDependency() != null && wpsDto.getForcedDependency() == 1));
 
-        calculateDays(planWorkHoursPickerStart, planWorkHoursPickerEnd);
+        InitFormTasker initFormTasker = new InitFormTasker();
+        initFormTasker.execute();
+    }
+
+    private class InitFormTasker extends SwingWorker{
+
+        @Override
+        protected Object doInBackground() {
+            calculateDays(planWorkHoursPickerStart, planWorkHoursPickerEnd);
+            return null;
+        }
     }
 
     private void calculateDays(WpsDatePicker startPicker, WpsDatePicker endPicker) {
