@@ -2,9 +2,12 @@ package com.jdl.ljc.joyworkprogress.ui.dialog;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.util.ui.JBUI;
 import com.jdl.ljc.joyworkprogress.config.WpsPluginSetting;
+import com.jdl.ljc.joyworkprogress.domain.WpsState;
+import com.jdl.ljc.joyworkprogress.util.FormUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +30,10 @@ public class WpsSettingDialog extends DialogWrapper {
     }
 
     private void initData() {
-        domainField.setText(WpsPluginSetting.getInstance().getState().domain);
+        WpsState state = WpsPluginSetting.getInstance().getState();
+        if (state != null) {
+            domainField.setText(state.domain);
+        }
     }
 
     @Override
@@ -42,23 +48,12 @@ public class WpsSettingDialog extends DialogWrapper {
     private JPanel getFormPanel() {
         JPanel formPanel = new JPanel(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
-        constraints.insets = new Insets(5, 5, 5, 5);
-        int y = 0;
-        JLabel domainLabel = new JLabel("域名：");
+        constraints.insets = JBUI.insets(5);
         domainField = new JBTextField();
-        domainField.setPreferredSize(JBUI.size(200,30));
-        constraints.gridx = 0;
-        constraints.gridy = y;
-        constraints.anchor = GridBagConstraints.WEST;
-        formPanel.add(domainLabel, constraints);
-        constraints.gridx = 1;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.weightx = 1.0;
-        formPanel.add(domainField, constraints);
-
+        domainField.setPreferredSize(JBUI.size(200, 30));
+        FormUtils.addRowForm(formPanel, constraints, new JLabel("域名："), domainField, 0);
         return formPanel;
     }
-
 
     @Override
     protected Action @NotNull [] createActions() {
@@ -67,8 +62,13 @@ public class WpsSettingDialog extends DialogWrapper {
                 new DialogWrapperAction("确认") {
                     @Override
                     protected void doAction(ActionEvent e) {
-                        WpsPluginSetting.getInstance().getState().domain = domainField.getText();
-                        close(DialogWrapper.OK_EXIT_CODE);
+                        WpsState state = WpsPluginSetting.getInstance().getState();
+                        if (state != null) {
+                            state.domain = domainField.getText();
+                            close(DialogWrapper.OK_EXIT_CODE);
+                        } else {
+                            Messages.showInfoMessage("WpsState is null", "错误提示");
+                        }
                     }
                 },
                 getCancelAction()

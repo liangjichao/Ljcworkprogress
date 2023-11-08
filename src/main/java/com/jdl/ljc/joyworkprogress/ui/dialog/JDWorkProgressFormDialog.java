@@ -21,6 +21,7 @@ import com.jdl.ljc.joyworkprogress.ui.calendar.WpsDatePicker;
 import com.jdl.ljc.joyworkprogress.ui.editor.WpsMarkdownEditor;
 import com.jdl.ljc.joyworkprogress.ui.panel.WorkProgressPanel;
 import com.jdl.ljc.joyworkprogress.util.DateComputeUtils;
+import com.jdl.ljc.joyworkprogress.util.FormUtils;
 import com.jdl.ljc.joyworkprogress.util.ProjectUtils;
 import com.jdl.ljc.joyworkprogress.util.RestUtils;
 import icons.JoyworkprogressIcons;
@@ -128,7 +129,6 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.insets = JBUI.insets(5);
         int y = 0;
-        JLabel progressLabel = new JLabel("进度：");
         //为状态添加下拉框编辑器
         progressStatusComboBox = new ComboBox<>();
         WorkProgressStatusEnum selectedStatus = null;
@@ -143,22 +143,15 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         if (selectedStatus != null) {
             progressStatusComboBox.setSelectedItem(selectedStatus);
         }
-        constraints.gridx = 0;
-        constraints.gridy = y;
-        constraints.anchor = GridBagConstraints.WEST;
-        topPanel.add(progressLabel, constraints);
-        constraints.gridx = 1;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.weightx = 1.0;
-        topPanel.add(progressStatusComboBox, constraints);
-        y++;
-        JLabel planWorkHoursLabel = new JLabel("计划工时：");
-        JPanel dataPickerPanel = new JPanel();
+        y = FormUtils.addRowFormUnFill(topPanel, constraints, new JLabel("进度："), progressStatusComboBox, y);
+
+        JPanel dataPickerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,0,0));
+        dataPickerPanel.setBorder(JBUI.Borders.empty());
         planWorkHoursPickerStart = new WpsDatePicker();
         planWorkHoursPickerEnd = new WpsDatePicker();
         planWorkHoursPickerStart.addPropertyChangeListener(evt -> {
             if ("date".equals(evt.getPropertyName())) {
-                calculateDays(planWorkHoursPickerStart,planWorkHoursPickerEnd);
+                calculateDays(planWorkHoursPickerStart, planWorkHoursPickerEnd);
             }
         });
         planWorkHoursPickerStart.addActionListener(e -> {
@@ -175,7 +168,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         });
         planWorkHoursPickerEnd.addPropertyChangeListener(evt -> {
             if ("date".equals(evt.getPropertyName())) {
-                calculateDays(planWorkHoursPickerStart,planWorkHoursPickerEnd);
+                calculateDays(planWorkHoursPickerStart, planWorkHoursPickerEnd);
             }
         });
         dataPickerPanel.add(planWorkHoursPickerStart);
@@ -183,89 +176,29 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         dataPickerPanel.add(planWorkHoursPickerEnd);
         dayLabel = new JLabel();
         dataPickerPanel.add(dayLabel);
-        JButton dayCopyBtn = new JDIconButton(JoyworkprogressIcons.COPY);
-        dayCopyBtn.addActionListener(e -> {
-            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            String startDate = getShortDateTime(planWorkHoursPickerStart);
-            String endDate = getShortDateTime(planWorkHoursPickerEnd);
-            if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate)) {
-                String copyContent = String.format("%s至%s",startDate,endDate);
-                StringSelection selection = new StringSelection(copyContent);
-                clipboard.setContents(selection,null);
-            }
-        });
+        JButton dayCopyBtn = createDayCopyButton();
         dataPickerPanel.add(dayCopyBtn);
 
-        constraints.gridx = 0;
-        constraints.gridy = y;
-        constraints.anchor = GridBagConstraints.WEST;
-        constraints.fill = GridBagConstraints.NONE;
-        constraints.weightx = 0;
-        topPanel.add(planWorkHoursLabel, constraints);
-        constraints.gridx = 1;
-        constraints.fill = GridBagConstraints.NONE;
-        constraints.weightx = 0;
-        topPanel.add(dataPickerPanel, constraints);
-        y++;
+        y = FormUtils.addRowForm(topPanel, constraints, new JLabel("计划工时："), dataPickerPanel, y);
+
         JLabel titleLabel = new JLabel("<html>项目名称：<font color=\"red\">*</></html>");
         projectNameField = new JTextField();
-        constraints.gridx = 0;
-        constraints.gridy = y;
-        constraints.anchor = GridBagConstraints.WEST;
-        constraints.fill = GridBagConstraints.NONE;
-        constraints.weightx = 0;
-        topPanel.add(titleLabel, constraints);
-        constraints.gridx = 1;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.weightx = 1.0;
-        topPanel.add(projectNameField, constraints);
-        y++;
-        JLabel prdLabel = new JLabel("PRD：");
+        y = FormUtils.addRowForm(topPanel, constraints, titleLabel, projectNameField, y);
+
         prdField = new JTextField();
         JButton prdLinkBtn = new JButton(AllIcons.Ide.Link);
         prdLinkBtn.setPreferredSize(new Dimension(30, 30));
-        JPanel prdPanel = new JPanel(new BorderLayout());
-        prdPanel.add(prdField, BorderLayout.CENTER);
-        prdPanel.add(prdLinkBtn, BorderLayout.EAST);
         prdLinkBtn.addActionListener(e -> {
             String url = prdField.getText();
             openBrowserLink(url);
         });
-        constraints.gridx = 0;
-        constraints.gridy = y;
-        constraints.anchor = GridBagConstraints.WEST;
-        constraints.fill = GridBagConstraints.NONE;
-        constraints.weightx = 0;
-        topPanel.add(prdLabel, constraints);
-        constraints.gridx = 1;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.weightx = 1.0;
-        topPanel.add(prdPanel, constraints);
-        y++;
-        JLabel productLabel = new JLabel("产品经理：");
+        JPanel prdPanel = new JPanel(new BorderLayout());
+        prdPanel.add(prdField, BorderLayout.CENTER);
+        prdPanel.add(prdLinkBtn, BorderLayout.EAST);
+        y = FormUtils.addRowForm(topPanel, constraints, new JLabel("PRD："), prdPanel, y);
         productField = new JTextField();
-        constraints.gridx = 0;
-        constraints.gridy = y;
-        constraints.anchor = GridBagConstraints.WEST;
-        constraints.fill = GridBagConstraints.NONE;
-        constraints.weightx = 0;
-        topPanel.add(productLabel, constraints);
-        constraints.gridx = 1;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.weightx = 1.0;
-        topPanel.add(productField, constraints);
-        y++;
-        JLabel devBranchLabel = new JLabel("开发分支：");
+        y = FormUtils.addRowForm(topPanel, constraints, new JLabel("产品经理："), productField, y);
         devBranchField = new JTextField();
-        constraints.gridx = 0;
-        constraints.gridy = y;
-        constraints.anchor = GridBagConstraints.WEST;
-        constraints.fill = GridBagConstraints.NONE;
-        constraints.weightx = 0;
-        topPanel.add(devBranchLabel, constraints);
-        constraints.gridx = 1;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.weightx = 1.0;
         JPanel devBranchPanel = new JPanel(new BorderLayout());
         devBranchPanel.add(devBranchField, BorderLayout.CENTER);
         JButton getBranchNameBtn = new JButton(AllIcons.Actions.Checked);
@@ -276,22 +209,9 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
             }
         });
         devBranchPanel.add(getBranchNameBtn, BorderLayout.EAST);
-        topPanel.add(devBranchPanel, constraints);
-        y++;
-        JLabel appVersionLabel = new JLabel("应用版本：");
+        y = FormUtils.addRowForm(topPanel, constraints, new JLabel("开发分支："), devBranchPanel, y);
         appVersionField = new JTextField();
-        constraints.gridx = 0;
-        constraints.gridy = y;
-        constraints.anchor = GridBagConstraints.WEST;
-        constraints.fill = GridBagConstraints.NONE;
-        constraints.weightx = 0;
-        topPanel.add(appVersionLabel, constraints);
-        constraints.gridx = 1;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.weightx = 1.0;
-        topPanel.add(appVersionField, constraints);
-        y++;
-        JLabel cardLabel = new JLabel("卡片：");
+        y = FormUtils.addRowForm(topPanel, constraints, new JLabel("应用版本："), appVersionField, y);
         cardField = new JTextField();
         JButton openLinkBtn = new JButton(AllIcons.Ide.Link);
         openLinkBtn.setPreferredSize(new Dimension(30, 30));
@@ -302,29 +222,26 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
             String url = cardField.getText();
             openBrowserLink(url);
         });
-        constraints.gridx = 0;
-        constraints.gridy = y;
-        constraints.anchor = GridBagConstraints.WEST;
-        constraints.fill = GridBagConstraints.NONE;
-        constraints.weightx = 0;
-        topPanel.add(cardLabel, constraints);
-        constraints.gridx = 1;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.weightx = 1.0;
-        topPanel.add(cardPanel, constraints);
-        y++;
+        y = FormUtils.addRowForm(topPanel, constraints, new JLabel("卡片："), cardPanel, y);
         devOwnerField = new JTextField();
-        constraints.gridx = 0;
-        constraints.gridy = y;
-        constraints.anchor = GridBagConstraints.WEST;
-        constraints.fill = GridBagConstraints.NONE;
-        constraints.weightx = 0;
-        topPanel.add(new JLabel("开发人员："), constraints);
-        constraints.gridx = 1;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.weightx = 1.0;
-        topPanel.add(devOwnerField, constraints);
+        FormUtils.addRowForm(topPanel, constraints, new JLabel("开发人员："), devOwnerField, y);
         return topPanel;
+    }
+
+    @NotNull
+    private JButton createDayCopyButton() {
+        JButton dayCopyBtn = new JDIconButton(JoyworkprogressIcons.COPY);
+        dayCopyBtn.addActionListener(e -> {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            String startDate = getShortDateTime(planWorkHoursPickerStart);
+            String endDate = getShortDateTime(planWorkHoursPickerEnd);
+            if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate)) {
+                String copyContent = String.format("%s至%s", startDate, endDate);
+                StringSelection selection = new StringSelection(copyContent);
+                clipboard.setContents(selection, null);
+            }
+        });
+        return dayCopyBtn;
     }
 
     public void full() {
@@ -444,7 +361,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
             try {
                 planWorkHoursPickerStart.setDate(startDate);
             } catch (PropertyVetoException e) {
-                LOG.error("设置计划开始工时失败",e);
+                LOG.error("设置计划开始工时失败", e);
             }
         }
         if (!StringUtil.isEmpty(wpsDto.getPlanEndTime())) {
@@ -452,7 +369,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
             try {
                 planWorkHoursPickerEnd.setDate(endDate);
             } catch (PropertyVetoException e) {
-                LOG.error("设置计划结束工时失败",e);
+                LOG.error("设置计划结束工时失败", e);
             }
         }
         productField.setText(wpsDto.getProductManager());
