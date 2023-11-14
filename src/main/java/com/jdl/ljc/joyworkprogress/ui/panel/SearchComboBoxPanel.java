@@ -12,6 +12,7 @@ import com.jdl.ljc.joyworkprogress.domain.WpsConfig;
 import com.jdl.ljc.joyworkprogress.domain.vo.WpsQueryDto;
 import com.jdl.ljc.joyworkprogress.toolwindow.HomeToolWindowPanel;
 import com.jdl.ljc.joyworkprogress.ui.UserMenu;
+import icons.JoyworkprogressIcons;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +29,7 @@ public class SearchComboBoxPanel extends JBPanel implements Disposable {
     private HomeToolWindowPanel rootPanel;
 
     public SearchComboBoxPanel(HomeToolWindowPanel rootPanel) {
-        super(new FlowLayout());
+        super(new FlowLayout(FlowLayout.LEFT, 0, 0));
         this.rootPanel = rootPanel;
         menuBar = new JMenuBar();
         menuBar.setBorder(JBUI.Borders.empty());
@@ -100,7 +101,7 @@ public class SearchComboBoxPanel extends JBPanel implements Disposable {
     private class CancelAction extends AnAction {
 
         public CancelAction() {
-            super(AllIcons.Actions.Close);
+            super(JoyworkprogressIcons.CLOSE);
         }
 
         @Override

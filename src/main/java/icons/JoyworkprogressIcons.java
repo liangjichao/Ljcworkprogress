@@ -19,6 +19,7 @@ public class JoyworkprogressIcons {
     public static Icon BROWSER = IconLoader.getIcon("icons/browser.svg", JoyworkprogressIcons.class);
     public static Icon IMG = IconLoader.getIcon("icons/img.svg", JoyworkprogressIcons.class);
     public static Icon COPY = IconLoader.getIcon("icons/copy.svg", JoyworkprogressIcons.class);
+    public static Icon CLOSE = IconLoader.getIcon("icons/close.svg", JoyworkprogressIcons.class);
 
     public JoyworkprogressIcons() {
     }
