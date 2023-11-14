@@ -6,6 +6,8 @@ public class WorkProgressGridData {
 
     private String planWorkHours;
 
+    private String productManager;
+
     private String userCode;
 
     public String getTitle() {
@@ -38,5 +40,13 @@ public class WorkProgressGridData {
 
     public void setUserCode(String userCode) {
         this.userCode = userCode;
+    }
+
+    public String getProductManager() {
+        return productManager;
+    }
+
+    public void setProductManager(String productManager) {
+        this.productManager = productManager;
     }
 }

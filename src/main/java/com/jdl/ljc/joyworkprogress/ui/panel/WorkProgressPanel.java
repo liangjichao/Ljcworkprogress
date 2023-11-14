@@ -49,6 +49,7 @@ public class WorkProgressPanel extends JBPanel<WorkProgressPanel> {
         columnNames.add("进度");
         columnNames.add("项目名称");
         columnNames.add("计划工时");
+        columnNames.add("产品经理");
         columnNames.add("用户");
         // 创建默认的表格模型
         model = new JDTableModel(null, columnNames);
@@ -60,6 +61,8 @@ public class WorkProgressPanel extends JBPanel<WorkProgressPanel> {
         table.getColumnModel().getColumn(2).setMaxWidth(178);
         table.getColumnModel().getColumn(3).setMinWidth(80);
         table.getColumnModel().getColumn(3).setMaxWidth(80);
+        table.getColumnModel().getColumn(4).setMinWidth(80);
+        table.getColumnModel().getColumn(4).setMaxWidth(80);
 
         JBScrollPane jbScrollPane = new JBScrollPane(table);
         jbScrollPane.setBorder(JBUI.Borders.empty());
@@ -117,6 +120,7 @@ public class WorkProgressPanel extends JBPanel<WorkProgressPanel> {
                 planWorkHours += "至" + convertDate(wpsDto.getPlanEndTime());
             }
             gridData.setPlanWorkHours(planWorkHours);
+            gridData.setProductManager(wpsDto.getProductManager());
             gridData.setUserCode(wpsDto.getUserCode());
         }
         model.setRowCount(0);
@@ -126,6 +130,7 @@ public class WorkProgressPanel extends JBPanel<WorkProgressPanel> {
             bean.add(data.getProgressStatus());
             bean.add(data.getTitle());
             bean.add(data.getPlanWorkHours());
+            bean.add(data.getProductManager());
             bean.add(data.getUserCode());
             model.addRow(bean);
         }
