@@ -1,21 +1,15 @@
 package com.jdl.ljc.joyworkprogress.util;
 
-import com.alibaba.fastjson.JSON;
-import com.google.api.client.util.Lists;
-import com.google.common.collect.Maps;
 import com.jdl.ljc.joyworkprogress.domain.WpsConfig;
-import com.jdl.ljc.joyworkprogress.domain.vo.HolidayResultVo;
-import com.jdl.ljc.joyworkprogress.domain.vo.HolidayVo;
-import com.jdl.ljc.joyworkprogress.enums.HolidayTypeEnum;
+import com.jdl.ljc.joyworkprogress.domain.dto.ResultDto;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
 
 public class DateComputeUtils {
-    private static Map<String, List<Integer>> holidayMap = Maps.newHashMap();
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern(WpsConfig.dateFormatPattern);
+
     public static int calculateWorkingDays(String start, String end) {
 
         LocalDate startDay = LocalDate.parse(start + " 00:00:00", formatter);
@@ -35,23 +29,9 @@ public class DateComputeUtils {
 
     private static boolean excludeHoliDay(LocalDate currentDate) {
         String month = currentDate.format(DateTimeFormatter.ofPattern("yyyyMM"));
-        List<Integer> holidayList = Lists.newArrayList();
-        if (!holidayMap.containsKey(month)) {
-            holidayMap.put(month, holidayList);
-            String holidayDataByMonth = DateComputeUtils.getHolidayDataByMonth(month);
-            HolidayResultVo resultVo = JSON.parseObject(holidayDataByMonth, HolidayResultVo.class);
-            if (resultVo.getCode().equals(1)&&resultVo.getData() != null) {
-                for (HolidayVo datum : resultVo.getData()) {
-                    if (HolidayTypeEnum.REST_DAY.getCode() == datum.getType() || HolidayTypeEnum.HOLIDAY.getCode() == datum.getType()) {
-                        holidayList.add(datum.getDayOfYear());
-                    }
-                }
-            }
-        }else{
-            holidayList = holidayMap.get(month);
-        }
-        if (holidayList.contains(currentDate.getDayOfYear())) {
-            return false;
+        ResultDto<List<Integer>> listResultDto = RestUtils.postList(Integer.class, String.format("/wps/holiday/%s", month), null);
+        if (listResultDto.isSuccess()) {
+            return !listResultDto.getResultValue().contains(currentDate.getDayOfYear());
         }
         return true;
     }

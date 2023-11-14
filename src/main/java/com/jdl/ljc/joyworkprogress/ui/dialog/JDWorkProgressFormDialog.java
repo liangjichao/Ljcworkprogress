@@ -145,7 +145,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         }
         y = FormUtils.addRowFormUnFill(topPanel, constraints, new JLabel("进度："), progressStatusComboBox, y);
 
-        JPanel dataPickerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,0,0));
+        JPanel dataPickerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         dataPickerPanel.setBorder(JBUI.Borders.empty());
         planWorkHoursPickerStart = new WpsDatePicker();
         planWorkHoursPickerEnd = new WpsDatePicker();
@@ -384,7 +384,7 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
         initFormTasker.execute();
     }
 
-    private class InitFormTasker extends SwingWorker{
+    private class InitFormTasker extends SwingWorker {
 
         @Override
         protected Object doInBackground() {
@@ -394,10 +394,28 @@ public class JDWorkProgressFormDialog extends DialogWrapper {
     }
 
     private void calculateDays(WpsDatePicker startPicker, WpsDatePicker endPicker) {
-        String start = getShortDateTime(startPicker);
-        String end = getShortDateTime(endPicker);
-        if (StringUtils.isNotBlank(start) && StringUtils.isNotBlank(end)) {
-            dayLabel.setText(DateComputeUtils.calculateWorkingDays(start, end) + "天");
+        CalculateDaysTasker tasker = new CalculateDaysTasker(startPicker, endPicker);
+        tasker.execute();
+
+    }
+
+    private class CalculateDaysTasker extends SwingWorker<String, Void> {
+        private WpsDatePicker startPicker;
+        private WpsDatePicker endPicker;
+
+        public CalculateDaysTasker(WpsDatePicker startPicker, WpsDatePicker endPicker) {
+            this.startPicker = startPicker;
+            this.endPicker = endPicker;
+        }
+
+        @Override
+        protected String doInBackground() {
+            String start = getShortDateTime(startPicker);
+            String end = getShortDateTime(endPicker);
+            if (StringUtils.isNotBlank(start) && StringUtils.isNotBlank(end)) {
+                dayLabel.setText(DateComputeUtils.calculateWorkingDays(start, end) + "天");
+            }
+            return "";
         }
     }
 
