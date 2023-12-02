@@ -4,7 +4,7 @@ plugins {
     id("org.jetbrains.intellij") version "1.15.0"
 }
 
-group = "com.jdl.ljc"
+group = "com.ljc"
 version = "1.7-SNAPSHOT"
 
 repositories {

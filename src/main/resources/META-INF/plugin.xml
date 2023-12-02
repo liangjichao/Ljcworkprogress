@@ -1,20 +1,20 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
-    <id>com.jdl.ljc.joyworkprogress</id>
+    <id>com.ljc.joyworkprogress</id>
 
     <!-- Public plugin name should be written in Title Case.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
-    <name>Joyworkprogress</name>
+    <name>Ljcworkprogress</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
-    <vendor email="liangjichao@jd.com" url="https://www.jdl.com">京东物流-梁吉超</vendor>
+    <vendor email="liangjichao@jd.com" url="https://">梁吉超</vendor>
 
     <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
-   这是一个开发进度管理工具，帮助开发过程中记录开发进度，开发过程信息，项目需求信息，关联行云卡片等。
+   这是一个开发进度管理工具，帮助开发过程中记录开发进度，开发过程信息，项目需求信息，关联卡片等。
   ]]></description>
 
     <!-- Product and plugin compatibility requirements.
@@ -26,9 +26,9 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-        <httpRequestHandler implementation="com.jdl.ljc.joyworkprogress.ui.editor.preview.WpsStaticServer"></httpRequestHandler>
-        <toolWindow id="WPS" anchor="bottom" icon="JoyworkprogressIcons.ToolWindowIcon" factoryClass="com.jdl.ljc.joyworkprogress.DevWorkProgressWindowFactory" />
-        <applicationService serviceImplementation="com.jdl.ljc.joyworkprogress.config.WpsPluginSetting"/>
+        <httpRequestHandler implementation="com.ljc.workprogress.ui.editor.preview.WpsStaticServer"></httpRequestHandler>
+        <toolWindow id="WPS" anchor="bottom" icon="LjcworkprogressIcons.ToolWindowIcon" factoryClass="com.ljc.workprogress.DevWorkProgressWindowFactory" />
+        <applicationService serviceImplementation="com.ljc.workprogress.config.WpsPluginSetting"/>
     </extensions>
     <actions>
 

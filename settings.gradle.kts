@@ -5,4 +5,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = "joyworkprogress"
+rootProject.name = "Ljcworkprogress"
