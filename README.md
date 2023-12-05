@@ -1,5 +1,6 @@
 # Ljcworkprogress
 这是一个开发进度管理工具，帮助开发过程中记录开发进度，开发过程信息，项目需求信息，关联卡片等。
+同时为idea插件开发提供参考
 
 列表页面效果
 ![image](https://github.com/liangjichao/Ljcworkprogress/assets/59160263/100e7721-7b00-4ebd-b3a3-c201c53ff539)
